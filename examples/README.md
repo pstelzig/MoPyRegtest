@@ -2,6 +2,15 @@
 This file guides you through the examples on how to use the `mopyregtest` module to perform simple and quick regression testing on Modelica models. 
 
 
+## Quick start
+Really quick introduction (read the in-depth explanation below to know what you are doing!): 
+* Go to `examples/test_Modelica_Electrical_Analog_Examples`
+* Copy and modify the file `test_modelica_electrical_analog_examples.py` according to your needs
+* Run regression tests on your own Modelica package and models
+
+A more in-depth explanation of how the provided example works and what happens can be found in the following section. 
+
+
 ## Example `test_Modelica_Electrical_Analog_Examples`
 In the example (see the folder `examples/test_Modelica_Electrical_Analog_Examples`) `MoPyRegtest` is used to perform regression testing on two examples from the Modelica standard library, namely
 * `Modelica.Electrical.Analog.Examples.HeatingResistor`
