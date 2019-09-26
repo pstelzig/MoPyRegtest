@@ -50,7 +50,7 @@ class TestElectricalAnalogExamples(unittest.TestCase):
         return
 
     # Testing Modelica.Electrical.Analog.Examples.Rectifier
-    def test_HeatingResistor(self):
+    def test_Rectifier(self):
         tester = mopyregtest.RegressionTest(package_folder=package_folder,
                                             model_in_package="Modelica.Electrical.Analog.Examples.Rectifier",
                                             result_folder=result_folder / "Modelica.Electrical.Analog.Examples.Rectifier")
