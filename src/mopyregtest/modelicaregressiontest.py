@@ -74,8 +74,8 @@ class RegressionTest:
 
         # Modify the import template
         repl_dict = {}
-        repl_dict["PACKAGE_FOLDER"] = str(self.package_folder_path)
-        repl_dict["RESULT_FOLDER"] = str(self.result_folder_path)
+        repl_dict["PACKAGE_FOLDER"] = str(self.package_folder_path.as_posix())
+        repl_dict["RESULT_FOLDER"] = str(self.result_folder_path.as_posix())
         repl_dict["MODEL_IN_PACKAGE"] = self.model_in_package
 
         RegressionTest.replace_in_file(self.result_folder_path / self.model_import_mos, repl_dict)
