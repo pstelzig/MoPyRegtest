@@ -46,7 +46,7 @@ writeFile("RESULT_FOLDER", errors);
 
 buildModel(MODEL_IN_PACKAGE, startTime=START_TIME, stopTime=STOP_TIME, numberOfIntervals=NUM_INTERVALS, method="dassl", tolerance=TOLERANCE, outputFormat="csv", variableFilter=".*");
 
-system("./MODEL_IN_PACKAGE");
+system("SIMULATION_BINARY");
 
 clearCommandLineOptions();
 

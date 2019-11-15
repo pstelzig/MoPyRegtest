@@ -5,6 +5,7 @@ License according to this project's LICENSE.md file.
 """
 
 import os
+import platform
 import pathlib
 import shutil
 import numpy as np
@@ -91,6 +92,10 @@ class RegressionTest:
         (start_time, stop_time, tolerance, num_intervals, interval) = omc_messages[-1].lstrip('(').rstrip(')').split(',')
 
         # Modify the simulation template
+        if platform.system() == 'Windows':
+            repl_dict["SIMULATION_BINARY"] = "{}.exe".format(self.model_in_package)
+        elif platform.system() == 'Linux':
+            repl_dict["SIMULATION_BINARY"] = "./{}".format(self.model_in_package)
         repl_dict["START_TIME"] = start_time
         repl_dict["STOP_TIME"] = stop_time
         repl_dict["TOLERANCE"] = tolerance
