@@ -17,7 +17,7 @@ Moreover, with the connection between Python and Modelica being very popular the
 
 
 ## Current realization
-The current realization uses the [Python `unittest` module](https://docs.python.org/3/library/unittest.html) and calls the [OpenModelica compiler `omc`]https://openmodelica.org/?id=51:open-modelica-compiler-omc&catid=10:main-category) as an external executable for translation and simulation of Modelica models. Note that the implementation `MoPyRegtest` is not specific to OpenModelica but can be replaced by any other Modelica simulation tool that comes with a suitable scripting API. 
+The current realization uses the [Python `unittest` module](https://docs.python.org/3/library/unittest.html) and calls the [OpenModelica compiler `omc`](https://openmodelica.org/?id=51:open-modelica-compiler-omc&catid=10:main-category) as an external executable for translation and simulation of Modelica models. Note that the implementation `MoPyRegtest` is not specific to OpenModelica but can be replaced by any other Modelica simulation tool that comes with a suitable scripting API. 
 
 The test execution and orchestration is done by the Python `unittest` module. In particular, Python `unittest` supports [test discovery](https://docs.python.org/3/library/unittest.html#test-discovery). That is, when the aforementioned Python files that the user has to create for regression testing are suitably placed, Python can discover and execute them automatically, thus making test orchestration and execution a lot easier. Also, `unittest` is a standard module that comes with virtually all Python distributions. 
 
@@ -33,9 +33,10 @@ Examples of how such a file would look like can be found in the `examples` folde
 
 ## Prerequisites
 To use `MoPyRegtest` you need to have
-* a [Python 3](https://www.python.org/) distribution including the modules [`unittest`](https://docs.python.org/3/library/unittest.html) and [Numpy](https://numpy.org/)
+* a [Python 3](https://www.python.org/) distribution including the modules [`unittest`](https://docs.python.org/3/library/unittest.html) and [`Numpy`](https://numpy.org/)
 * a working [OpenModelica](https://www.openmodelica.org/) installation (version 1.13.0 or later) and 
-* the OpenModelica compiler executable `omc` has to be found via the `PATH` variable
+* the OpenModelica compiler executable `omc` has to be found via the `PATH` variable.
+
 To test for the latter, open a command line terminal (`cmd` in Windows), type `omc` and press `Enter`. If `omc` is in the `PATH` variable, you should get a long list of options and links to the documentation of OpenModelica, otherwise an error message.
 
 
