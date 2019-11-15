@@ -6,7 +6,7 @@ This file guides you through the examples on how to use the `mopyregtest` module
 Really quick introduction (read the in-depth explanation below to know what you are doing!): 
 * Go to `examples/test_Modelica_Electrical_Analog_Examples`
 * Copy and modify the file `test_modelica_electrical_analog_examples.py` according to your needs
-* Run regression tests on your own Modelica package and models
+* Execute the modified file like `python3 test_modelica_electrical_analog_examples.py` (or whatever you named the file now) to run regression tests on your own Modelica package and models
 
 A more in-depth explanation of how the provided example works and what happens can be found in the following section. 
 
