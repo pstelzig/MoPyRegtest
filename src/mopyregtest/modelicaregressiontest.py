@@ -79,10 +79,6 @@ class RegressionTest:
 
         pathlib.os.chdir(self.result_folder_path)
 
-        # Copy mos templates to result folder
-        shutil.copy(self.template_folder_path / self.model_import_template, self.result_folder_path / self.model_import_mos)
-        shutil.copy(self.template_folder_path / self.model_simulate_template, self.result_folder_path / self.model_simulate_mos)
-
         # Run the scripts for import and simulation
         self._run_model()
 
@@ -107,13 +103,15 @@ class RegressionTest:
         -------
         out : None
         """
+        print("\nTesting model {}".format(self.model_in_package))
+
         self.import_and_simulate()
         simulation_result = str(self.result_folder_path / self.model_in_package) + "_res.csv"
 
         print("Comparing simulation result {} and reference {}".format(simulation_result, reference_result))
 
         ref_data = pd.read_csv(filepath_or_buffer=reference_result, delimiter=',')
-        result_data = pd.read_csv(filepath_or_buffer=simulation_result + "_res.csv", delimiter=',')
+        result_data = pd.read_csv(filepath_or_buffer=simulation_result, delimiter=',')
 
         # Determine common columns by comparing column headers
         common_cols = set(ref_data.columns).intersection(set(result_data.columns))
@@ -135,15 +133,19 @@ class RegressionTest:
         return
 
     def _run_model(self):
-        # Modify the import template
-        repl_dict = {}
-        repl_dict["PACKAGE_FOLDER"] = str(self.package_folder_path.as_posix())
-        repl_dict["RESULT_FOLDER"] = str(self.result_folder_path.as_posix())
-        repl_dict["MODEL_IN_PACKAGE"] = self.model_in_package
-
-        RegressionTest.replace_in_file(self.result_folder_path / self.model_import_mos, repl_dict)
-
         if self.tool == "omc":
+            # Copy mos templates to result folder
+            shutil.copy(self.template_folder_path / self.model_import_template, self.result_folder_path / self.model_import_mos)
+            shutil.copy(self.template_folder_path / self.model_simulate_template, self.result_folder_path / self.model_simulate_mos)
+
+            # Modify the import template
+            repl_dict = {}
+            repl_dict["PACKAGE_FOLDER"] = str(self.package_folder_path.as_posix())
+            repl_dict["RESULT_FOLDER"] = str(self.result_folder_path.as_posix())
+            repl_dict["MODEL_IN_PACKAGE"] = self.model_in_package
+
+            RegressionTest.replace_in_file(self.result_folder_path / self.model_import_mos, repl_dict)
+
             # Run the import script and write the output of the OpenModelica Compiler (omc) to omc_output
             os.system(self.tool_executable + " {} > {}".format(self.model_import_mos, self.tool_output))
 
@@ -170,7 +172,18 @@ class RegressionTest:
             os.system(self.tool_executable + " {} >> {}".format(self.model_simulate_mos, self.tool_output))
 
         if self.tool == "dymola":
+            # Copy mos templates to result folder
+            shutil.copy(self.template_folder_path / self.model_simulate_template, self.result_folder_path / self.model_simulate_mos)
+
+            # Modify the simulation template
+            repl_dict = {}
+            repl_dict["PACKAGE_FOLDER"] = str(self.package_folder_path.as_posix())
+            repl_dict["RESULT_FOLDER"] = str(self.result_folder_path.as_posix())
+            repl_dict["MODEL_IN_PACKAGE"] = self.model_in_package
+
+            RegressionTest.replace_in_file(self.result_folder_path / self.model_simulate_mos, repl_dict)
+
             # Run the simulation script
-            os.system(self.tool_executable + " {} /nowindow".format(self.model_simulate_mos))
+            os.system(self.tool_executable + " {} /nowindow >> {}".format(self.model_simulate_mos, self.tool_output))
 
         return
