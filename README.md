@@ -11,7 +11,9 @@ When developing Modelica models or libraries and a certain maturity or complexit
 
 
 ## Why MoPyRegtest
-The scope of `MoPyRegtest` is first and foremost to have a transparent, quick, lightweight and simple way to perform regression tests, without immediately requiring commercial simulation tools or creating strong dependencies from other Modelica libraries. All that is needed to use `MoPyRegtest` is a Python 3 installation, an [OpenModelica](https://www.openmodelica.org/) installation and a text editor -- things that very likely most (Open)Modelica users do have anyway. All that is needed to deploy `MoPyRegtest` is to write a Python file, just like in the `examples` folder of this project. 
+The scope of `MoPyRegtest` is first and foremost to have a transparent, quick, lightweight and simple way to perform regression tests. Without immediately requiring commercial simulation tools or creating strong dependencies from other Modelica libraries. This is why MoPyRegTest consists of just one source file. 
+
+All that is needed to use `MoPyRegtest` is a Python 3 installation, an [OpenModelica](https://www.openmodelica.org/) installation and a text editor -- things that very likely most (Open)Modelica users do have anyway. All that is needed to deploy `MoPyRegtest` is to write a Python file, just like in the `examples` folder of this project. 
 
 Moreover, with the connection between Python and Modelica being very popular these days (see e.g. the projects [pyFMI](https://pypi.org/project/PyFMI/), [OMPython](https://github.com/OpenModelica/OMPython), [PySimulator](https://github.com/PySimulator/PySimulator) and many more), it appears meaningful to have one testing toolkit that can cover both your Python development and your Modelica model development. 
 
@@ -43,6 +45,11 @@ To test for the latter, open a command line terminal (`cmd` in Windows), type `o
 ## Known issues
 * Under Windows, due to file permissions set by Windows on some machines MoPyRegtest has problems removing temporary result folders created by the OpenModelica compiler
 * Using MoPyRegtest with the commercial software Dymola to perform the regression test is not possible yet, or only in an early experimental stage
+
+## Future Work
+* Support other simulators like e.g. Dymola
+* Make definition of the tests even simpler, e.g. using a more human-readable BDD approach with [Behave. BDD, Python style](https://github.com/behave/behave)
+* Allow for parallel execution of regression tests
 
 
 # License
