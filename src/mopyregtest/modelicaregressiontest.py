@@ -18,7 +18,7 @@ class RegressionTest:
     Creates OpenModelica-compatible .mos scripts to import and simulate the model with .csv output.
     The .csv output is then compared against a reference result, possibly only on a subset of columns.
     """
-    def __init__(self, package_folder, model_in_package, result_folder, tool=None):
+    def __init__(self, package_folder, model_in_package, result_folder, tool="omc"):
         """
         Constructor of the RegresssionTest class.
 
