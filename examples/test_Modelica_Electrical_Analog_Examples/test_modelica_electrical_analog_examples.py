@@ -1,7 +1,7 @@
 """
 Example of how to use MoPyRegtest to perform regression tests. 
 
-License: See the file LICENSE in the project's root folder. 
+MIT License. See the project's LICENSE file.
 
 (c) Dr. Philipp Emanuel Stelzig, 2019. 
 """

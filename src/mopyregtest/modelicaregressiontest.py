@@ -1,7 +1,7 @@
 """
 (c) Dr. Philipp Emanuel Stelzig, 2019. 
 
-License according to this project's LICENSE.md file. 
+MIT License. See the project's LICENSE file.
 """
 
 import os
