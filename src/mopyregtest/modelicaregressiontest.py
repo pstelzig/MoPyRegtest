@@ -31,9 +31,9 @@ class RegressionTest:
         result_folder :
             Path of the folder where the output of the model testing shall be written to
         tool:
-            Simulator used to translate, compile and execute Modelica model. Valid options are omc,
-            and dymola. If no argument is specified, RegressionTest will search the PATH variable
-            for both omc and dymola and will execute the tests for all of the two that is found. 
+            Simulator used to translate, compile and execute Modelica model. The only valid 
+            tool right now is omc (OpenModelica Compiler). If no argument is specified, 
+            RegressionTest will search the PATH variable for omc and will execute the tests if found. 
         """
 
         self.template_folder_path = pathlib.Path(__file__).parent.absolute() / "templates"
@@ -44,7 +44,7 @@ class RegressionTest:
         if tool != None:
             self.tools = [tool]
         else:
-            self.tools = [tl for tl in ["omc", "dymola"] if shutil.which(tl) != None]
+            self.tools = [tl for tl in ["omc"] if shutil.which(tl) != None]
 
         self.result_folder_created = False
 
@@ -180,19 +180,5 @@ class RegressionTest:
                 # Run the simulation script and append the output of the OpenModelica Compiler (omc) to omc_output
                 os.system(tool_executable + " {} >> {}".format(model_simulate_mos, tool_output))
 
-            if tool == "dymola":
-                # Copy mos templates to result folder
-                shutil.copy(self.template_folder_path / model_simulate_template, self.result_folder_path / model_simulate_mos)
-
-                # Modify the simulation template
-                repl_dict = {}
-                repl_dict["PACKAGE_FOLDER"] = str(self.package_folder_path.as_posix())
-                repl_dict["RESULT_FOLDER"] = str(self.result_folder_path.as_posix())
-                repl_dict["MODEL_IN_PACKAGE"] = self.model_in_package
-
-                RegressionTest.replace_in_file(self.result_folder_path / model_simulate_mos, repl_dict)
-
-                # Run the simulation script
-                os.system(tool_executable + " {} /nowindow >> {}".format(model_simulate_mos, tool_output))
 
         return
