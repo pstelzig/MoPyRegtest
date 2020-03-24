@@ -40,6 +40,11 @@ To use `MoPyRegtest` you need to have
 To test for the latter, open a command line terminal (`cmd` in Windows), type `omc` and press `Enter`. If `omc` is in the `PATH` variable, you should get a long list of options and links to the documentation of OpenModelica, otherwise an error message.
 
 
+## Known issues
+* Under Windows, due to file permissions set by Windows on some machines MoPyRegtest has problems removing temporary result folders created by the OpenModelica compiler
+* Using MoPyRegtest with the commercial software Dymola to perform the regression test is not possible yet, or only in an early experimental stage
+
+
 # License
 See the file `LICENSE`. 
 
