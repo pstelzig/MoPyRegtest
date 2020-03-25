@@ -49,12 +49,12 @@ class TestElectricalAnalogExamples(unittest.TestCase):
 
         return
 
-    # Testing Modelica.Electrical.Analog.Examples.Rectifier
-    def test_Rectifier(self):
+    # Testing Modelica.Electrical.Analog.Examples.InvertingAmp
+    def test_InvertingAmp(self):
         tester = mopyregtest.RegressionTest(package_folder=package_folder,
-                                            model_in_package="Modelica.Electrical.Analog.Examples.Rectifier",
-                                            result_folder=result_folder / "Modelica.Electrical.Analog.Examples.Rectifier")
-        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.Rectifier_res.csv"))
+                                            model_in_package="Modelica.Electrical.Analog.Examples.InvertingAmp",
+                                            result_folder=result_folder / "Modelica.Electrical.Analog.Examples.InvertingAmp")
+        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.InvertingAmp_res.csv"))
 
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
         tester.cleanup()
