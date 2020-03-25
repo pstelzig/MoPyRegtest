@@ -40,6 +40,7 @@ class RegressionTest:
         self.package_folder_path = pathlib.Path(package_folder).absolute()
         self.model_in_package = model_in_package
         self.result_folder_path = pathlib.Path(result_folder).absolute()
+        self.initial_cwd = os.getcwd()
 
         if tool != None:
             self.tools = [tool]
@@ -76,6 +77,8 @@ class RegressionTest:
 
         # Run the scripts for import and simulation
         self._run_model()
+
+        pathlib.os.chdir(self.initial_cwd)
 
         return
 
