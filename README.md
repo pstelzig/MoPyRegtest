@@ -46,14 +46,23 @@ To test for the latter, open a command line terminal (`cmd` in Windows), type `o
 * Under Windows, due to file permissions set by Windows on some machines MoPyRegtest has problems removing temporary result folders created by the OpenModelica compiler
 * Using MoPyRegtest with the commercial software Dymola to perform the regression test is not possible yet, or only in an early experimental stage
 
+
 ## Future Work
 * Support other simulators like e.g. Dymola
 * Make definition of the tests even simpler, e.g. using a more human-readable BDD approach with [Behave. BDD, Python style](https://github.com/behave/behave)
 * Allow for parallel execution of regression tests
 
 
+## Open source software used
+MoPyRegtest is implemented in Python3 and uses the Python core modules (including `pathlib` and `unittest`) along with [Numpy](https://numpy.org/) and [pandas](https://pandas.pydata.org/). 
+
+
 # License
-See the file `LICENSE`. 
+MoPyRegtest is open source software. MoPyRegtest is provided "as is", without warranty of any kind. Usage is completely at your own risk. See the file `LICENSE`. 
+
+
+# How to contribute
+If you want to help me extend MoPyregtest, please drop me a message! Contributions are welcome!
 
 
 # Authors
