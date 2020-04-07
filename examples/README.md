@@ -143,5 +143,5 @@ python3 -m unittest
 which should trigger the same tests as when running `python3 test_modelica_electrical_analog_examples.py` and potentially many more tests in the examples folder
 
 ## A note for Windows users
-If you use Windows and the popular [Anaconda Python distribution](https://www.anaconda.com/), it might be useful to call the `python3` executable from the "Anaconda command prompt" application rather than the Windows command line "cmd". This is because the "Anaconda command prompt" reliably sets all the Python paths needed, which might be tricky under Windows "cmd". 
+If you use Windows and the popular [Anaconda Python distribution](https://www.anaconda.com/), it might be useful to call the `python` executable from the "Anaconda command prompt" application rather than the Windows command line "cmd". This is because the "Anaconda command prompt" reliably sets all the Python paths needed, which might be tricky under Windows "cmd". Note that the command there is `python` or `python.exe` (instead of `python3` on Linux).
 
