@@ -85,7 +85,10 @@ Inside each `test_` method, the actual `MoPyRegtest` object `tester` to perform 
 * package folder of the Modelica model to be tested in `package_folder=`
 * the actual Modelica model name in this package in `model_in_package=`
 * the result folder where the simulation output goes in `result_folder=`. 
-The actual execution and comparison with the reference result is done in `tester.compare_result`, which gets the path to the reference result as an argument in `reference_result=`. Finally, if `test.cleanup()` is called, the intermediate results are deleted automatically provided their containing folder has been created in the process. **Leave this out if you feel uncomfortable with auto-deletion** and prefer to delete manually. Note that **result folders for failed tests will not be deleted** in order to trace back any issues. 
+The actual execution and comparison with the reference result is done in `tester.compare_result`, which gets the path to the reference result as an argument in `reference_result=`. 
+
+Finally, if `test.cleanup()` is called, the intermediate results are deleted automatically provided their containing folder has been created in the process. 
+**Leave this out if you feel uncomfortable with auto-deletion. Use it only after you verified yourself that the respective code does no harm.** Otherwise clean up manually. Note that **result folders for failed tests will not be deleted** in order to trace back any issues. 
 
 ```
 # Define the test #############################################################
