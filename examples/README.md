@@ -4,19 +4,19 @@ This file guides you through the examples on how to use the `mopyregtest` module
 
 ## Quick start
 Really quick introduction (read the in-depth explanation below to know what you are doing!): 
-* Go to `examples/test_Modelica_Electrical_Analog_Examples`
-* Copy and modify the file `test_modelica_electrical_analog_examples.py` according to your needs
+* Go to [examples/test_Modelica_Electrical_Analog_Examples](/examples/test_Modelica_Electrical_Analog_Examples)
+* Copy and modify the file [test_modelica_electrical_analog_examples.py](/examples/test_Modelica_Electrical_Analog_Examples/test_modelica_electrical_analog_examples.py) according to your needs
 * Execute the modified file like `python3 test_modelica_electrical_analog_examples.py` (or whatever you named the file now) to run regression tests on your own Modelica package and models
 
-A more in-depth explanation of how the provided example works and what happens can be found in the following section. 
+A more in-depth explanation of how the provided example works, what happens and how the example was created step-by-step can be found in the following section. 
 
 
 ## Example `test_Modelica_Electrical_Analog_Examples`
-In the example (see the folder `examples/test_Modelica_Electrical_Analog_Examples`) `MoPyRegtest` is used to perform regression testing on two examples from the Modelica standard library, namely
+In the example (see the folder [examples/test_Modelica_Electrical_Analog_Examples](examples/test_Modelica_Electrical_Analog_Examples)) `MoPyRegtest` is used to perform regression testing on two examples from the Modelica standard library, namely
 * `Modelica.Electrical.Analog.Examples.HeatingResistor`
 * `Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes`
 
-The whole test definition and the explanation of what follows is contained in the file `examples/test_Modelica_Electrical_Analog_Examples/test_modelica_electrical_analog_examples.py`. **Here we show how the example has been set up.** 
+The whole test definition and the explanation of what follows is contained in the file [test_modelica_electrical_analog_examples.py](/examples/test_Modelica_Electrical_Analog_Examples/test_modelica_electrical_analog_examples.py). **Here we show how the example has been set up.** 
 
 Both regression tests shall be done as a single test case, so that e.g. all examples in `Modelica.Electrical.Analog.Examples` are handled in the same test case. 
 
