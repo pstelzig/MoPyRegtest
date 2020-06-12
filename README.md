@@ -23,7 +23,7 @@ The current realization uses the [Python `unittest` module](https://docs.python.
 
 The test execution and orchestration is done by the Python `unittest` module. In particular, Python `unittest` supports [test discovery](https://docs.python.org/3/library/unittest.html#test-discovery). That is, when the aforementioned Python files that the user has to create for regression testing are suitably placed, Python can discover and execute them automatically, thus making test orchestration and execution a lot easier. Also, `unittest` is a standard module that comes with virtually all Python distributions. 
 
-**MoPyRetest is work in progress!**
+**MoPyRegtest is work in progress!**
 
 
 ## Usage and example
