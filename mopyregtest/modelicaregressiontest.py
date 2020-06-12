@@ -52,6 +52,26 @@ class RegressionTest:
         self.result_folder_created = False
 
     @staticmethod
+    def _ask_confirmation(question, max_asks=5):
+        answer = None
+
+        for q in range(0, max_asks):
+            print("{} [yes|no] ".format(question), end="")
+            answer_as_str = input()
+
+            if answer_as_str.strip().lower() == "yes":
+                answer = True
+                break
+            elif answer_as_str.strip().lower() == "no":
+                answer = False
+                break
+
+        if answer is None:
+            raise ValueError("Answer to question \"{}\" not understood. ".format(question))
+
+        return answer
+
+    @staticmethod
     def _replace_in_file(filename, repl_dict):
         fhandle = open(str(filename), 'r')
         contents = fhandle.read()
@@ -132,10 +152,36 @@ class RegressionTest:
 
         return
 
-    def cleanup(self):
+    def cleanup(self, ask_confirmation=True):
+        """
+        USE WITH CARE
+
+        Cleans up the intermediate result folders created by the external simulation
+        tool during the execution of the simulation model created from the model and
+        package to be tested as specified in the constructor.
+
+        Parameters
+        ----------
+        ask_confirmation : bool
+            Boolean to force asking for confirmation before deletion (default=True)
+
+        Returns
+        -------
+        out : None
+        """
+
         # Only cleanup folders created here
         if self.result_folder_created:
-            shutil.rmtree(self.result_folder_path)
+            if ask_confirmation:
+                do_delete = RegressionTest._ask_confirmation(
+                    "\nDo you want to delete the folder \n\n\t{}\n\nand all its subfolders?".format(self.result_folder_path))
+                if do_delete:
+                    shutil.rmtree(self.result_folder_path)
+            else:
+                shutil.rmtree(self.result_folder_path)
+        else:
+            print("\nThe result folder \n\n\t{}\n\nwas not created by this program. Will not clean up. ".format(
+                self.result_folder_path))
 
         return
 
@@ -200,6 +246,5 @@ class RegressionTest:
 
                 # Run the simulation script and append the output of the OpenModelica Compiler (omc) to omc_output
                 os.system(tool_executable + " {} >> {}".format(model_simulate_mos, tool_output))
-
 
         return
