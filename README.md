@@ -23,6 +23,8 @@ The current realization uses the [Python `unittest` module](https://docs.python.
 
 The test execution and orchestration is done by the Python `unittest` module. In particular, Python `unittest` supports [test discovery](https://docs.python.org/3/library/unittest.html#test-discovery). That is, when the aforementioned Python files that the user has to create for regression testing are suitably placed, Python can discover and execute them automatically, thus making test orchestration and execution a lot easier. Also, `unittest` is a standard module that comes with virtually all Python distributions. 
 
+**MoPyRetest is work in progress!**
+
 
 ## Usage and example
 The user has to
@@ -30,7 +32,7 @@ The user has to
 * provide for every Modelica model a `.csv` file with reference results against which (or a subset of columns of which) results are compared
 * create a Python file containing a child class of `unittest.TestCase` and test methods that instantiate a `mopyregtest.RegressionTest` object, which just needs to be told which Modelica model to test and where to find the reference result. 
 
-Examples of how such a file would look like can be found in the `examples` folder. Also see the `examples/README.md`. 
+Examples of how such a file would look like can be found in the `examples` folder. Also see the [examples/README.md](/examples/README.md). 
 
 
 ## Prerequisites
@@ -40,6 +42,26 @@ To use `MoPyRegtest` you need to have
 * the OpenModelica compiler executable `omc` has to be found via the `PATH` variable.
 
 To test for the latter, open a command line terminal (`cmd` in Windows), type `omc` and press `Enter`. If `omc` is in the `PATH` variable, you should get a long list of options and links to the documentation of OpenModelica, otherwise an error message.
+
+
+## Installation using pip3
+If you want to install `MoPyRegtest` using [Python's package manager `pip`](https://packaging.python.org/tutorials/installing-packages/), just clone this repo
+
+```
+$ cd <your-mopyregtest-dir>
+$ git clone https://gitlab.com/pstelzig/mopyregtest.git
+```
+
+to your local `<your-mopyregtest-dir>` (adapt to your needs) and then
+
+```
+pip3 install --user <your-mopyregtest-dir>/mopyregtest
+```
+
+To uninstall, run
+```
+pip3 uninstall mopyregtest
+```
 
 
 ## Future Work
