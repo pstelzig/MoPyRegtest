@@ -45,7 +45,7 @@ class TestElectricalAnalogExamples(unittest.TestCase):
         tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.HeatingResistor_res.csv"))
 
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
-        tester.cleanup()
+        #tester.cleanup()
 
         return
 
@@ -57,7 +57,7 @@ class TestElectricalAnalogExamples(unittest.TestCase):
         tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv"))
 
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
-        tester.cleanup()
+        #tester.cleanup()
 
         return
 
