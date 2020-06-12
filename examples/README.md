@@ -90,6 +90,8 @@ The actual execution and comparison with the reference result is done in `tester
 Finally, if `test.cleanup()` is called, the intermediate results are deleted automatically provided their containing folder has been created in the process. 
 **Leave this out if you feel uncomfortable with auto-deletion. Use it only after you verified yourself that the respective code does no harm.** Otherwise clean up manually. Note that **result folders for failed tests will not be deleted** in order to trace back any issues. 
 
+By default, `test.cleanup()` will ask for user confirmation before cleaning up, i.e. user input in the command line. In case this is not wanted (e.g. for automated testing), just replace `test.cleanup()` with `tester.cleanup(ask_confirmation=False)`. 
+
 ```
 # Define the test #############################################################
 class TestElectricalAnalogExamples(unittest.TestCase):
