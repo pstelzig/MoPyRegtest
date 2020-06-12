@@ -52,7 +52,7 @@ class RegressionTest:
         self.result_folder_created = False
 
     @staticmethod
-    def replace_in_file(filename, repl_dict):
+    def _replace_in_file(filename, repl_dict):
         fhandle = open(str(filename), 'r')
         contents = fhandle.read()
         fhandle.close()
@@ -67,7 +67,7 @@ class RegressionTest:
 
         return
 
-    def import_and_simulate(self):
+    def _import_and_simulate(self):
         """
         Imports and simulates the model from the Modelica package specified in the constructor.
 
@@ -112,7 +112,7 @@ class RegressionTest:
         """
         print("\nTesting model {}".format(self.model_in_package))
 
-        self.import_and_simulate()
+        self._import_and_simulate()
         simulation_result = str(self.result_folder_path / self.model_in_package) + "_res.csv"
 
         print("Comparing simulation result {} and reference {}".format(simulation_result, reference_result))
@@ -174,7 +174,7 @@ class RegressionTest:
                 repl_dict["RESULT_FOLDER"] = str(self.result_folder_path.as_posix())
                 repl_dict["MODEL_IN_PACKAGE"] = self.model_in_package
 
-                RegressionTest.replace_in_file(self.result_folder_path / model_import_mos, repl_dict)
+                RegressionTest._replace_in_file(self.result_folder_path / model_import_mos, repl_dict)
 
                 # Run the import script and write the output of the OpenModelica Compiler (omc) to omc_output
                 os.system(tool_executable + " {} > {}".format(model_import_mos, tool_output))
@@ -196,7 +196,7 @@ class RegressionTest:
                 repl_dict["TOLERANCE"] = tolerance
                 repl_dict["NUM_INTERVALS"] = num_intervals
 
-                RegressionTest.replace_in_file(self.result_folder_path / model_simulate_mos, repl_dict)
+                RegressionTest._replace_in_file(self.result_folder_path / model_simulate_mos, repl_dict)
 
                 # Run the simulation script and append the output of the OpenModelica Compiler (omc) to omc_output
                 os.system(tool_executable + " {} >> {}".format(model_simulate_mos, tool_output))
