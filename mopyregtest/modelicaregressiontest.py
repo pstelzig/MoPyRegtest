@@ -1,5 +1,7 @@
 """
-(c) Dr. Philipp Emanuel Stelzig, 2019. 
+MoPyRegtest: A Python enabled simple regression testing framework for Modelica models.
+
+Copyright (c) Dr. Philipp Emanuel Stelzig, 2019.
 
 MIT License. See the project's LICENSE file.
 """
@@ -66,6 +68,13 @@ class RegressionTest:
         return
 
     def import_and_simulate(self):
+        """
+        Imports and simulates the model from the Modelica package specified in the constructor.
+
+        Returns
+        -------
+        out : None
+        """
         print("Simulating model {} using the simulation tools: {}" .format(self.model_in_package, ", ".join(self.tools)))
 
         # Create folder where output of the simulation shall be stored
@@ -131,7 +140,16 @@ class RegressionTest:
         return
 
     def _run_model(self):
+        """
+        Executes the Modelica simulation tool as an external process called on the
+        model and the package to be tested, as specified in the constructor.
 
+
+        Returns
+        -------
+        out : None
+
+        """
         for tool in self.tools:
             tool_executable = tool
             if platform.system() == 'Windows':
