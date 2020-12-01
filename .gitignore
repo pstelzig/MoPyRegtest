@@ -1,4 +1,5 @@
 __pycache__
 *.pyd
 .idea/
-
+/examples/test_Modelica_Electrical_Analog_Examples/
+/examples/test_Modelica_Electrical_Analog_Examples/
