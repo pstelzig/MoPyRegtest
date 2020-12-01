@@ -11,7 +11,7 @@ When developing Modelica models or libraries and a certain maturity or complexit
 
 
 ## Why MoPyRegtest
-The scope of `MoPyRegtest` is first and foremost to have a transparent, quick, lightweight and simple way to perform regression tests. Without immediately requiring commercial simulation tools or creating strong dependencies from other Modelica libraries. This is why MoPyRegTest consists of just one source file. 
+The scope of `MoPyRegtest` is first and foremost to have a transparent, quick, lightweight and simple way to perform regression tests. Without immediately requiring commercial simulation tools or creating strong dependencies from other Modelica libraries. This is why MoPyRegtest consists of just one source file. 
 
 All that is needed to use `MoPyRegtest` is a Python 3 installation, an [OpenModelica](https://www.openmodelica.org/) installation and a text editor -- things that very likely most (Open)Modelica users do have anyway. All that is needed to deploy `MoPyRegtest` is to write a Python file, just like in the `examples` folder of this project. 
 
@@ -79,7 +79,7 @@ MoPyRegtest is open source software. MoPyRegtest is provided "as is", without wa
 
 
 # How to contribute
-If you want to help me extend MoPyregtest, please drop me a message! Contributions are welcome!
+If you want to help me extend MoPyRegtest, please drop me a message! Contributions are welcome!
 
 
 # Authors
