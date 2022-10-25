@@ -148,7 +148,7 @@ class RegressionTest:
 
         for c in validated_cols:
             print("Comparing column \"{}\"".format(c))
-            np.testing.assert_almost_equal(result_data[c].as_matrix(), ref_data[c].as_matrix(), precision)
+            np.testing.assert_almost_equal(result_data[c].values, ref_data[c].values, precision)
 
         return
 

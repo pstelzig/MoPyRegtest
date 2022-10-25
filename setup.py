@@ -20,5 +20,5 @@ setuptools.setup(
         "Operating System :: Microsoft :: Windows :: Windows 10",
         "Operating System :: POSIX :: Linux"
     ],
-    python_requires='>=3.6'
+    python_requires='>=3.8'
 )
