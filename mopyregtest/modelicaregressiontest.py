@@ -20,7 +20,7 @@ class RegressionTest:
     Creates OpenModelica-compatible .mos scripts to import and simulate the model with .csv output.
     The .csv output is then compared against a reference result, possibly only on a subset of columns.
     """
-    def __init__(self, package_folder, model_in_package, result_folder, tool="omc"):
+    def __init__(self, package_folder, model_in_package, result_folder, tool="omc", modelica_version="default"):
         """
         Constructor of the RegresssionTest class.
 
@@ -35,7 +35,10 @@ class RegressionTest:
         tool:
             Simulator used to translate, compile and execute Modelica model. The only valid 
             tool right now is omc (OpenModelica Compiler). If no argument is specified, 
-            RegressionTest will search the PATH variable for omc and will execute the tests if found. 
+            RegressionTest will search the PATH variable for omc and will execute the tests if found.
+        modelica_version:
+            Version of the Modelica standard library to be loaded before the test is executed.
+            Default is "default", other meaningful values can be "3.2.3" or "4.0.0".
         """
 
         self.template_folder_path = pathlib.Path(__file__).parent.absolute() / "templates"
@@ -43,6 +46,7 @@ class RegressionTest:
         self.model_in_package = model_in_package
         self.result_folder_path = pathlib.Path(result_folder).absolute()
         self.initial_cwd = os.getcwd()
+        self.modelica_version = modelica_version
 
         if tool != None:
             self.tools = [tool]
@@ -219,6 +223,7 @@ class RegressionTest:
                 repl_dict["PACKAGE_FOLDER"] = str(self.package_folder_path.as_posix())
                 repl_dict["RESULT_FOLDER"] = str(self.result_folder_path.as_posix())
                 repl_dict["MODEL_IN_PACKAGE"] = self.model_in_package
+                repl_dict["MODELICA_VERSION"] = self.modelica_version
 
                 RegressionTest._replace_in_file(self.result_folder_path / model_import_mos, repl_dict)
 

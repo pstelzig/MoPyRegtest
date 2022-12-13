@@ -1,8 +1,8 @@
 cd("PACKAGE_FOLDER");
 
-loadModel(Modelica,{"default"},false,"",false);
+loadModel(Modelica,{"MODELICA_VERSION"},false,"",false);
 
-loadModel(ModelicaReference,{"default"},false,"",false);
+loadModel(ModelicaReference,{"MODELICA_VERSION"},false,"",false);
 
 setMatchingAlgorithm("PFPlusExt");
 
