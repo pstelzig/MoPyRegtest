@@ -14,7 +14,6 @@ A more in-depth explanation of how the provided example works, what happens and 
 
 ## Example `test_Modelica_Electrical_Analog_Examples`
 In the example (see the folder [examples/test_Modelica_Electrical_Analog_Examples](examples/test_Modelica_Electrical_Analog_Examples)) `MoPyRegtest` is used to perform regression testing on two examples from the Modelica standard library, namely
-* `Modelica.Electrical.Analog.Examples.HeatingResistor`
 * `Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes`
 
 The whole test definition and the explanation of what follows is contained in the file [test_modelica_electrical_analog_examples.py](/examples/test_Modelica_Electrical_Analog_Examples/test_modelica_electrical_analog_examples.py). **Here we show how the example has been set up.** 
@@ -33,10 +32,9 @@ It is strongly recommended to avoid the `.` character in folder names since Pyth
 
 
 ### Step 2: Reference results
-Create the folder `examples/test_Modelica_Electrical_Analog_Examples/references`. This is where the reference results for the models `Modelica.Electrical.Analog.Examples.HeatingResistor` and `Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes` shall be copied in the `.csv` format. In our case, you shall find
+Create the folder `examples/test_Modelica_Electrical_Analog_Examples/references`. This is where the reference results for the models `Modelica.Electrical.Analog.Examples.HeatingRectifier` and `Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes` shall be copied in the `.csv` format. In our case, you shall find
 
 ```
-examples/test_Modelica_Electrical_Analog_Examples/references/Modelica.Electrical.Analog.Examples.HeatingResistor_res.csv
 examples/test_Modelica_Electrical_Analog_Examples/references/Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv
 ```
 
@@ -97,12 +95,12 @@ By default, `test.cleanup()` will ask for user confirmation before cleaning up, 
 # Define the test #############################################################
 class TestElectricalAnalogExamples(unittest.TestCase):
 
-    # Testing Modelica.Electrical.Analog.Examples.HeatingResistor
-    def test_HeatingResistor(self):
+    # Testing Modelica.Electrical.Analog.Examples.HeatingRectifier
+    def test_HeatingRectifier(self):
         tester = mopyregtest.RegressionTest(package_folder=package_folder,
-                                            model_in_package="Modelica.Electrical.Analog.Examples.HeatingResistor",
-                                            result_folder=result_folder / "Modelica.Electrical.Analog.Examples.HeatingResistor")
-        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.HeatingResistor_res.csv"))
+                                            model_in_package="Modelica.Electrical.Analog.Examples.HeatingRectifier",
+                                            result_folder=result_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier")
+        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier_res.csv"))
 
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
         #tester.cleanup()

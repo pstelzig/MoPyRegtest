@@ -33,12 +33,13 @@ reference_folder = this_folder / "references"
 # Define the test #############################################################
 class TestElectricalAnalogExamples(unittest.TestCase):
 
-    # Testing Modelica.Electrical.Analog.Examples.HeatingResistor
-    def test_HeatingResistor(self):
+    # Testing Modelica.Electrical.Analog.Examples.HeatingRectifier
+    def test_HeatingRectifier(self):
         tester = mopyregtest.RegressionTest(package_folder=package_folder,
-                                            model_in_package="Modelica.Electrical.Analog.Examples.HeatingResistor",
-                                            result_folder=result_folder / "Modelica.Electrical.Analog.Examples.HeatingResistor")
-        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.HeatingResistor_res.csv"))
+                                            model_in_package="Modelica.Electrical.Analog.Examples.HeatingRectifier",
+                                            result_folder=result_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier",
+                                            modelica_version="4.0.0")
+        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier_res.csv"))
 
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
         #tester.cleanup()
@@ -49,7 +50,8 @@ class TestElectricalAnalogExamples(unittest.TestCase):
     def test_CharacteristicIdealDiodes(self):
         tester = mopyregtest.RegressionTest(package_folder=package_folder,
                                             model_in_package="Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes",
-                                            result_folder=result_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes")
+                                            result_folder=result_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes",
+                                            modelica_version="4.0.0")
         tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv"))
 
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
