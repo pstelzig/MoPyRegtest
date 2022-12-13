@@ -11,23 +11,19 @@ MIT License. See the project's LICENSE file.
 import unittest 
 
 # For convenience in handling paths
-import pathlib  
-
-# Where to find MoPyRegtest: Temporarily add mopyregtest module to Python path
-this_folder = pathlib.Path(__file__).absolute().parent
-import sys      
-sys.path.append(str(this_folder / "../../src/"))
+import pathlib
 import mopyregtest
-
 
 # Setup the test data #########################################################
 # Example here for a Ubuntu environment with OpenModelica 
 # installed like in https://openmodelica.org/download/download-linux
+# and using the default OpenModelica package manager
 
 # Path to Modelica library or model to be tested. Here Modelica.Electrial
-package_folder = "/usr/lib/omlibrary/Modelica 3.2.2/Electrical/"
+package_folder = pathlib.Path(pathlib.os.environ["HOME"]) / "Modelica 4.0.0+maint.om/Electrical"
 
 # Where to put results from this test
+this_folder = pathlib.Path(__file__).absolute().parent
 result_folder = this_folder
 
 # Where to find reference results for this test
