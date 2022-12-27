@@ -38,7 +38,8 @@ class TestElectricalAnalogExamples(unittest.TestCase):
         tester = mopyregtest.RegressionTest(package_folder=package_folder,
                                             model_in_package="Modelica.Electrical.Analog.Examples.HeatingRectifier",
                                             result_folder=result_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier",
-                                            modelica_version="4.0.0")
+                                            modelica_version="4.0.0",
+                                            dependencies=None)
         tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier_res.csv"))
 
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
@@ -51,7 +52,8 @@ class TestElectricalAnalogExamples(unittest.TestCase):
         tester = mopyregtest.RegressionTest(package_folder=package_folder,
                                             model_in_package="Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes",
                                             result_folder=result_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes",
-                                            modelica_version="4.0.0")
+                                            modelica_version="4.0.0",
+                                            dependencies=None)
         tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv"))
 
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!

@@ -20,7 +20,7 @@ class RegressionTest:
     Creates OpenModelica-compatible .mos scripts to import and simulate the model with .csv output.
     The .csv output is then compared against a reference result, possibly only on a subset of columns.
     """
-    def __init__(self, package_folder, model_in_package, result_folder, tool="omc", modelica_version="default"):
+    def __init__(self, package_folder, model_in_package, result_folder, tool="omc", modelica_version="default", dependencies=None):
         """
         Constructor of the RegresssionTest class.
 
@@ -39,6 +39,10 @@ class RegressionTest:
         modelica_version:
             Version of the Modelica standard library to be loaded before the test is executed.
             Default is "default", other meaningful values can be "3.2.3" or "4.0.0".
+        dependencies:
+            Optional list of strings with names of packages that the package to be tested depends on.
+            Each dependency must point to the .mo file that defines the dependency. E.g. if the
+            dependency is an entire package, it must be the path to the respective package's package.mo.
         """
 
         self.template_folder_path = pathlib.Path(__file__).parent.absolute() / "templates"
@@ -47,6 +51,7 @@ class RegressionTest:
         self.result_folder_path = pathlib.Path(result_folder).absolute()
         self.initial_cwd = os.getcwd()
         self.modelica_version = modelica_version
+        self.dependencies = dependencies
 
         if tool != None:
             self.tools = [tool]
@@ -224,6 +229,15 @@ class RegressionTest:
                 repl_dict["RESULT_FOLDER"] = str(self.result_folder_path.as_posix())
                 repl_dict["MODEL_IN_PACKAGE"] = self.model_in_package
                 repl_dict["MODELICA_VERSION"] = self.modelica_version
+
+                if self.dependencies:
+                    load_str = ""
+                    for d in self.dependencies:
+                        load_str += "\n + loadFile(\"{}\",\"UTF-8\",true);".format(d)
+
+                    repl_dict["DEPENDENCIES"] = load_str
+                else:
+                    repl_dict["DEPENDENCIES"] = ""
 
                 RegressionTest._replace_in_file(self.result_folder_path / model_import_mos, repl_dict)
 
