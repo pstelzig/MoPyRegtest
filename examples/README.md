@@ -45,7 +45,7 @@ Create the file `examples/test_Modelica_Electrical_Analog_Examples/test_modelica
 
 This section defines the essential imports to run the test. For other test definitions, the relative loction of the `mopyregtest` module to the test definition file might be different and has to be adapted. In this case it location relative to `test_modelica_electrical_analog_examples.py` is `../../src/`. 
 
-```
+```python
 # Preparing the dependencies ##################################################
 # Essential
 import unittest 
@@ -63,7 +63,7 @@ import mopyregtest
 
 The next section defines variables that hold the location of the package the model to be tested is situated in. The definition below is the case of an Ubuntu installation where the OpenModelica system libraries are found under `/usr/lib/omlibrary/`. Under Windows this would be something like `C:\OpenModelica1.13.264bit\lib\omlibrary`. For other test scenarios this would be the absolute path to a user developed Modelica package. The `package_folder` variable holds the path to the actual package the model to be tested is situated in. More precisely, we look for the file `<package_folder>/package.mo`. The `result_folder` is where the intermediate results generated in translating, building and executing the actual model to be tested go. The `reference_folder` is where the reference simulation result files in `.csv` format are to be found. 
 
-```
+```python
 # Setup the test data #########################################################
 # Example here for a Ubuntu environment with OpenModelica 
 # installed like in https://openmodelica.org/download/download-linux
@@ -91,7 +91,7 @@ Finally, if `test.cleanup()` is called, the intermediate results are deleted aut
 
 By default, `test.cleanup()` will ask for user confirmation before cleaning up, i.e. user input in the command line. In case this is not wanted (e.g. for automated testing), just replace `test.cleanup()` with `tester.cleanup(ask_confirmation=False)`. 
 
-```
+```python
 # Define the test #############################################################
 class TestElectricalAnalogExamples(unittest.TestCase):
 
@@ -123,14 +123,14 @@ class TestElectricalAnalogExamples(unittest.TestCase):
 
 This last part is to make the file `test_modelica_electrical_analog_examples.py` itself an executable test case. 
 
-```
+```python
 if __name__ == '__main__':
     unittest.main()
 ```
 
 The test case can now be run from a command line in the folder `examples/test_Modelica_Electrical_Analog_Examples/` by typing
 
-```
+```bash
 $ python3 test_modelica_electrical_analog_examples.py
 ```
 
@@ -140,7 +140,7 @@ If you want to have this test in `test_modelica_electrical_analog_examples.py` t
 
 To verify, open a command line terminal and change to the folder `examples` and run
 
-```
+```bash
 python3 -m unittest
 ```
 

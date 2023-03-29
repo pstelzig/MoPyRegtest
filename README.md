@@ -16,7 +16,6 @@ The scope of `MoPyRegtest` is first and foremost to have a transparent, quick, l
 All that is needed to use `MoPyRegtest` is a Python 3 installation, an [OpenModelica](https://www.openmodelica.org/) installation and a text editor -- things that very likely most (Open)Modelica users do have anyway. All that is needed to deploy `MoPyRegtest` is to write a Python file, just like in the `examples` folder of this project. 
 
 
-
 ## Current realization
 The current realization uses the [Python `unittest` module](https://docs.python.org/3/library/unittest.html) and calls the [OpenModelica compiler `omc`](https://openmodelica.org/?id=51:open-modelica-compiler-omc&catid=10:main-category) as an external executable for translation and simulation of Modelica models. Note that the implementation `MoPyRegtest` is not specific to OpenModelica but can be replaced by any other Modelica simulation tool that comes with a suitable scripting API. 
 
