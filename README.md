@@ -15,7 +15,6 @@ The scope of `MoPyRegtest` is first and foremost to have a transparent, quick, l
 
 All that is needed to use `MoPyRegtest` is a Python 3 installation, an [OpenModelica](https://www.openmodelica.org/) installation and a text editor -- things that very likely most (Open)Modelica users do have anyway. All that is needed to deploy `MoPyRegtest` is to write a Python file, just like in the `examples` folder of this project. 
 
-Moreover, with the connection between Python and Modelica being very popular these days (see e.g. the projects [pyFMI](https://pypi.org/project/PyFMI/), [OMPython](https://github.com/OpenModelica/OMPython), [PySimulator](https://github.com/PySimulator/PySimulator) and many more), it appears meaningful to have one testing toolkit that can cover both your Python development and your Modelica model development. 
 
 
 ## Current realization
@@ -47,7 +46,7 @@ To test for the latter, open a command line terminal (`cmd` in Windows), type `o
 ## Installation using pip3
 If you want to install `MoPyRegtest` using [Python's package manager `pip`](https://packaging.python.org/tutorials/installing-packages/), just clone this repo
 
-```
+```bash
 $ cd <your-mopyregtest-dir>
 $ git clone https://gitlab.com/pstelzig/mopyregtest.git
 ```
@@ -59,7 +58,7 @@ pip3 install --user <your-mopyregtest-dir>/mopyregtest
 ```
 
 To uninstall, run
-```
+```bash
 pip3 uninstall mopyregtest
 ```
 
