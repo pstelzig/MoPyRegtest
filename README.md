@@ -43,17 +43,12 @@ To test for the latter, open a command line terminal (`cmd` in Windows), type `o
 
 
 ## Installation using pip3
-If you want to install `MoPyRegtest` using [Python's package manager `pip`](https://packaging.python.org/tutorials/installing-packages/), just clone this repo
+If you want to install `MoPyRegtest` using [Python's package manager `pip`](https://packaging.python.org/tutorials/installing-packages/), 
+just clone this repo to your local `<your-mopyregtest-dir>` (adapt to your needs) and then run
 
 ```bash
-$ cd <your-mopyregtest-dir>
-$ git clone https://gitlab.com/pstelzig/mopyregtest.git
-```
-
-to your local `<your-mopyregtest-dir>` (adapt to your needs) and then
-
-```
-pip3 install --user <your-mopyregtest-dir>/mopyregtest
+cd <your-mopyregtest-dir>
+pip3 install --user .
 ```
 
 To uninstall, run
