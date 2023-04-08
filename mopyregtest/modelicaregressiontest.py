@@ -207,8 +207,6 @@ class RegressionTest:
         """
         for tool in self.tools:
             tool_executable = tool
-            if platform.system() == 'Windows':
-                tool_executable += ".exe"
 
             print("Using simulation tool {}".format(tool_executable))
 
