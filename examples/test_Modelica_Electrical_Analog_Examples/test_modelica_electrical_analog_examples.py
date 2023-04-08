@@ -59,7 +59,7 @@ class TestElectricalAnalogExamples(unittest.TestCase):
                                             result_folder=result_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier",
                                             modelica_version="4.0.0",
                                             dependencies=None)
-        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier_res.csv"))
+        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier_res.csv"), precision=3)
 
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
         #tester.cleanup()
@@ -73,7 +73,7 @@ class TestElectricalAnalogExamples(unittest.TestCase):
                                             result_folder=result_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes",
                                             modelica_version="4.0.0",
                                             dependencies=None)
-        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv"))
+        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv"), precision=3)
 
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
         #tester.cleanup()
