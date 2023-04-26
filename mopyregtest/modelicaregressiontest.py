@@ -10,6 +10,7 @@ import os
 import platform
 import pathlib
 import shutil
+import math
 import numpy as np
 import pandas as pd
 
@@ -96,6 +97,47 @@ class RegressionTest:
 
         return
 
+    @staticmethod
+    def _unify_timestamps(results: list[pd.DataFrame]):
+        end_times = np.zeros(shape=(len(results),))
+        for i in range(0, len(results)):
+            end_times[i] = results[i]["time"].max()
+
+        if not math.isclose(np.min(end_times), np.max(end_times), rel_tol=1e-5, abs_tol=1e-3):
+            raise ValueError("The simulation end times of the results to not match. "\
+                             f"Maximum deviation is {np.max(end_times) - np.min(end_times)} " \
+                             f"and stems from results with indices {np.argmax(end_times)} and {np.argmin(end_times)}")
+
+        # Get result timestamps from all results
+        timestamps = list(results[0]["time"])
+        for i in range(1, len(results)):
+            new_timestamps = [tstamp for tstamp in results[i]["time"] if tstamp not in timestamps]
+            timestamps += new_timestamps
+
+        timestamps = sorted(timestamps)
+
+        # Create the extended results
+        results_ext = [pd.DataFrame(0, index=np.arange(len(timestamps)), columns=results[i].keys()) for i in range(0, len(results))]
+
+        # Add rows with NaNs for every timestamp that is not present
+        for i in range(0, len(results)):
+            missing_timestamps = [tstamp for tstamp in timestamps if tstamp not in results[i]["time"].values]
+
+            missing_tstamp_rows = pd.DataFrame(np.nan, index=range(0, len(missing_timestamps)),
+                                               columns=results[i].columns)
+            missing_tstamp_rows["time"] = missing_timestamps
+
+            results_ext[i] = pd.concat([results[i], missing_tstamp_rows], axis=0)
+            results_ext[i] = results_ext[i].sort_values("time")
+
+            new_index = range(0, len(timestamps))
+            results_ext[i].index = new_index
+
+            # For simplicity, use a filling strategy that fills up with the last know value
+            results_ext[i] = results_ext[i].fillna(method="ffill", axis=0)
+
+        return results_ext
+
     def _import_and_simulate(self):
         """
         Imports and simulates the model from the Modelica package specified in the constructor.
@@ -149,15 +191,19 @@ class RegressionTest:
         ref_data = pd.read_csv(filepath_or_buffer=reference_result, delimiter=',')
         result_data = pd.read_csv(filepath_or_buffer=simulation_result, delimiter=',')
 
+        data_ext = self._unify_timestamps([ref_data, result_data])
+        ref_data_ext = data_ext[0]
+        result_data_ext = data_ext[1]
+
         # Determine common columns by comparing column headers
-        common_cols = set(ref_data.columns).intersection(set(result_data.columns))
+        common_cols = set(ref_data_ext.columns).intersection(set(result_data_ext.columns))
 
         if not validated_cols:
             validated_cols = common_cols
 
         for c in validated_cols:
             print("Comparing column \"{}\"".format(c))
-            np.testing.assert_almost_equal(result_data[c].values, ref_data[c].values, precision)
+            np.testing.assert_almost_equal(result_data_ext[c].values, ref_data_ext[c].values, precision)
 
         return
 
