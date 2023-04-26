@@ -98,10 +98,42 @@ class RegressionTest:
         return
 
     @staticmethod
-    def _unify_timestamps(results: list[pd.DataFrame]):
+    def _unify_timestamps(results: list[pd.DataFrame], fill_in_method="ffill"):
+        """
+        From a list of pandas DataFrame objects containing the results of Modelica
+        simulation runs, a list of extended results is generated, each of which
+        has the same timestamps. To this end, a union of all timestamps from all
+        results is created and the data filled in. For the filling in of data,
+        different methods can be specified with the fill_in_method parameter.
+
+        Parameters
+        ----------
+        results : list[pd.DataFrame]
+            List of pandas DataFrame objects containing the results of Modelica
+            simulation runs
+        fill_in_method : str
+            Valid methods are "ffill", "bfill", "interpolate" where
+            ffill and bfill are the forward fill and backward fill methods from
+            pandas.DataFrame.fillna and "interpol" uses linear interpolation
+            as in pandas.DataFrame.interpol
+
+        Returns
+        -------
+        out : list[pd.DataFrame]
+            List of extended pandas DataFrame objects, each of which has the
+            same timestamps and missing data has been filled in
+        """
+        # Check if start times and end times match over the various results
+        start_times = np.zeros(shape=(len(results),))
         end_times = np.zeros(shape=(len(results),))
         for i in range(0, len(results)):
+            start_times[i] = results[i]["time"].min()
             end_times[i] = results[i]["time"].max()
+
+        if not math.isclose(np.min(start_times), np.max(start_times), rel_tol=1e-5, abs_tol=1e-3):
+            raise ValueError("The simulation start times of the results to not match. "\
+                             f"Maximum deviation is {np.max(start_times) - np.min(start_times)} " \
+                             f"and stems from results with indices {np.argmax(start_times)} and {np.argmin(start_times)}")
 
         if not math.isclose(np.min(end_times), np.max(end_times), rel_tol=1e-5, abs_tol=1e-3):
             raise ValueError("The simulation end times of the results to not match. "\
@@ -133,8 +165,15 @@ class RegressionTest:
             new_index = range(0, len(timestamps))
             results_ext[i].index = new_index
 
-            # For simplicity, use a filling strategy that fills up with the last know value
-            results_ext[i] = results_ext[i].fillna(method="ffill", axis=0)
+            # Fill in values at missing timestamps
+            if fill_in_method == "ffill":
+                results_ext[i] = results_ext[i].fillna(method="ffill", axis=0)
+            elif fill_in_method == "bfill":
+                results_ext[i] = results_ext[i].fillna(method="bfill", axis=0)
+            elif fill_in_method == "interpolate":
+                results_ext[i] = results_ext[i].interpolate()
+            else:
+                raise ValueError("Unknown filling method for NaN values")
 
         return results_ext
 
