@@ -15,6 +15,8 @@ import pathlib
 import platform
 import mopyregtest
 import sys
+import numpy as np
+import functools
 
 # Setup the test data #########################################################
 # Example here for a Ubuntu environment with OpenModelica 
@@ -73,7 +75,8 @@ class TestElectricalAnalogExamples(unittest.TestCase):
                                             result_folder=result_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes",
                                             modelica_version="4.0.0",
                                             dependencies=None)
-        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv"), precision=3)
+        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv"), precision=3,
+                              norm=functools.partial(np.linalg.norm, ord=1))
 
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
         #tester.cleanup()
