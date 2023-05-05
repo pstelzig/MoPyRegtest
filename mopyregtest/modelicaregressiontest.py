@@ -203,7 +203,7 @@ class RegressionTest:
         return
 
     def compare_result(self, reference_result, precision=7, validated_cols=[],
-                       norm=functools.partial(np.linalg.norm, ord=np.inf)):
+                       metric=lambda r_ref, r_act: np.linalg.norm(r_ref[:, 1] - r_act[:, 1], ord=np.inf)):
         """
         Executes simulation and then compares the obtained result and the reference result along the
         validated columns. Throws an exception (AssertionError) if the deviation is larger or equal to
@@ -217,9 +217,10 @@ class RegressionTest:
             Decimal precision up to which equality is tested
         validated_cols : list
             List of variable names (from the file header) in the reference .csv file that are used in the regression test
-        norm: Callable
-            Norm-like function that is used to compare the reference result and the actual result produced by the
-            simulation. Default is the infinity-norm
+        metric: Callable
+            Metric-like function that is used to compute the distance between the reference result and the actual result
+            produced by the simulation. Default is the infinity-norm on the difference between reference result and
+            actual result
 
             :math:`\| r_\text{ref} - r_\{act} \|_{\infty} = \max_{t \in 1,\ldots,N} |r_\text{ref}[t] - r_\{act}[t]|`
 
@@ -253,7 +254,7 @@ class RegressionTest:
 
         for c in validated_cols:
             print("Comparing column \"{}\"".format(c))
-            delta = norm(ref_data_ext[c].values - result_data_ext[c].values)
+            delta = metric(ref_data_ext[["time", c]].values, result_data_ext[["time", c]].values)
             if np.abs(delta) >= 10**(-precision):
                 raise AssertionError(f"Values in Colum {c} of results {simulation_result} and {result_data} differ by " \
                                      f"more than 1e^-{precision}.")
