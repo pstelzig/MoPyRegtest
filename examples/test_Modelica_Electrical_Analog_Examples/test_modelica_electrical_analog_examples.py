@@ -16,6 +16,7 @@ import platform
 import mopyregtest
 import sys
 import numpy as np
+import functools
 
 # Setup the test data #########################################################
 # Example here for a Ubuntu environment with OpenModelica 
@@ -82,6 +83,20 @@ class TestElectricalAnalogExamples(unittest.TestCase):
 
         return
 
+    # Testing closeness for Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes in the L2-norm
+    def test_CharacteristicIdealDiodes_L2(self):
+        tester = mopyregtest.RegressionTest(package_folder=package_folder,
+                                            model_in_package="Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes",
+                                            result_folder=result_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes",
+                                            modelica_version="4.0.0",
+                                            dependencies=None)
+        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv"), precision=3,
+                              metric=functools.partial(mopyregtest.metrics.Lp_dist, p=2.0))
+
+        # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
+        #tester.cleanup()
+
+        return
 
 if __name__ == '__main__':
     unittest.main()
