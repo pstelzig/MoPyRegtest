@@ -9,9 +9,16 @@ MIT License. See the project's LICENSE file.
 import numpy as np
 
 
-def Lp_norm(f, p: float=2.0):
+def Lp_norm(f, p: float = 2.0):
     """
-    Computes the :math:`L^p` norm (:math:`1 \leq p < \infty`) of a piecewise constant function :math:`f: [0,T] \mapsto \mathbb{R}`
+    Computes the :math:`L^p` norm (:math:`1 \leq p < \infty`) of a piecewise constant function :math:`f: [x_0,x_N) \mapsto \mathbb{R}`
+
+    The piecewise function f must be defined as pairs :math:`[(x_0,y_0),\ldots,(x_N,y_N)]` and it is assumed that the
+    function is right-continuous. I.e., at the discontinuities :math:`x_i` it is
+
+    :math:`lim_{x\\searrow x_i} f(x) = y_i`
+
+    Note that the value of :math:`y_N` will be ignored in the computation.
     """
 
     x = f[:, 0]
@@ -27,8 +34,8 @@ def Lp_norm(f, p: float=2.0):
         raise ValueError("The piecewise constant function definition of f requires the abscissae f[:,0] are sorted in ascending order.")
 
     r = 0.0
-    for i in range(1, len(x)):
-        r += (x[i] - x[i-1]) * abs(y[i])**p
+    for i in range(0, len(x)-1):
+        r += (x[i+1] - x[i]) * abs(y[i])**p
 
     return r
 
