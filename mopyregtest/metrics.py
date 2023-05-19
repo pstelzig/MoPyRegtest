@@ -40,8 +40,11 @@ def Lp_norm(f, p: float = 2.0):
     return r
 
 
-def Lp_dist(f1, f2, p: float=2.0):
+def Lp_dist(f1, f2, p: float = 2.0):
     if not f1.shape == f2.shape:
         raise ValueError(f"Shapes of f1 and f2 must match, but is f1.shape={f1.shape} and f2.shape={f2.shape}")
 
-    return Lp_norm(np.vstack((f1[:, 0], f2[:, 1] - f1[:, 1])).transpose())
+    if not np.array_equal(f1[:, 0], f2[:, 0]):
+        raise ValueError(f"The abscissae of f1 and f2 must match but are f1[:,0]={f1[:, 0]} and f2[:,0]={f2[:, 0]}")
+
+    return Lp_norm(np.vstack((f1[:, 0], f2[:, 1] - f1[:, 1])).transpose(), p)
