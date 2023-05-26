@@ -52,9 +52,9 @@ reference_folder = this_folder / "references"
 
 
 # Define the test #############################################################
-class TestElectricalAnalogExamples(unittest.TestCase):
+class TestUserDefinedMetrics(unittest.TestCase):
 
-    # Testing Modelica.Electrical.Analog.Examples.HeatingRectifier
+    # Testing user defined metrics on a Modelica simulation result against a noisy reference result
     def test_Sine(self):
         tester = mopyregtest.RegressionTest(package_folder=package_folder,
                                             model_in_package="Modelica.Blocks.Sources.Sine",
