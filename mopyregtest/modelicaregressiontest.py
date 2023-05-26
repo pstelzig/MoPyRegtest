@@ -104,8 +104,14 @@ class RegressionTest:
         From a list of pandas DataFrame objects containing the results of Modelica
         simulation runs, a list of extended results is generated, each of which
         has the same timestamps. To this end, a union of all timestamps from all
-        results is created and the data filled in. For the filling in of data,
-        different methods can be specified with the fill_in_method parameter.
+        results is created.
+
+        Missing timestamps and such which occur multiple times
+        are filled in until the multiplicity amongst all results to be compared
+        is identical. Then, any missing data is filled in.
+
+        For the filling in of data, different methods can be specified with the
+        fill_in_method parameter.
 
         Parameters
         ----------
@@ -144,17 +150,27 @@ class RegressionTest:
         # Get result timestamps from all results
         timestamps = list(results[0]["time"])
         for i in range(1, len(results)):
-            new_timestamps = [tstamp for tstamp in results[i]["time"] if tstamp not in timestamps]
-            timestamps += new_timestamps
+            cur_res_timestamps = list(results[i]["time"].values)
 
-        timestamps = sorted(timestamps)
+            for tstamp in cur_res_timestamps:
+                n_occur_prev = timestamps.count(tstamp)
+                n_occur_new = cur_res_timestamps.count(tstamp)
+
+                timestamps += max(0, n_occur_new - n_occur_prev)*[tstamp]
+                timestamps = sorted(timestamps)
 
         # Create the extended results
         results_ext = [pd.DataFrame(0, index=np.arange(len(timestamps)), columns=results[i].keys()) for i in range(0, len(results))]
 
-        # Add rows with NaNs for every timestamp that is not present
+        # Add rows with NaNs for every timestamp that is not present or does not have the right multiplicity
         for i in range(0, len(results)):
-            missing_timestamps = [tstamp for tstamp in timestamps if tstamp not in results[i]["time"].values]
+            missing_timestamps = []
+            cur_res_timestamps = list(results[i]["time"].values)
+            for tstamp in set(timestamps):
+                n_occur_req = timestamps.count(tstamp)
+                n_occur_act = cur_res_timestamps.count(tstamp)
+
+                missing_timestamps += max(0, n_occur_req - n_occur_act)*[tstamp]
 
             missing_tstamp_rows = pd.DataFrame(np.nan, index=range(0, len(missing_timestamps)),
                                                columns=results[i].columns)
