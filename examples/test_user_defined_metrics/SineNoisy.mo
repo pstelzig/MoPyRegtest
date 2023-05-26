@@ -4,7 +4,7 @@ model SineNoisy
     Placement(visible = true, transformation(origin = {-10, 30}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Blocks.Noise.UniformNoise uniformNoise(samplePeriod = 0.05,y_max = 1, y_min = 0) annotation(
     Placement(visible = true, transformation(origin = {-10, -30}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  Modelica.Blocks.Math.Add add(k2 = 1e-2) annotation(
+  Modelica.Blocks.Math.Add add(k2 = 1e-4) annotation(
     Placement(visible = true, transformation(origin = {30, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   inner Modelica.Blocks.Noise.GlobalSeed globalSeed annotation(
     Placement(visible = true, transformation(origin = {52, 80}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));

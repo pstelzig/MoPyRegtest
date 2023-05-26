@@ -63,7 +63,7 @@ class TestElectricalAnalogExamples(unittest.TestCase):
                                             dependencies=None)
         tester.compare_result(reference_result=str(reference_folder / "SineNoisy_res.csv"),
                               metric=functools.partial(mopyregtest.metrics.Lp_dist, p=2.0),
-                              validated_cols=["y"], precision=3)
+                              validated_cols=["y"], precision=3, fill_in_method="interpolate")
 
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
         #tester.cleanup()
