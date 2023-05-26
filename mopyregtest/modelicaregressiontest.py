@@ -203,7 +203,8 @@ class RegressionTest:
         return
 
     def compare_result(self, reference_result, precision=7, validated_cols=[],
-                       metric=lambda r_ref, r_act: np.linalg.norm(r_ref[:, 1] - r_act[:, 1], ord=np.inf)):
+                       metric=lambda r_ref, r_act: np.linalg.norm(r_ref[:, 1] - r_act[:, 1], ord=np.inf),
+                       fill_in_method="ffill"):
         """
         Executes simulation and then compares the obtained result and the reference result along the
         validated columns. Throws an exception (AssertionError) if the deviation is larger or equal to
@@ -217,7 +218,7 @@ class RegressionTest:
             Decimal precision up to which equality is tested
         validated_cols : list
             List of variable names (from the file header) in the reference .csv file that are used in the regression test
-        metric: Callable
+        metric : Callable
             Metric-like function that is used to compute the distance between the reference result and the actual result
             produced by the simulation. Default is the infinity-norm on the difference between reference result and
             actual result
@@ -227,6 +228,14 @@ class RegressionTest:
             where :math:`r_\text{ref}, r_\text{act} \in \mathbb{R}^N` denote the reference and the actual result
             with timestamps :math:`t \in 1,\ldots,N`. Note that the timestamps of both results are unified using
             the method _unify_timestamps
+        fill_in_method : str
+            Defines the method used to fill in data if results have different timestamps and cannot be compared
+            pointwise.
+
+            Valid methods are "ffill", "bfill", "interpolate" where
+            ffill and bfill are the forward fill and backward fill methods from
+            pandas.DataFrame.fillna and "interpol" uses linear interpolation
+            as in pandas.DataFrame.interpol
 
         Returns
         -------
@@ -242,7 +251,7 @@ class RegressionTest:
         ref_data = pd.read_csv(filepath_or_buffer=reference_result, delimiter=',')
         result_data = pd.read_csv(filepath_or_buffer=simulation_result, delimiter=',')
 
-        data_ext = self._unify_timestamps([ref_data, result_data])
+        data_ext = self._unify_timestamps([ref_data, result_data], fill_in_method)
         ref_data_ext = data_ext[0]
         result_data_ext = data_ext[1]
 
