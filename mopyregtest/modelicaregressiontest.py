@@ -148,30 +148,45 @@ class RegressionTest:
                              f"and stems from results with indices {np.argmax(end_times)} and {np.argmin(end_times)}")
 
         # Get result timestamps from all results
-        timestamps = list(results[0]["time"])
-        for i in range(1, len(results)):
-            cur_res_timestamps = list(results[i]["time"].values)
+        all_timestamps = np.hstack([results[i]["time"].values] for i in range(0, len(results))).transpose()
+        unique, counts = np.unique(all_timestamps, return_counts=True)
+        all_timestamps_occur = dict(zip(unique, counts))
 
-            for tstamp in cur_res_timestamps:
-                n_occur_prev = timestamps.count(tstamp)
-                n_occur_new = cur_res_timestamps.count(tstamp)
+        timestamps = np.zeros(shape=(sum(all_timestamps_occur.values()), ))
 
-                timestamps += max(0, n_occur_new - n_occur_prev)*[tstamp]
-                timestamps = sorted(timestamps)
+        ctr = 0
+        for k, v in all_timestamps_occur.items():
+            timestamps[ctr:ctr+v] = k
+            ctr += v
 
         # Create the extended results
         results_ext = [pd.DataFrame(0, index=np.arange(len(timestamps)), columns=results[i].keys()) for i in range(0, len(results))]
 
         # Add rows with NaNs for every timestamp that is not present or does not have the right multiplicity
         for i in range(0, len(results)):
-            missing_timestamps = []
-            cur_res_timestamps = list(results[i]["time"].values)
-            for tstamp in set(timestamps):
-                n_occur_req = timestamps.count(tstamp)
-                n_occur_act = cur_res_timestamps.count(tstamp)
+            # Allocate array
+            missing_timestamps = np.zeros(shape=(len(all_timestamps),))
 
-                missing_timestamps += max(0, n_occur_req - n_occur_act)*[tstamp]
+            # Find out which timestamps are missing
+            cur_res_timestamps = results[i]["time"].values
+            cur_unique, cur_counts = np.unique(cur_res_timestamps, return_counts=True)
+            cur_occur = dict(zip(cur_unique, cur_counts))
 
+            missing_ctr = 0
+            for tstamp in all_timestamps_occur:
+                if tstamp in cur_occur.keys():
+                    number_misses = all_timestamps_occur[tstamp] - cur_occur[tstamp]
+                    if number_misses > 0:
+                        missing_timestamps[missing_ctr:missing_ctr + number_misses] = tstamp
+                        missing_ctr += number_misses
+                else:
+                    number_misses = all_timestamps_occur[tstamp]
+                    missing_timestamps[missing_ctr:missing_ctr + number_misses] = tstamp
+                    missing_ctr += number_misses
+
+            missing_timestamps = missing_timestamps[0:missing_ctr]
+
+            # Add data rows for missing timestamps
             missing_tstamp_rows = pd.DataFrame(np.nan, index=range(0, len(missing_timestamps)),
                                                columns=results[i].columns)
             missing_tstamp_rows["time"] = missing_timestamps
