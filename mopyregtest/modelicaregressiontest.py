@@ -130,6 +130,16 @@ class RegressionTest:
             List of extended pandas DataFrame objects, each of which has the
             same timestamps and missing data has been filled in
         """
+        # Shortcut: If timestamps match, then simply return the results unchanged
+        all_equal = True
+        for i in range(1, len(results)):
+            all_equal = all_equal and np.array_equal(results[0]["time"].values, results[i]["time"].values)
+            if not all_equal:
+                break
+
+        if all_equal:
+            return results
+
         # Check if start times and end times match over the various results
         start_times = np.zeros(shape=(len(results),))
         end_times = np.zeros(shape=(len(results),))
