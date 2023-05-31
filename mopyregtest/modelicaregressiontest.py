@@ -247,20 +247,19 @@ class RegressionTest:
 
         return
 
-    def compare_result(self, reference_result, precision=7, validated_cols=[],
+    def compare_result(self, reference_result, tol=1e-7, validated_cols=[],
                        metric=lambda r_ref, r_act: np.linalg.norm(r_ref[:, 1] - r_act[:, 1], ord=np.inf),
                        fill_in_method="ffill"):
         """
         Executes simulation and then compares the obtained result and the reference result along the
-        validated columns. Throws an exception (AssertionError) if the deviation is larger or equal to
-        10**(-precision).
+        validated columns. Throws an exception (AssertionError) if the deviation is larger or equal to tol.
 
         Parameters
         ----------
         reference_result : str
             Path to a reference .csv file containing the expected results of the model
-        precision : int
-            Decimal precision up to which equality is tested
+        tol : float
+            Absolute tolerance up to which equality is tested
         validated_cols : list
             List of variable names (from the file header) in the reference .csv file that are used in the regression test
         metric : Callable
@@ -309,9 +308,9 @@ class RegressionTest:
         for c in validated_cols:
             print("Comparing column \"{}\"".format(c))
             delta = metric(ref_data_ext[["time", c]].values, result_data_ext[["time", c]].values)
-            if np.abs(delta) >= 10**(-precision):
+            if np.abs(delta) >= tol:
                 raise AssertionError(f"Values in Colum {c} of results {simulation_result} and {result_data} differ by " \
-                                     f"more than 1e^-{precision}.")
+                                     f"more than {tol}.")
 
         return
 
