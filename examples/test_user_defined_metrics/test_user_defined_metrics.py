@@ -64,7 +64,7 @@ class TestUserDefinedMetrics(unittest.TestCase):
 
         # Comparing results by computing the L^2([T_min,T_max])-norm of the result difference (as piecewise constant functions over [T_min,T_max])
         tester.compare_result(reference_result=str(reference_folder / "SineNoisy_res.csv"),
-                              metric=functools.partial(mopyregtest.metrics.Lp_dist, p=2.0),
+                              metric=functools.partial(mopyregtest.metrics.Lp_dist, p=2),
                               validated_cols=["y"], precision=3, fill_in_method="interpolate")
 
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
