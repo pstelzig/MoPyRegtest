@@ -10,8 +10,10 @@ import os
 import platform
 import pathlib
 import shutil
+import math
 import numpy as np
 import pandas as pd
+import functools
 
 
 class RegressionTest:
@@ -96,6 +98,131 @@ class RegressionTest:
 
         return
 
+    @staticmethod
+    def _unify_timestamps(results: list[pd.DataFrame], fill_in_method="ffill"):
+        """
+        From a list of pandas DataFrame objects containing the results of Modelica
+        simulation runs, a list of extended results is generated, each of which
+        has the same timestamps. To this end, a union of all timestamps from all
+        results is created.
+
+        Missing timestamps and such which occur multiple times
+        are filled in until the multiplicity amongst all results to be compared
+        is identical. Then, any missing data is filled in.
+
+        For the filling in of data, different methods can be specified with the
+        fill_in_method parameter.
+
+        Parameters
+        ----------
+        results : list[pd.DataFrame]
+            List of pandas DataFrame objects containing the results of Modelica
+            simulation runs
+        fill_in_method : str
+            Valid methods are "ffill", "bfill", "interpolate" where
+            ffill and bfill are the forward fill and backward fill methods from
+            pandas.DataFrame.fillna and "interpol" uses linear interpolation
+            as in pandas.DataFrame.interpol
+
+        Returns
+        -------
+        out : list[pd.DataFrame]
+            List of extended pandas DataFrame objects, each of which has the
+            same timestamps and missing data has been filled in
+        """
+        # Shortcut: If timestamps match, then simply return the results unchanged
+        all_equal = True
+        for i in range(1, len(results)):
+            all_equal = all_equal and np.allclose(results[0]["time"].values, results[i]["time"].values, atol=1e-15, rtol=1e-15)
+            if not all_equal:
+                break
+
+        if all_equal:
+            return results
+
+        # Check if start times and end times match over the various results
+        start_times = np.zeros(shape=(len(results),))
+        end_times = np.zeros(shape=(len(results),))
+        for i in range(0, len(results)):
+            start_times[i] = results[i]["time"].min()
+            end_times[i] = results[i]["time"].max()
+
+        if not math.isclose(np.min(start_times), np.max(start_times), rel_tol=1e-5, abs_tol=1e-3):
+            raise ValueError("The simulation start times of the results to not match. "\
+                             f"Maximum deviation is {np.max(start_times) - np.min(start_times)} " \
+                             f"and stems from results with indices {np.argmax(start_times)} and {np.argmin(start_times)}")
+
+        if not math.isclose(np.min(end_times), np.max(end_times), rel_tol=1e-5, abs_tol=1e-3):
+            raise ValueError("The simulation end times of the results to not match. "\
+                             f"Maximum deviation is {np.max(end_times) - np.min(end_times)} " \
+                             f"and stems from results with indices {np.argmax(end_times)} and {np.argmin(end_times)}")
+
+        # Timestamps from all results and their highest multiplicity amongst all results
+        timestamps_per_result = [dict(zip(*np.unique(results[i]["time"].values, return_counts=True)))
+                                 for i in range(0, len(results))]
+
+        all_timestamps_unique = np.unique(np.hstack([results[i]["time"].values] for i in range(0, len(results))).transpose())
+        timestamps = np.zeros(sum([len(results[i]["time"].values) for i in range(0, len(results))]))
+        ctr = 0
+        for tstamp in all_timestamps_unique:
+            max_occur = max([timestamps_per_result[i][tstamp] for i in range(0, len(results))
+                             if tstamp in timestamps_per_result[i].keys()])
+            timestamps[ctr:ctr + max_occur] = tstamp
+            ctr += max_occur
+
+        timestamps = timestamps[0:ctr]
+
+        unique, counts = np.unique(timestamps, return_counts=True)
+        all_timestamps_occur = dict(zip(unique, counts))
+
+        # Create the extended results
+        results_ext = [pd.DataFrame(0, index=np.arange(len(timestamps)), columns=results[i].keys()) for i in range(0, len(results))]
+
+        # Add rows with NaNs for every timestamp that is not present or does not have the right multiplicity
+        for i in range(0, len(results)):
+            # Allocate array
+            missing_timestamps = np.zeros(len(timestamps))
+
+            # Find out which timestamps are missing
+            cur_occur = timestamps_per_result[i]
+
+            missing_ctr = 0
+            for tstamp in all_timestamps_occur:
+                if tstamp in cur_occur.keys():
+                    number_misses = all_timestamps_occur[tstamp] - cur_occur[tstamp]
+                    if number_misses > 0:
+                        missing_timestamps[missing_ctr:missing_ctr + number_misses] = tstamp
+                        missing_ctr += number_misses
+                else:
+                    number_misses = all_timestamps_occur[tstamp]
+                    missing_timestamps[missing_ctr:missing_ctr + number_misses] = tstamp
+                    missing_ctr += number_misses
+
+            missing_timestamps = missing_timestamps[0:missing_ctr]
+
+            # Add data rows for missing timestamps
+            missing_tstamp_rows = pd.DataFrame(np.nan, index=range(0, len(missing_timestamps)),
+                                               columns=results[i].columns)
+            missing_tstamp_rows["time"] = missing_timestamps
+
+            results_ext[i] = pd.concat([results[i], missing_tstamp_rows], axis=0)
+            results_ext[i] = results_ext[i].sort_values("time")
+
+            new_index = range(0, len(timestamps))
+            results_ext[i].index = new_index
+
+            # Fill in values at missing timestamps
+            if fill_in_method == "ffill":
+                results_ext[i] = results_ext[i].fillna(method="ffill", axis=0)
+            elif fill_in_method == "bfill":
+                results_ext[i] = results_ext[i].fillna(method="bfill", axis=0)
+            elif fill_in_method == "interpolate":
+                results_ext[i] = results_ext[i].interpolate()
+            else:
+                raise ValueError("Unknown filling method for NaN values")
+
+        return results_ext
+
     def _import_and_simulate(self):
         """
         Imports and simulates the model from the Modelica package specified in the constructor.
@@ -120,20 +247,39 @@ class RegressionTest:
 
         return
 
-    def compare_result(self, reference_result, precision=7, validated_cols=[]):
+    def compare_result(self, reference_result, tol=1e-7, validated_cols=[],
+                       metric=lambda r_ref, r_act: np.linalg.norm(r_ref[:, 1] - r_act[:, 1], ord=np.inf),
+                       fill_in_method="ffill"):
         """
         Executes simulation and then compares the obtained result and the reference result along the
-        validated columns. Throws an exception (AssertionError) if the deviation is larger or equal to
-        10**(-precision).
+        validated columns. Throws an exception (AssertionError) if the deviation is larger or equal to tol.
 
         Parameters
         ----------
         reference_result : str
             Path to a reference .csv file containing the expected results of the model
+        tol : float
+            Absolute tolerance up to which equality is tested
         validated_cols : list
             List of variable names (from the file header) in the reference .csv file that are used in the regression test
-        precision : int
-            Decimal precision up to which equality is tested
+        metric : Callable
+            Metric-like function that is used to compute the distance between the reference result and the actual result
+            produced by the simulation. Default is the infinity-norm on the difference between reference result and
+            actual result
+
+            :math:`\| r_\text{ref} - r_\{act} \|_{\infty} = \max_{t \in 1,\ldots,N} |r_\text{ref}[t] - r_\{act}[t]|`
+
+            where :math:`r_\text{ref}, r_\text{act} \in \mathbb{R}^N` denote the reference and the actual result
+            with timestamps :math:`t \in 1,\ldots,N`. Note that the timestamps of both results are unified using
+            the method _unify_timestamps
+        fill_in_method : str
+            Defines the method used to fill in data if results have different timestamps and cannot be compared
+            pointwise.
+
+            Valid methods are "ffill", "bfill", "interpolate" where
+            ffill and bfill are the forward fill and backward fill methods from
+            pandas.DataFrame.fillna and "interpol" uses linear interpolation
+            as in pandas.DataFrame.interpol
 
         Returns
         -------
@@ -149,15 +295,22 @@ class RegressionTest:
         ref_data = pd.read_csv(filepath_or_buffer=reference_result, delimiter=',')
         result_data = pd.read_csv(filepath_or_buffer=simulation_result, delimiter=',')
 
+        data_ext = self._unify_timestamps([ref_data, result_data], fill_in_method)
+        ref_data_ext = data_ext[0]
+        result_data_ext = data_ext[1]
+
         # Determine common columns by comparing column headers
-        common_cols = set(ref_data.columns).intersection(set(result_data.columns))
+        common_cols = set(ref_data_ext.columns).intersection(set(result_data_ext.columns))
 
         if not validated_cols:
             validated_cols = common_cols
 
         for c in validated_cols:
             print("Comparing column \"{}\"".format(c))
-            np.testing.assert_almost_equal(result_data[c].values, ref_data[c].values, precision)
+            delta = metric(ref_data_ext[["time", c]].values, result_data_ext[["time", c]].values)
+            if np.abs(delta) >= tol:
+                raise AssertionError(f"Values in Colum {c} of results {simulation_result} and {reference_result} differ by " \
+                                     f"{np.abs(delta)} which is larger than {tol}.")
 
         return
 

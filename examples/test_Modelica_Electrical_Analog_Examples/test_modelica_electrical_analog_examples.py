@@ -15,6 +15,8 @@ import pathlib
 import platform
 import mopyregtest
 import sys
+import numpy as np
+import functools
 
 # Setup the test data #########################################################
 # Example here for a Ubuntu environment with OpenModelica 
@@ -59,7 +61,7 @@ class TestElectricalAnalogExamples(unittest.TestCase):
                                             result_folder=result_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier",
                                             modelica_version="4.0.0",
                                             dependencies=None)
-        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier_res.csv"), precision=3)
+        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier_res.csv"), tol=1e-3)
 
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
         #tester.cleanup()
@@ -73,13 +75,32 @@ class TestElectricalAnalogExamples(unittest.TestCase):
                                             result_folder=result_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes",
                                             modelica_version="4.0.0",
                                             dependencies=None)
-        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv"), precision=3)
+
+        # Comparing results by computing :math:`\| \|_1` vector norm distance of result values
+        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv"), tol=1e-3,
+                              metric=lambda r_ref, r_act: np.linalg.norm(r_ref[:, 1] - r_act[:, 1], ord=1))
 
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
         #tester.cleanup()
 
         return
 
+    # Testing closeness for Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes in the L2-norm
+    def test_CharacteristicIdealDiodes_L2(self):
+        tester = mopyregtest.RegressionTest(package_folder=package_folder,
+                                            model_in_package="Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes",
+                                            result_folder=result_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes",
+                                            modelica_version="4.0.0",
+                                            dependencies=None)
+
+        # Comparing results by computing the L^2([T_min,T_max])-norm of the result difference (as piecewise constant functions over [T_min,T_max])
+        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv"), tol=1e-3,
+                              metric=functools.partial(mopyregtest.metrics.Lp_dist, p=2))
+
+        # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
+        #tester.cleanup()
+
+        return
 
 if __name__ == '__main__':
     unittest.main()
