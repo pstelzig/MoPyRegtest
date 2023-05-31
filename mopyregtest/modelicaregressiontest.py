@@ -309,8 +309,8 @@ class RegressionTest:
             print("Comparing column \"{}\"".format(c))
             delta = metric(ref_data_ext[["time", c]].values, result_data_ext[["time", c]].values)
             if np.abs(delta) >= tol:
-                raise AssertionError(f"Values in Colum {c} of results {simulation_result} and {result_data} differ by " \
-                                     f"more than {tol}.")
+                raise AssertionError(f"Values in Colum {c} of results {simulation_result} and {reference_result} differ by " \
+                                     f"{np.abs(delta)} which is larger than {tol}.")
 
         return
 
