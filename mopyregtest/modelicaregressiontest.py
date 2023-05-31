@@ -164,7 +164,7 @@ class RegressionTest:
         timestamps_per_result = [dict(zip(*np.unique(results[i]["time"].values, return_counts=True)))
                                  for i in range(0, len(results))]
 
-        all_timestamps_unique = np.unique(np.hstack([results[i]["time"].values] for i in range(0, len(results))).transpose())
+        all_timestamps_unique = np.unique(np.hstack([results[i]["time"].values for i in range(0, len(results))]).transpose())
         timestamps = np.zeros(sum([len(results[i]["time"].values) for i in range(0, len(results))]))
         ctr = 0
         for tstamp in all_timestamps_unique:
