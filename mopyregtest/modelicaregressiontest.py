@@ -147,17 +147,23 @@ class RegressionTest:
                              f"Maximum deviation is {np.max(end_times) - np.min(end_times)} " \
                              f"and stems from results with indices {np.argmax(end_times)} and {np.argmin(end_times)}")
 
-        # Get result timestamps from all results
-        all_timestamps = np.hstack([results[i]["time"].values] for i in range(0, len(results))).transpose()
-        unique, counts = np.unique(all_timestamps, return_counts=True)
-        all_timestamps_occur = dict(zip(unique, counts))
+        # Timestamps from all results and their highest multiplicity amongst all results
+        timestamps_per_result = [dict(zip(*np.unique(results[i]["time"].values, return_counts=True)))
+                                 for i in range(0, len(results))]
 
-        timestamps = np.zeros(shape=(sum(all_timestamps_occur.values()), ))
-
+        all_timestamps_unique = np.unique(np.hstack([results[i]["time"].values] for i in range(0, len(results))).transpose())
+        timestamps = np.zeros(sum([len(results[i]["time"].values) for i in range(0, len(results))]))
         ctr = 0
-        for k, v in all_timestamps_occur.items():
-            timestamps[ctr:ctr+v] = k
-            ctr += v
+        for tstamp in all_timestamps_unique:
+            max_occur = max([timestamps_per_result[i][tstamp] for i in range(0, len(results))
+                             if tstamp in timestamps_per_result[i].keys()])
+            timestamps[ctr:ctr + max_occur] = tstamp
+            ctr += max_occur
+
+        timestamps = timestamps[0:ctr]
+
+        unique, counts = np.unique(timestamps, return_counts=True)
+        all_timestamps_occur = dict(zip(unique, counts))
 
         # Create the extended results
         results_ext = [pd.DataFrame(0, index=np.arange(len(timestamps)), columns=results[i].keys()) for i in range(0, len(results))]
@@ -165,12 +171,10 @@ class RegressionTest:
         # Add rows with NaNs for every timestamp that is not present or does not have the right multiplicity
         for i in range(0, len(results)):
             # Allocate array
-            missing_timestamps = np.zeros(shape=(len(all_timestamps),))
+            missing_timestamps = np.zeros(len(timestamps))
 
             # Find out which timestamps are missing
-            cur_res_timestamps = results[i]["time"].values
-            cur_unique, cur_counts = np.unique(cur_res_timestamps, return_counts=True)
-            cur_occur = dict(zip(cur_unique, cur_counts))
+            cur_occur = timestamps_per_result[i]
 
             missing_ctr = 0
             for tstamp in all_timestamps_occur:
