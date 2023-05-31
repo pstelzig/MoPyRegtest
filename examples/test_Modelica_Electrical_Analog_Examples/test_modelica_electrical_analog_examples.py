@@ -75,6 +75,8 @@ class TestElectricalAnalogExamples(unittest.TestCase):
                                             result_folder=result_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes",
                                             modelica_version="4.0.0",
                                             dependencies=None)
+
+        # Comparing results by computing :math:`\| \|_1` vector norm distance of result values
         tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv"), precision=3,
                               metric=lambda r_ref, r_act: np.linalg.norm(r_ref[:, 1] - r_act[:, 1], ord=1.0))
 
@@ -90,6 +92,8 @@ class TestElectricalAnalogExamples(unittest.TestCase):
                                             result_folder=result_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes",
                                             modelica_version="4.0.0",
                                             dependencies=None)
+
+        # Comparing results by computing the L^2([T_min,T_max])-norm of the result difference (as piecewise constant functions over [T_min,T_max])
         tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv"), precision=3,
                               metric=functools.partial(mopyregtest.metrics.Lp_dist, p=2.0))
 

@@ -61,6 +61,8 @@ class TestUserDefinedMetrics(unittest.TestCase):
                                             result_folder=result_folder / "Modelica.Blocks.Sources.Sine",
                                             modelica_version="4.0.0",
                                             dependencies=None)
+
+        # Comparing results by computing the L^2([T_min,T_max])-norm of the result difference (as piecewise constant functions over [T_min,T_max])
         tester.compare_result(reference_result=str(reference_folder / "SineNoisy_res.csv"),
                               metric=functools.partial(mopyregtest.metrics.Lp_dist, p=2.0),
                               validated_cols=["y"], precision=3, fill_in_method="interpolate")
