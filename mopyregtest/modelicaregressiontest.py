@@ -133,7 +133,7 @@ class RegressionTest:
         # Shortcut: If timestamps match, then simply return the results unchanged
         all_equal = True
         for i in range(1, len(results)):
-            all_equal = all_equal and np.array_equal(results[0]["time"].values, results[i]["time"].values)
+            all_equal = all_equal and np.allclose(results[0]["time"].values, results[i]["time"].values, atol=1e-15, rtol=1e-15)
             if not all_equal:
                 break
 
