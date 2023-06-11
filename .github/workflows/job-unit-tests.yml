@@ -1,5 +1,5 @@
 name : MoPyRegtest unit test job
-on: workflow_dispatch
+on: [push]
 jobs:
   unit-test:
     runs-on: ubuntu-latest
