@@ -5,12 +5,11 @@ jobs:
     runs-on: ubuntu-latest
     container: openmodelica/openmodelica:v1.21.0-minimal
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       - name: Install dependencies
         run: |
           apt-get -qq update
-          apt-get -qq --no-install-recommends python3 python3-pip
+          apt-get -qq --no-install-recommends install python3 python3-pip
           pip install numpy pandas
       - name: Install Modelica STL 4.0.0
         run: |
