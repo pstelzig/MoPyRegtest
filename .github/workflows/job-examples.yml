@@ -1,5 +1,5 @@
 name : Run job for examples folder
-on: [push]
+on: [workflow_dispatch]
 jobs:
   examples-test:
     runs-on: ubuntu-latest

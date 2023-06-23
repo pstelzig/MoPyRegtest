@@ -1,5 +1,5 @@
 name : Example job for Modelica library regression testing
-on: [push]
+on: [workflow_dispatch]
 jobs:
   examples-test:
     runs-on: ubuntu-latest
