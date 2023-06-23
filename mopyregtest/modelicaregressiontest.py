@@ -209,7 +209,7 @@ class RegressionTest:
             missing_tstamp_rows["time"] = missing_timestamps
 
             results_ext[i] = pd.concat([results[i], missing_tstamp_rows], axis=0)
-            results_ext[i] = results_ext[i].sort_values("time")
+            results_ext[i] = results_ext[i].sort_values("time", kind="mergesort")
 
             new_index = range(0, len(timestamps))
             results_ext[i].index = new_index
