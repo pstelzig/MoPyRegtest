@@ -1,5 +1,5 @@
 name : Unit test job
-on: [push]
+on: [workflow_dispatch]
 jobs:
   unit-test:
     runs-on: ubuntu-latest
