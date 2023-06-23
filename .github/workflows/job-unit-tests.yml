@@ -1,4 +1,4 @@
-name : MoPyRegtest unit test job
+name : Unit test job
 on: [push]
 jobs:
   unit-test:
