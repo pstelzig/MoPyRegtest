@@ -1,0 +1,25 @@
+name : Example job for Modelica library regression testing
+on: [push]
+jobs:
+  examples-test:
+    runs-on: ubuntu-latest
+    container: openmodelica/openmodelica:v1.21.0-minimal
+    steps:
+      - name: Install dependencies
+        run: |
+          apt-get -qq update
+          apt-get -qq --no-install-recommends install python3 python3-pip git
+          pip install numpy pandas
+      - name: Install Modelica STL 4.0.0
+        run: |
+          echo "installPackage(Modelica, \"4.0.0+maint.om\", exactMatch=true);" > installModelicaStl.mos && omc installModelicaStl.mos
+      - name: Install MoPyRegtest with tag v0.2.1
+        run: |
+          git clone https://github.com/pstelzig/MoPyRegtest.git mopyregtest
+          cd mopyregtest
+          git checkout v0.2.1
+          pip3 install --user .
+      - name: Run examples
+        run: |
+          cd mopyregtest/examples
+          python3 -m unittest
