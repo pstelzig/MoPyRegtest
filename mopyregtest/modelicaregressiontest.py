@@ -252,7 +252,7 @@ class RegressionTest:
 
     def compare_result(self, reference_result, tol=1e-7, validated_cols=[],
                        metric=lambda r_ref, r_act: np.linalg.norm(r_ref[:, 1] - r_act[:, 1], ord=np.inf),
-                       fill_in_method="ffill"):
+                       unify_timestamps=True, fill_in_method="ffill"):
         """
         Executes simulation and then compares the obtained result and the reference result along the
         validated columns. Throws an exception (AssertionError) if the deviation is larger or equal to tol.
@@ -275,9 +275,16 @@ class RegressionTest:
             where :math:`r_\text{ref}, r_\text{act} \in \mathbb{R}^N` denote the reference and the actual result
             with timestamps :math:`t \in 1,\ldots,N`. Note that the timestamps of both results are unified using
             the method _unify_timestamps
+        unify_timestamps : bool
+            Boolean controlling whether the timestamp unification shall be called in compare_result before evaluating
+            the metric. Default=True.
+
+            If set to False, then the function passed in the argument "metric" will be evaluated for matching columns
+            (from validated_cols) of reference and actual result. In this case the definition of the metric has to
+            ensure that computations are meaningful, e.g. for non-matching dimensions or different timestamps.
         fill_in_method : str
-            Defines the method used to fill in data if results have different timestamps and cannot be compared
-            pointwise.
+            Defines the method used to fill in data when calling RegressionTest._unify_timestamps and if results have
+            different timestamps and cannot be compared pointwise.
 
             Valid methods are "ffill", "bfill", "interpolate" where
             ffill and bfill are the forward fill and backward fill methods from
@@ -298,19 +305,20 @@ class RegressionTest:
         ref_data = pd.read_csv(filepath_or_buffer=reference_result, delimiter=',')
         result_data = pd.read_csv(filepath_or_buffer=simulation_result, delimiter=',')
 
-        data_ext = self._unify_timestamps([ref_data, result_data], fill_in_method)
-        ref_data_ext = data_ext[0]
-        result_data_ext = data_ext[1]
+        if unify_timestamps:
+            data_ext = self._unify_timestamps([ref_data, result_data], fill_in_method)
+            ref_data = data_ext[0]
+            result_data = data_ext[1]
 
         # Determine common columns by comparing column headers
-        common_cols = set(ref_data_ext.columns).intersection(set(result_data_ext.columns))
+        common_cols = set(ref_data.columns).intersection(set(result_data.columns))
 
         if not validated_cols:
             validated_cols = common_cols
 
         for c in validated_cols:
             print("Comparing column \"{}\"".format(c))
-            delta = metric(ref_data_ext[["time", c]].values, result_data_ext[["time", c]].values)
+            delta = metric(ref_data[["time", c]].values, result_data[["time", c]].values)
             if np.abs(delta) >= tol:
                 raise AssertionError(f"Values in Colum {c} of results {simulation_result} and {reference_result} differ by " \
                                      f"{np.abs(delta)} which is larger than {tol}.")
