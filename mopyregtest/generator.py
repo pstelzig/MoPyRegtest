@@ -10,7 +10,7 @@ import shutil
 import pathlib
 import tempfile
 
-import mopyregtest.metrics
+from . import metrics
 from . import utils
 from .modelicaregressiontest import RegressionTest
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
         """
 
     def __init__(self, package_folder, models_in_package, modelica_version="default", dependencies=None,
-                 metric=mopyregtest.metrics.norm_infty_dist,
+                 metric=metrics.norm_infty_dist,
                  tol=1e-7, unify_timestamps=True, fill_in_method="ffill"):
         """
 
@@ -119,7 +119,13 @@ if __name__ == '__main__':
         self.models_in_package = models_in_package
         self.modelica_version = modelica_version
         self.dependencies = dependencies
-        self.metric = f"mopyregtest.metrics.{metric.__name__}"
+        if (callable(metric) and
+                metric in [metrics.norm_p_dist, metrics.norm_infty_dist, metrics.Lp_dist, metrics.Linfty_dist]):
+            self.metric = f"mopyregtest.metrics.{metric.__name__}"
+        elif type(metric) == str:
+            self.metric = metric
+        else:
+            raise ValueError("metric argument not recognized")
         self.tol = tol
         self.unify_timestamps = unify_timestamps
         self.fill_in_method = fill_in_method
