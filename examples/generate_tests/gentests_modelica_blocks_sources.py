@@ -39,4 +39,5 @@ reference_folder = this_folder / "references"
 models_in_package = ["Modelica.Blocks.Sources.Sine", "Modelica.Blocks.Sources.ExpSine", "Modelica.Blocks.Sources.Step"]
 
 gen = mopyregtest.Generator(package_folder=package_folder, models_in_package=models_in_package)
-gen.generate_tests(test_folder=this_folder / "gen_tests", test_name="Blocks", result_folder=this_folder / "results", do_cleanup=True)
+gen.generate_tests(test_folder=this_folder / "gen_tests", test_name="Blocks", test_results_folder=this_folder / "results",
+                   cleanup_ref_gen=True)

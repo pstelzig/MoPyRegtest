@@ -96,8 +96,9 @@ if __name__ == '__main__':
 
         return r_ref
 
-    def generate_tests(self, test_folder, test_name, result_folder,
-                       references=None, generate_missing_refs=True, do_cleanup=False):
+    def generate_tests(self, test_folder, test_name, test_results_folder,
+                       references=None, generate_missing_refs=True,
+                       cleanup_ref_gen=False, cleanup_in_tests=False):
         test_folder = pathlib.Path(test_folder)
         if not test_folder.exists():
             test_folder.mkdir(parents=True, exist_ok=False)
@@ -111,7 +112,7 @@ if __name__ == '__main__':
         for md in self.models_in_package:
             if (references is None or md not in references.keys()) and generate_missing_refs:
                 r_ref = self._generate_reference(reference_folder=test_folder / "references",
-                                                 model_in_package=md, do_cleanup=do_cleanup)
+                                                 model_in_package=md, do_cleanup=cleanup_ref_gen)
             else:
                 r_ref = references[md]
                 shutil.copyfile(r_ref, test_folder / "references" / f"{md}_res.csv")
@@ -121,7 +122,7 @@ if __name__ == '__main__':
                 "$$METHOD_NAME$$": md.lower().replace(".", "_"),
                 "$$PACKAGE_FOLDER$$": str(self.package_folder),
                 "$$MODEL_IN_PACKAGE$$": md,
-                "$$RESULT_FOLDER$$": str(result_folder),
+                "$$RESULT_FOLDER$$": str(test_results_folder),
                 "$$MODELICA_VERSION$$": self.modelica_version,
                 "$$DEPENDENCIES$$": dependencies_str,
                 "$$REFERENCE_RESULT$$": r_ref,
@@ -129,7 +130,7 @@ if __name__ == '__main__':
                 "$$TOLERANCE$$": str(self.tol),
                 "$$UNIFY_TIMESTAMPS$$": str(self.unify_timestamps),
                 "$$FILL_IN_METHOD$$": self.fill_in_method,
-                "$$DO_CLEANUP$$": "" if do_cleanup else "#"
+                "$$DO_CLEANUP$$": "" if cleanup_in_tests else "#"
             }
 
             test_method = utils.replace_in_str(Generator.METHOD, repl_dict)
