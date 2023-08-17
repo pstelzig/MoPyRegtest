@@ -35,9 +35,22 @@ result_folder = this_folder
 # Where to find reference results for this test
 reference_folder = this_folder / "references"
 
+# Generating a test battery with a predefined metric ###################################################################
 # Models to generate regression tests for
 models_in_package = ["Modelica.Blocks.Sources.Sine", "Modelica.Blocks.Sources.ExpSine", "Modelica.Blocks.Sources.Step"]
 
-gen = mopyregtest.Generator(package_folder=package_folder, models_in_package=models_in_package)
-gen.generate_tests(test_folder=this_folder / "gen_tests", test_name="Blocks", test_results_folder=this_folder / "results",
+gen = mopyregtest.Generator(package_folder=package_folder, models_in_package=models_in_package,
+                            metric=mopyregtest.metrics.Lp_dist)
+gen.generate_tests(test_folder=this_folder / "gen_tests", test_name="BlocksLpDist",
+                   test_results_folder=this_folder / "results",
+                   cleanup_ref_gen=True)
+
+# Generating a test battery with a user defined metric #################################################################
+# Models to generate regression tests for
+models_in_package = ["Modelica.Blocks.Sources.Cosine", "Modelica.Blocks.Sources.Sinc", "Modelica.Blocks.Sources.Ramp"]
+
+gen = mopyregtest.Generator(package_folder=package_folder, models_in_package=models_in_package,
+                            metric="lambda r_ref, r_act: np.linalg.norm(r_ref[:, 1] - r_act[:, 1], ord=np.inf)")
+gen.generate_tests(test_folder=this_folder / "gen_tests", test_name="BlocksUserDef",
+                   test_results_folder=this_folder / "results",
                    cleanup_ref_gen=True)
