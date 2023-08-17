@@ -7,7 +7,6 @@ MIT License. See the project's LICENSE file.
 """
 
 import shutil
-import numpy as np
 import pathlib
 import tempfile
 
@@ -102,6 +101,7 @@ if __name__ == '__main__':
         test_folder = pathlib.Path(test_folder)
         if not test_folder.exists():
             test_folder.mkdir(parents=True, exist_ok=False)
+        if not (test_folder / "references").exists():
             (test_folder / "references").mkdir()
 
         tfile = open(pathlib.Path(test_folder) / f"test_{test_name.lower()}.py", 'w')
