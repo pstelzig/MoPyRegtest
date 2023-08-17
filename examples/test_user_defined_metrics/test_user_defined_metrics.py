@@ -23,11 +23,11 @@ import functools
 # installed like in https://openmodelica.org/download/download-linux
 # and using the default OpenModelica package manager
 
-# Path to Modelica library or model to be tested. Here Modelica.Electrial
+# Path to Modelica library or model to be tested. Here an element of the Modelica STL.
 if platform.system() == 'Windows':
     package_folder = pathlib.Path.home() / "AppData/Roaming/.openmodelica/libraries/Modelica 4.0.0+maint.om"
 else:
-    package_folder = pathlib.Path.home() / ".openmodelica/libraries/Modelica 4.0.0+maint.om/Electrical"
+    package_folder = pathlib.Path.home() / ".openmodelica/libraries/Modelica 4.0.0+maint.om"
 
 if not package_folder.exists():
     error_msg = f"""[ERROR] Path \"{package_folder}\" not found. Aborting.
