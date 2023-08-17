@@ -28,20 +28,20 @@ class RegressionTest:
 
         Parameters
         ----------
-        package_folder : str
+        package_folder : str or PathLike
             Path of the folder the Modelica package containing the model to be tested
         model_in_package : str
             Name of the model to be tested
-        result_folder :
+        result_folder : str or PathLike
             Path of the folder where the output of the model testing shall be written to
-        tool:
+        tool : str
             Simulator used to translate, compile and execute Modelica model. The only valid 
             tool right now is omc (OpenModelica Compiler). If no argument is specified, 
             RegressionTest will search the PATH variable for omc and will execute the tests if found.
-        modelica_version:
+        modelica_version : str
             Version of the Modelica standard library to be loaded before the test is executed.
             Default is "default", other meaningful values can be "3.2.3" or "4.0.0".
-        dependencies:
+        dependencies : None or list[str]
             Optional list of strings with names of packages that the package to be tested depends on.
             Each dependency must point to the .mo file that defines the dependency. E.g. if the
             dependency is an entire package, it must be the path to the respective package's package.mo.
