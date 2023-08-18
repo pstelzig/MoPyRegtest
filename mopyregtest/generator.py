@@ -5,8 +5,9 @@ Copyright (c) Dr. Philipp Emanuel Stelzig, 2019--2023.
 
 MIT License. See the project's LICENSE file.
 """
-
+import os.path
 import shutil
+import os
 import pathlib
 import tempfile
 
@@ -236,10 +237,23 @@ if __name__ == '__main__':
             else:
                 shutil.copyfile(references[md], str(test_folder / r_ref_relpath))
 
+            # If the package path is relative, compute its relative path to the target test folder
+            if not pathlib.PurePath(test_folder).is_absolute():
+                test_folder_abs = pathlib.Path.cwd().absolute() / test_folder
+            else:
+                test_folder_abs = test_folder
+
+            if not pathlib.PurePath(self.package_folder).is_absolute():
+                package_folder_abs = pathlib.Path.cwd().absolute() / self.package_folder
+                package_folder = os.path.relpath(package_folder_abs, start=test_folder_abs)
+                package_folder = pathlib.Path(package_folder)
+            else:
+                package_folder = pathlib.Path(self.package_folder)
+
             dependencies_str = "None" if self.dependencies is None else "[{}]".format(",".join(self.dependencies))
             repl_dict = {
                 "$$METHOD_NAME$$": md.lower().replace(".", "_"),
-                "$$PACKAGE_FOLDER$$": str(pathlib.Path(self.package_folder).as_posix()),
+                "$$PACKAGE_FOLDER$$": str(package_folder.as_posix()),
                 "$$MODEL_IN_PACKAGE$$": md,
                 "$$RESULT_FOLDER$$": str(pathlib.Path(test_results_folder).as_posix()),
                 "$$MODELICA_VERSION$$": self.modelica_version,
