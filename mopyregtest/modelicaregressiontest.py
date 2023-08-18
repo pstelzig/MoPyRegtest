@@ -206,12 +206,12 @@ class RegressionTest:
             pathlib.Path.mkdir(self.result_folder_path)
             self.result_folder_created = True
 
-        pathlib.os.chdir(self.result_folder_path)
+        os.chdir(self.result_folder_path)
 
         # Run the scripts for import and simulation
         self._run_model()
 
-        pathlib.os.chdir(self.initial_cwd)
+        os.chdir(self.initial_cwd)
 
         return
 
