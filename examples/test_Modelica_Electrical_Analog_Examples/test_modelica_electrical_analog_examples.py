@@ -19,7 +19,7 @@ import numpy as np
 import functools
 
 # Setup the test data #########################################################
-# Example here for a Ubuntu environment with OpenModelica 
+# Example here for an Ubuntu environment with OpenModelica
 # installed like in https://openmodelica.org/download/download-linux
 # and using the default OpenModelica package manager
 

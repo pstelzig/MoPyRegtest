@@ -13,7 +13,7 @@ def _check_comparability(f1, f2):
     if not f1.shape == f2.shape:
         raise ValueError(f"Shapes of f1 and f2 must match, but is f1.shape={f1.shape} and f2.shape={f2.shape}")
 
-    if not np.array_equal(f1[:, 0], f2[:, 0]):
+    if not np.allclose(f1[:, 0], f2[:, 0], atol=1e-15, rtol=1e-15):
         raise ValueError(f"The abscissae of f1 and f2 must match but are f1[:,0]={f1[:, 0]} and f2[:,0]={f2[:, 0]}")
 
 

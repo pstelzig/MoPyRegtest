@@ -3,116 +3,114 @@ This file guides you through the examples on how to use the `mopyregtest` module
 
 
 ## Quick start
+
+### Manual test case definition
 Really quick introduction (read the in-depth explanation below to know what you are doing!): 
 * Install MoPyRegtest locally (!) from the same folder where its `setup.py` is found with pip, e.g. like `pip3 install --user .`
-* Go to [examples/test_Modelica_Electrical_Analog_Examples](/examples/test_Modelica_Electrical_Analog_Examples)
+* Go to [test_Modelica_Electrical_Analog_Examples](/examples/test_Modelica_Electrical_Analog_Examples)
 * Copy and modify the file [test_modelica_electrical_analog_examples.py](/examples/test_Modelica_Electrical_Analog_Examples/test_modelica_electrical_analog_examples.py) according to your needs
 * Execute the modified file like `python3 test_modelica_electrical_analog_examples.py` (or whatever you named the file now) to run regression tests on your own Modelica package and models
 
-A more in-depth explanation of how the provided example works, what happens and how the example was created step-by-step can be found in the following section. 
+A more in-depth explanation of how the provided example works, what happens and how the example was created step-by-step can be found in the following section.
 
+### Automatic test case generation
+* Go to [generate_tests](/examples/generate_tests)
+* Copy and modify the file [gentests_modelica_blocks_sources.py](/examples/generate_tests/gentests_modelica_blocks_sources.py) according to your needs
+* Execute the modified file like `python3 gentests_modelica_blocks_sources.py` (or whatever you named the file now) to create the regression tests defined in that file
+* This will produce MoPyRegtest test case definitions in `test_blocksuserdef.py` (or how you adapted it) and copy all
+  the reference files into a subfolder `references`. The test cases can then be executed like `python3 test_blocksuserdef.py`
 
 ## Example `test_Modelica_Electrical_Analog_Examples`
-In the example (see the folder [examples/test_Modelica_Electrical_Analog_Examples](examples/test_Modelica_Electrical_Analog_Examples)) `MoPyRegtest` is used to perform regression testing on two examples from the Modelica standard library, namely
+In the example (see the folder [test_Modelica_Electrical_Analog_Examples](/examples/test_Modelica_Electrical_Analog_Examples)) `MoPyRegtest` is used to perform regression testing on three examples from the Modelica standard library, namely
+* `Modelica.Electrical.Analog.Examples.HeatingRectifier`
 * `Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes`
 
 The whole test definition and the explanation of what follows is contained in the file [test_modelica_electrical_analog_examples.py](/examples/test_Modelica_Electrical_Analog_Examples/test_modelica_electrical_analog_examples.py). **Here we show how the example has been set up.** 
 
 Both regression tests shall be done as a single test case, so that e.g. all examples in `Modelica.Electrical.Analog.Examples` are handled in the same test case. 
 
-
 ### Step 1: Folder to hold test case
-Create the folder `examples/test_Modelica_Electrical_Analog_Examples`. This is where the test definition and the intermediate test results go. 
+Have a look at the folder `examples/test_Modelica_Electrical_Analog_Examples`. 
+This is where the test definition and the intermediate test results go. 
 
+To help `unittest` identify this as a test, the folder name starts with `test_`. 
 
-To help `unittest` identify this as a test, start the folder name with `test_`. 
-
-
-It is strongly recommended to avoid the `.` character in folder names since Python interprets anything following the `.` in the folder name as a reference to a Python package. 
-
+It is strongly recommended to avoid the `.` character in folder names since Python interprets anything following the `.` 
+in the folder name as a reference to a Python package. 
 
 ### Step 2: Reference results
-Create the folder `examples/test_Modelica_Electrical_Analog_Examples/references`. This is where the reference results for the models `Modelica.Electrical.Analog.Examples.HeatingRectifier` and `Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes` shall be copied in the `.csv` format. In our case, you shall find
-
-```
-examples/test_Modelica_Electrical_Analog_Examples/references/Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv
-```
-
+Look at the folder `examples/test_Modelica_Electrical_Analog_Examples/references`. 
+This is where the reference results for the models 
+`Modelica.Electrical.Analog.Examples.HeatingRectifier` and `Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes` 
+are located. Note the `.csv` format. 
 
 ### Step 3: Test definition
-Create the file `examples/test_Modelica_Electrical_Analog_Examples/test_modelica_electrical_analog_examples.py`. The file name is not important, other than having it start with `test_` and end with `.py`. This file contains the entire test definition. 
+Look at the file `examples/test_Modelica_Electrical_Analog_Examples/test_modelica_electrical_analog_examples.py`. 
+The file name is not important, other than having it start with `test_` and end with `.py`. 
+This file contains the entire test definition. 
 
+Make sure to have the `mopyregtest` module installed by running `pip3 install --user .` from the [`mopyregtest` root directory](/). 
+Now `mopyregtest` can be imported as a module into the test case definition file. 
 
-This section defines the essential imports to run the test. For other test definitions, the relative loction of the `mopyregtest` module to the test definition file might be different and has to be adapted. In this case it location relative to `test_modelica_electrical_analog_examples.py` is `../../src/`. 
-
-```python
-# Preparing the dependencies ##################################################
-# Essential
-import unittest 
-
-# For convenience in handling paths
-import pathlib
-
-# Where to find MoPyRegtest: Temporarily add mopyregtest module to Python path
-this_folder = pathlib.Path(__file__).absolute().parent
-import sys
-sys.path.append(str(this_folder / "../../src/"))
-import mopyregtest
-```
-
-
-The next section defines variables that hold the location of the package the model to be tested is situated in. The definition below is the case of an Ubuntu installation where the OpenModelica system libraries are found under `/usr/lib/omlibrary/`. Under Windows this would be something like `C:\OpenModelica1.13.264bit\lib\omlibrary`. For other test scenarios this would be the absolute path to a user developed Modelica package. The `package_folder` variable holds the path to the actual package the model to be tested is situated in. More precisely, we look for the file `<package_folder>/package.mo`. The `result_folder` is where the intermediate results generated in translating, building and executing the actual model to be tested go. The `reference_folder` is where the reference simulation result files in `.csv` format are to be found. 
+The following section in the file defines variables that hold the location of the package the model to be tested is situated in. 
+For other test scenarios this would be the absolute path to a user developed Modelica package. 
+The `package_folder` variable holds the path to the actual package the model to be tested is situated in. 
+More precisely, we look for the file `<package_folder>/package.mo`. 
+The `result_folder` is where the intermediate results generated in translating, building and executing the actual model to be tested go. 
+The `reference_folder` is where the reference simulation result files in `.csv` format are to be found. 
 
 ```python
 # Setup the test data #########################################################
-# Example here for a Ubuntu environment with OpenModelica 
+# Example here for an Ubuntu environment with OpenModelica
 # installed like in https://openmodelica.org/download/download-linux
+# and using the default OpenModelica package manager
 
-# Path to Modelica library or model to be tested. Here Modelica.Electrical
-package_folder = "/usr/lib/omlibrary/Modelica 3.2.2/Electrical/"
+# Path to Modelica library or model to be tested. Here Modelica.Electrial
+if platform.system() == 'Windows':
+    package_folder = pathlib.Path.home() / "AppData/Roaming/.openmodelica/libraries/Modelica 4.0.0+maint.om"
+else:
+    package_folder = pathlib.Path.home() / ".openmodelica/libraries/Modelica 4.0.0+maint.om/Electrical"
 
 # Where to put results from this test
+this_folder = pathlib.Path(__file__).absolute().parent
 result_folder = this_folder
 
 # Where to find reference results for this test
 reference_folder = this_folder / "references"
 ```
-
-
-This section defines the actual test, which is the class `TestElectricalAnalogExamples`. It derives from `unittest.TestCase` and thus makes it manageable by the `unittest` module. The naming is important, the class (like in the [`PEP8` style guide for Python](https://www.python.org/dev/peps/pep-0008/)) shall be camelcase and start with `Test`, and all of its methods start with a lower case `test_`. See the [`unittest` documentation](https://docs.python.org/3/library/unittest.html) for details. Note that one child class of `unittest.TestCase` defines a test case -- if you want to split into multiple test cases, create multiple classes. 
-Inside each `test_` method, the actual `MoPyRegtest` object `tester` to perform the regression test is instantiated. The constructor of `mopyregtest.RegressionTest` gets the 
+This section defines the actual test, which is the class `TestElectricalAnalogExamples`. 
+It derives from `unittest.TestCase` and thus makes it manageable by the `unittest` module. 
+The naming is important, the class (like in the [`PEP8` style guide for Python](https://www.python.org/dev/peps/pep-0008/)) 
+shall be camelcase and start with `Test`, and all of its methods start with a lower case `test_`. 
+See the [`unittest` documentation](https://docs.python.org/3/library/unittest.html) for details. Note that one child class of `unittest.TestCase` defines a test case. 
+If you want to split into multiple test cases, create multiple classes. 
+Inside each `test_` method, the actual `mopyregtest.RegressionTest` object `tester` to perform the regression test is 
+instantiated. The constructor of `mopyregtest.RegressionTest` gets the 
 * package folder of the Modelica model to be tested in `package_folder=`
 * the actual Modelica model name in this package in `model_in_package=`
 * the result folder where the simulation output goes in `result_folder=`. 
-The actual execution and comparison with the reference result is done in `tester.compare_result`, which gets the path to the reference result as an argument in `reference_result=`. 
+The actual execution and comparison with the reference result is done in `tester.compare_result`, which gets the path to
+the reference result as an argument in `reference_result=`. 
 
-Finally, if `test.cleanup()` is called, the intermediate results are deleted automatically provided their containing folder has been created in the process. 
-**Leave this out if you feel uncomfortable with auto-deletion. Use it only after you verified yourself that the respective code does no harm.** Otherwise clean up manually. Note that **result folders for failed tests will not be deleted** in order to trace back any issues. 
+Finally, if `test.cleanup()` is called, the intermediate results are deleted automatically provided their containing 
+folder has been created in the process. 
+**Leave this out if you feel uncomfortable with auto-deletion. Use it only after you verified yourself that the respective code does no harm.**
+Otherwise clean up manually. Note that **result folders for failed tests will not be deleted** in order to trace back any issues. 
 
-By default, `test.cleanup()` will ask for user confirmation before cleaning up, i.e. user input in the command line. In case this is not wanted (e.g. for automated testing), just replace `test.cleanup()` with `tester.cleanup(ask_confirmation=False)`. 
+By default, `test.cleanup()` will ask for user confirmation before cleaning up, i.e. user input in the command line. 
+In case this is not wanted (e.g. for automated testing), just replace `test.cleanup()` with `tester.cleanup(ask_confirmation=False)`. 
 
 ```python
-# Define the test #############################################################
 class TestElectricalAnalogExamples(unittest.TestCase):
 
     # Testing Modelica.Electrical.Analog.Examples.HeatingRectifier
     def test_HeatingRectifier(self):
         tester = mopyregtest.RegressionTest(package_folder=package_folder,
                                             model_in_package="Modelica.Electrical.Analog.Examples.HeatingRectifier",
-                                            result_folder=result_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier")
-        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier_res.csv"))
-
-        # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
-        #tester.cleanup()
-
-        return
-
-    # Testing Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes
-    def test_CharacteristicIdealDiodes(self):
-        tester = mopyregtest.RegressionTest(package_folder=package_folder,
-                                            model_in_package="Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes",
-                                            result_folder=result_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes")
-        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv"))
+                                            result_folder=result_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier",
+                                            modelica_version="4.0.0",
+                                            dependencies=None)
+        tester.compare_result(reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier_res.csv"), tol=1e-3)
 
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
         #tester.cleanup()
@@ -120,6 +118,10 @@ class TestElectricalAnalogExamples(unittest.TestCase):
         return
 ```
 
+If you want to use other metrics for result comparison than the default one as above, you can add the parameter `metric`
+to `test.compare_result`. E.g. `metric=mopyregtest.metrics.Lp_dist` for the predefined metric with the Lebesgue space norm
+in L^2, or `metric=lambda r_ref, r_act: np.linalg.norm(r_ref[:, 1] - r_act[:, 1], ord=1)` as an example for a user-defined metric. 
+See the other methods in [test_modelica_electrical_analog_examples.py](/examples/test_Modelica_Electrical_Analog_Examples/test_modelica_electrical_analog_examples.py).
 
 This last part is to make the file `test_modelica_electrical_analog_examples.py` itself an executable test case. 
 
@@ -134,9 +136,11 @@ The test case can now be run from a command line in the folder `examples/test_Mo
 $ python3 test_modelica_electrical_analog_examples.py
 ```
 
-
 ### Step 4: Turn into Python module for test discovery
-If you want to have this test in `test_modelica_electrical_analog_examples.py` to be found automatically by Python `unittest` you need to turn the containing folder `test_Modelica_Electrical_Analog_Examples` into a Python module. This is simply done by adding the (empty) file `examples/test_Modelica_Electrical_Analog_Examples/__init__.py`. Also see the [documentation of `unittest` on test discovery](https://docs.python.org/3/library/unittest.html#test-discovery). 
+If you want to have this test in `test_modelica_electrical_analog_examples.py` to be found automatically by 
+Python `unittest` you need to turn the containing folder `test_Modelica_Electrical_Analog_Examples` into a Python module. 
+This is simply done by adding the (empty) file `examples/test_Modelica_Electrical_Analog_Examples/__init__.py`. 
+Also see the [documentation of `unittest` on test discovery](https://docs.python.org/3/library/unittest.html#test-discovery). 
 
 To verify, open a command line terminal and change to the folder `examples` and run
 
@@ -144,8 +148,6 @@ To verify, open a command line terminal and change to the folder `examples` and 
 python3 -m unittest
 ```
 
-which should trigger the same tests as when running `python3 test_modelica_electrical_analog_examples.py` and potentially many more tests in the examples folder
-
-## A note for Windows users
-If you use Windows and the popular [Anaconda Python distribution](https://www.anaconda.com/), it might be useful to call the `python` executable from the "Anaconda command prompt" application rather than the Windows command line "cmd". This is because the "Anaconda command prompt" reliably sets all the Python paths needed, which might be tricky under Windows "cmd". Note that the command there is `python` or `python.exe` (instead of `python3` on Linux).
+which should trigger the same tests as when running `python3 test_modelica_electrical_analog_examples.py` and 
+potentially many more tests in the examples folder
 

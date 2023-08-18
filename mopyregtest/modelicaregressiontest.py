@@ -13,7 +13,7 @@ import shutil
 import math
 import numpy as np
 import pandas as pd
-import functools
+from . import utils
 
 
 class RegressionTest:
@@ -28,20 +28,20 @@ class RegressionTest:
 
         Parameters
         ----------
-        package_folder : str
+        package_folder : str or PathLike
             Path of the folder the Modelica package containing the model to be tested
         model_in_package : str
             Name of the model to be tested
-        result_folder :
+        result_folder : str or PathLike
             Path of the folder where the output of the model testing shall be written to
-        tool:
+        tool : str
             Simulator used to translate, compile and execute Modelica model. The only valid 
             tool right now is omc (OpenModelica Compiler). If no argument is specified, 
             RegressionTest will search the PATH variable for omc and will execute the tests if found.
-        modelica_version:
+        modelica_version : str
             Version of the Modelica standard library to be loaded before the test is executed.
             Default is "default", other meaningful values can be "3.2.3" or "4.0.0".
-        dependencies:
+        dependencies : None or list[str]
             Optional list of strings with names of packages that the package to be tested depends on.
             Each dependency must point to the .mo file that defines the dependency. E.g. if the
             dependency is an entire package, it must be the path to the respective package's package.mo.
@@ -61,42 +61,6 @@ class RegressionTest:
             self.tools = [tl for tl in ["omc"] if shutil.which(tl) != None]
 
         self.result_folder_created = False
-
-    @staticmethod
-    def _ask_confirmation(question, max_asks=5):
-        answer = None
-
-        for q in range(0, max_asks):
-            print("{} [yes|no] ".format(question), end="")
-            answer_as_str = input()
-
-            if answer_as_str.strip().lower() == "yes":
-                answer = True
-                break
-            elif answer_as_str.strip().lower() == "no":
-                answer = False
-                break
-
-        if answer is None:
-            raise ValueError("Answer to question \"{}\" not understood. ".format(question))
-
-        return answer
-
-    @staticmethod
-    def _replace_in_file(filename, repl_dict):
-        fhandle = open(str(filename), 'r')
-        contents = fhandle.read()
-        fhandle.close()
-
-        for k, v in repl_dict.items():
-            contents = contents.replace(k, v)
-
-        fhandle = open(str(filename), 'w')
-        fhandle.truncate()
-        fhandle.write(contents)
-        fhandle.close()
-
-        return
 
     @staticmethod
     def _unify_timestamps(results: list[pd.DataFrame], fill_in_method="ffill"):
@@ -346,7 +310,7 @@ class RegressionTest:
         # Only cleanup folders created here
         if self.result_folder_created:
             if ask_confirmation:
-                do_delete = RegressionTest._ask_confirmation(
+                do_delete = utils.ask_confirmation(
                     "\nDo you want to delete the folder \n\n\t{}\n\nand all its subfolders?".format(self.result_folder_path))
                 if do_delete:
                     shutil.rmtree(self.result_folder_path)
@@ -401,7 +365,7 @@ class RegressionTest:
                 else:
                     repl_dict["DEPENDENCIES"] = ""
 
-                RegressionTest._replace_in_file(self.result_folder_path / model_import_mos, repl_dict)
+                utils.replace_in_file(self.result_folder_path / model_import_mos, repl_dict)
 
                 # Run the import script and write the output of the OpenModelica Compiler (omc) to omc_output
                 os.system(tool_executable + " {} > {}".format(model_import_mos, tool_output))
@@ -423,7 +387,7 @@ class RegressionTest:
                 repl_dict["TOLERANCE"] = tolerance
                 repl_dict["NUM_INTERVALS"] = num_intervals
 
-                RegressionTest._replace_in_file(self.result_folder_path / model_simulate_mos, repl_dict)
+                utils.replace_in_file(self.result_folder_path / model_simulate_mos, repl_dict)
 
                 # Run the simulation script and append the output of the OpenModelica Compiler (omc) to omc_output
                 os.system(tool_executable + " {} >> {}".format(model_simulate_mos, tool_output))
