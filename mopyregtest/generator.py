@@ -16,6 +16,8 @@ from .modelicaregressiontest import RegressionTest
 
 class Generator:
     """
+    Experimental
+
     Class that allows to automatically generate MoPyRegtest regression test definitions for a given library.
     This is make it easier to retroactively turn e.g. an Examples package of an existing Modelica library into
     regression tests with minimal effort.
@@ -233,8 +235,8 @@ if __name__ == '__main__':
                 r_ref = self._generate_reference(reference_folder=test_folder / "references",
                                                  model_in_package=md, do_cleanup=cleanup_ref_gen)
             else:
-                r_ref = references[md]
-                shutil.copyfile(r_ref, test_folder / "references" / f"{md}_res.csv")
+                r_ref = str(test_folder / "references" / f"{md}_res.csv")
+                shutil.copyfile(references[md], r_ref)
 
             dependencies_str = "None" if self.dependencies is None else "[{}]".format(",".join(self.dependencies))
             repl_dict = {
