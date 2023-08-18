@@ -241,12 +241,12 @@ if __name__ == '__main__':
             dependencies_str = "None" if self.dependencies is None else "[{}]".format(",".join(self.dependencies))
             repl_dict = {
                 "$$METHOD_NAME$$": md.lower().replace(".", "_"),
-                "$$PACKAGE_FOLDER$$": str(self.package_folder),
+                "$$PACKAGE_FOLDER$$": str(pathlib.Path(self.package_folder).as_posix()),
                 "$$MODEL_IN_PACKAGE$$": md,
-                "$$RESULT_FOLDER$$": str(test_results_folder),
+                "$$RESULT_FOLDER$$": str(pathlib.Path(test_results_folder).as_posix()),
                 "$$MODELICA_VERSION$$": self.modelica_version,
                 "$$DEPENDENCIES$$": dependencies_str,
-                "$$REFERENCE_RESULT$$": r_ref,
+                "$$REFERENCE_RESULT$$": str(pathlib.Path(r_ref).as_posix()),
                 "$$METRIC$$": self.metric,
                 "$$TOLERANCE$$": str(self.tol),
                 "$$UNIFY_TIMESTAMPS$$": str(self.unify_timestamps),
