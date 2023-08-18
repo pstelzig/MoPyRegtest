@@ -33,8 +33,8 @@ if __name__ == "__main__":
 
     test_name = args.test_name
     test_folder = pathlib.Path(args.test_folder)
-    reference_folder = test_folder / "references"
-    result_folder = test_folder / "results"
+    reference_folder = "references"
+    result_folder = "results"
     package_folder = args.package_folder
     models_in_package = args.models_in_package.split(",")
 

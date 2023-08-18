@@ -169,15 +169,13 @@ if __name__ == '__main__':
 
         # Copy reference result file from temporary folder into reference target folder
         res_file = f"{model_in_package}_res.csv"
-        r_ref = str(pathlib.Path(reference_folder) / res_file)
-
-        shutil.copyfile(pathlib.Path(tmp_res_folder) / res_file, r_ref)
+        shutil.copyfile(pathlib.Path(tmp_res_folder) / res_file, str(pathlib.Path(reference_folder) / res_file))
 
         # Cleanup temporary directory with simulation data
         if do_cleanup:
             shutil.rmtree(tmp_res_folder)
 
-        return r_ref
+        return
 
     def generate_tests(self, test_folder, test_name, test_results_folder,
                        references=None, generate_missing_refs=True,
@@ -231,12 +229,12 @@ if __name__ == '__main__':
 
         # Creating a test method for every element in self.models_in_package
         for md in self.models_in_package:
+            r_ref_relpath = f"references/{md}_res.csv"
             if (references is None or md not in references.keys()) and generate_missing_refs:
-                r_ref = self._generate_reference(reference_folder=test_folder / "references",
-                                                 model_in_package=md, do_cleanup=cleanup_ref_gen)
+                self._generate_reference(reference_folder=test_folder / "references",
+                                         model_in_package=md, do_cleanup=cleanup_ref_gen)
             else:
-                r_ref = str(test_folder / "references" / f"{md}_res.csv")
-                shutil.copyfile(references[md], r_ref)
+                shutil.copyfile(references[md], str(test_folder / r_ref_relpath))
 
             dependencies_str = "None" if self.dependencies is None else "[{}]".format(",".join(self.dependencies))
             repl_dict = {
@@ -246,7 +244,7 @@ if __name__ == '__main__':
                 "$$RESULT_FOLDER$$": str(pathlib.Path(test_results_folder).as_posix()),
                 "$$MODELICA_VERSION$$": self.modelica_version,
                 "$$DEPENDENCIES$$": dependencies_str,
-                "$$REFERENCE_RESULT$$": str(pathlib.Path(r_ref).as_posix()),
+                "$$REFERENCE_RESULT$$": str(pathlib.Path(r_ref_relpath).as_posix()),
                 "$$METRIC$$": self.metric,
                 "$$TOLERANCE$$": str(self.tol),
                 "$$UNIFY_TIMESTAMPS$$": str(self.unify_timestamps),
