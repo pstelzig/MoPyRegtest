@@ -14,6 +14,7 @@ import math
 import numpy as np
 import pandas as pd
 from . import utils
+from . import metrics
 
 
 class RegressionTest:
@@ -215,7 +216,7 @@ class RegressionTest:
         return
 
     def compare_result(self, reference_result, tol=1e-7, validated_cols=[],
-                       metric=lambda r_ref, r_act: np.linalg.norm(r_ref[:, 1] - r_act[:, 1], ord=np.inf),
+                       metric=metrics.norm_infty_dist,
                        unify_timestamps=True, fill_in_method="ffill"):
         """
         Executes simulation and then compares the obtained result and the reference result along the
@@ -238,7 +239,16 @@ class RegressionTest:
 
             where :math:`r_\text{ref}, r_\text{act} \in \mathbb{R}^N` denote the reference and the actual result
             with timestamps :math:`t \in 1,\ldots,N`. Note that the timestamps of both results are unified using
-            the method _unify_timestamps
+            the method _unify_timestamps.
+
+            This default function is implemented in 
+
+                metric=metrics.norm_infty_dist
+
+            but we could also have put an in-place definition using lambda functions like
+
+                metric=lambda r_ref, r_act: np.linalg.norm(r_ref[:, 1] - r_act[:, 1], ord=np.inf)
+
         unify_timestamps : bool
             Boolean controlling whether the timestamp unification shall be called in compare_result before evaluating
             the metric. Default=True.
