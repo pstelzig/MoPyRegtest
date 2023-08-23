@@ -7,7 +7,7 @@ testing on Modelica models.
 
 ### Manual test case definition
 Really quick introduction (read the in-depth explanation below to know what you are doing!): 
-* Install MoPyRegtest locally (!) from the same folder where its `setup.py` is found with pip, e.g. like `pip3 install --user .`
+* Install MoPyRegtest locally (!) from the same folder where its [setup.py](/setup.py) is found with pip, e.g. like `pip3 install --user .`
 * Go to [test_Modelica_Electrical_Analog_Examples](/examples/test_Modelica_Electrical_Analog_Examples)
 * Copy and modify the file [test_modelica_electrical_analog_examples.py](/examples/test_Modelica_Electrical_Analog_Examples/test_modelica_electrical_analog_examples.py) according to your needs
 * Execute the modified file like `python3 test_modelica_electrical_analog_examples.py`
@@ -21,11 +21,11 @@ can be found in the following section.
 * Copy and modify the file [gentests_modelica_blocks_sources.py](/examples/generate_tests/gentests_modelica_blocks_sources.py) according to your needs
 * Execute the modified file like `python3 gentests_modelica_blocks_sources.py` (or whatever you named the file now) 
   to create the regression tests defined in that file
-* This will produce MoPyRegtest test case definitions in `test_blocksuserdef.py` (or how you adapted it) and copy all
+* This will produce MoPyRegtest test case definitions in test_blocksuserdef.py (or how you adapted it) and copy all
   the reference files into a subfolder `references`. The test cases can then be executed 
   like `python3 test_blocksuserdef.py`
 
-## Example `test_Modelica_Electrical_Analog_Examples`
+## Manual test definition example
 In the example (see the folder [test_Modelica_Electrical_Analog_Examples](/examples/test_Modelica_Electrical_Analog_Examples)) `MoPyRegtest` is used to perform 
 regression testing on three examples from the Modelica standard library, namely
 * `Modelica.Electrical.Analog.Examples.HeatingRectifier`
@@ -39,7 +39,7 @@ The regression tests shall be done as a single test case. For instance, in this 
 `Modelica.Electrical.Analog.Examples` could be handled in the same test case. 
 
 ### Step 1: Folder to hold test case
-Have a look at the folder `examples/test_Modelica_Electrical_Analog_Examples`. 
+Have a look at the folder [examples/test_Modelica_Electrical_Analog_Examples](/examples/test_Modelica_Electrical_Analog_Examples). 
 This is where the test definition and the intermediate test results go. 
 
 To help `unittest` identify this as a test, the folder name starts with `test_`. 
@@ -139,23 +139,32 @@ user-defined metric. See the methods in
 [test_modelica_electrical_analog_examples.py](/examples/test_Modelica_Electrical_Analog_Examples/test_modelica_electrical_analog_examples.py),
 or the dedicated example [test_user_defined_metrics.py](/examples/test_user_defined_metrics/test_user_defined_metrics.py)
 
-This last part is to make the file `test_modelica_electrical_analog_examples.py` itself an executable test case. 
+This last part is to make the file 
+[test_modelica_electrical_analog_examples.py](/examples/test_Modelica_Electrical_Analog_Examples/test_modelica_electrical_analog_examples.py) 
+itself an executable test case. 
 
 ```python
 if __name__ == '__main__':
     unittest.main()
 ```
 
-The test case can now be run from a command line in the folder `examples/test_Modelica_Electrical_Analog_Examples/` by typing
+The test case can now be run from a command line in the folder 
+[examples/test_Modelica_Electrical_Analog_Examples](/examples/test_Modelica_Electrical_Analog_Examples) by typing
 
 ```bash
 $ python3 test_modelica_electrical_analog_examples.py
 ```
 
 ### Step 4: Turn into Python module for test discovery
-If you want that the tests from `test_modelica_electrical_analog_examples.py` can be found automatically by 
-Python `unittest`, you need to turn the containing folder `test_Modelica_Electrical_Analog_Examples` into a Python module. 
-This is simply done by adding the (empty) file `examples/test_Modelica_Electrical_Analog_Examples/__init__.py`. 
+If you want that the tests from 
+[test_modelica_electrical_analog_examples.py](/examples/test_Modelica_Electrical_Analog_Examples/test_modelica_electrical_analog_examples.py) 
+can be found automatically by 
+Python `unittest`, you need to turn the containing folder 
+[test_Modelica_Electrical_Analog_Examples](/examples/test_Modelica_Electrical_Analog_Examples) 
+into a Python module. 
+This is simply done by adding the (empty) file 
+[__init__.py](/examples/test_Modelica_Electrical_Analog_Examples/__init__.py) to the folder 
+[test_Modelica_Electrical_Analog_Examples](/examples/test_Modelica_Electrical_Analog_Examples)
 Also see the [documentation of `unittest` on test discovery](https://docs.python.org/3/library/unittest.html#test-discovery). 
 
 To verify, open a terminal, change to the folder `examples` and run
