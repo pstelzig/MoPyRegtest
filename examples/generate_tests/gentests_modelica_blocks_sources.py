@@ -42,8 +42,7 @@ models_in_package = ["Modelica.Blocks.Sources.Sine", "Modelica.Blocks.Sources.Ex
 gen = mopyregtest.Generator(package_folder=package_folder, models_in_package=models_in_package,
                             metric=mopyregtest.metrics.Lp_dist)
 gen.generate_tests(test_folder=this_folder / "gen_tests", test_name="BlocksLpDist",
-                   test_results_folder=this_folder / "results",
-                   cleanup_ref_gen=True)
+                   test_results_folder=this_folder / "results")
 
 # Generating a test battery with a user defined metric #################################################################
 # Models to generate regression tests for
@@ -52,5 +51,4 @@ models_in_package = ["Modelica.Blocks.Sources.Cosine", "Modelica.Blocks.Sources.
 gen = mopyregtest.Generator(package_folder=package_folder, models_in_package=models_in_package,
                             metric="lambda r_ref, r_act: np.linalg.norm(r_ref[:, 1] - r_act[:, 1], ord=np.inf)")
 gen.generate_tests(test_folder=this_folder / "gen_tests", test_name="BlocksUserDef",
-                   test_results_folder=this_folder / "results",
-                   cleanup_ref_gen=True)
+                   test_results_folder=this_folder / "results")
