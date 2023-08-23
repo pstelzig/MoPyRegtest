@@ -15,7 +15,7 @@ if __name__ == "__main__":
         epilog="Command line interface for the experimental MoPyRegtest test case generator. "
               "This interface is a simplified version. If you want to use all options, please consider "
               "creating a dedicated Python script.")
-    parser.add_argument("test_folder", type=str, help="Path where test shall be generated. Must not exist yet")
+    parser.add_argument("test_folder", type=str, help="Path where test shall be generated. Advice: Should not exist yet")
     parser.add_argument("test_name", type=str, help="Name of the test. Do not use special characters")
     parser.add_argument("package_folder", type=str,
                         help="Path to Modelica package from which models shall be tested. Relative paths are possible")
