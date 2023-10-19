@@ -86,11 +86,11 @@ if __name__ == '__main__':
         package_folder : str or PathLike
             Path to the package, from which elements shall be turned into regression tests. Relative paths to the
             file that instantiates a Generator class are possible.
-        models_in_package : list[str]
+        models_in_package : List[str]
             List of strings with Modelica names of elements in the library to be turned into regression tests.
         modelica_version : str
             Modelica STL version as a string. Default value is "default"
-        dependencies : None or list[str]
+        dependencies : None or List[str]
             Optional list of strings with names of packages that the package to be tested depends on.
             Each dependency must point to the .mo file that defines the dependency. E.g. if the
             dependency is an entire package, it must be the path to the respective package's package.mo.

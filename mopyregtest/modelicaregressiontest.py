@@ -13,6 +13,7 @@ import shutil
 import math
 import numpy as np
 import pandas as pd
+from typing import List
 from . import utils
 from . import metrics
 
@@ -42,7 +43,7 @@ class RegressionTest:
         modelica_version : str
             Version of the Modelica standard library to be loaded before the test is executed.
             Default is "default", other meaningful values can be "3.2.3" or "4.0.0".
-        dependencies : None or list[str]
+        dependencies : None or List[str]
             Optional list of strings with names of packages that the package to be tested depends on.
             Each dependency must point to the .mo file that defines the dependency. E.g. if the
             dependency is an entire package, it must be the path to the respective package's package.mo.
@@ -64,7 +65,7 @@ class RegressionTest:
         self.result_folder_created = False
 
     @staticmethod
-    def _unify_timestamps(results: list[pd.DataFrame], fill_in_method="ffill"):
+    def _unify_timestamps(results: List[pd.DataFrame], fill_in_method="ffill"):
         """
         From a list of pandas DataFrame objects containing the results of Modelica
         simulation runs, a list of extended results is generated, each of which
@@ -80,7 +81,7 @@ class RegressionTest:
 
         Parameters
         ----------
-        results : list[pd.DataFrame]
+        results : List[pd.DataFrame]
             List of pandas DataFrame objects containing the results of Modelica
             simulation runs
         fill_in_method : str
@@ -91,7 +92,7 @@ class RegressionTest:
 
         Returns
         -------
-        out : list[pd.DataFrame]
+        out : List[pd.DataFrame]
             List of extended pandas DataFrame objects, each of which has the
             same timestamps and missing data has been filled in
         """
