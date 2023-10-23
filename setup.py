@@ -1,7 +1,10 @@
 import setuptools
+import re
 
 with open("README.md") as fh:
     long_description = fh.read()
+    md_links_re = re.compile(r"\[(.+)\]\(/([^\)]*)\)")
+    long_description = md_links_re.sub(r"[\1](https://github.com/pstelzig/MoPyRegtest/tree/master/\2)", long_description)
 
 setuptools.setup(
     name="MoPyRegtest",

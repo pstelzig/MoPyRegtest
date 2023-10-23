@@ -50,8 +50,8 @@ Examples can be found in the `examples` folder. Also see the [examples/README.md
 
 ### Automatic test case generation
 MoPyRegtest can generate regression test definitions for elements of a Modelica library automatically. 
-Either by creating [Generator](/mopyregtest/generator.py) class objects. Or from the command line using the 
-[testgen.py](/tools/testgen.py) script. 
+Either by creating [Generator class objects](/mopyregtest/generator.py). Or from the command line using the 
+[testgen.py script](/tools/testgen.py). 
 
 The [examples folder generate_tests](/examples/generate_tests) has a detailed example on how to automatically 
 generate tests using a Python script.
