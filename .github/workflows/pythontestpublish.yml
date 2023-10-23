@@ -1,5 +1,6 @@
 name: Test Upload Python Package
-on: [workflow_dispatch]
+on:
+  push
 jobs:
   test-deploy:
     runs-on: ubuntu-latest
