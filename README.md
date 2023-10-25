@@ -77,15 +77,23 @@ pip3 install --user mopyregtest
 To install a specific version, e.g. `v0.3.1`, run `pip3 install --user mopyregtest==0.3.1`. 
 
 ### Install from source
-Just clone this repository to your local `<your-mopyregtest-dir>` (adapt to your needs). Then run
+To install from source, first clone this repository to your local `<your-mopyregtest-dir>` (adapt to your needs) with
+the command `git clone https://github.com/pstelzig/MoPyRegtest.git <your-mopyregtest-dir>`
+
+Then run
 
 ```bash
 cd <your-mopyregtest-dir>
 pip3 install --user .
 ```
 
-to get the latest development head. To install a specific version, e.g. `v0.3.1`, first run `git checkout v0.3.1`
-in the `<your-mopyregtest-dir>` where you cloned the repository into, and then `pip3 install --user .`. 
+to get the latest development head. To install a specific version from source, e.g. `v0.3.1`, run 
+
+```bash
+cd <your-mopyregtest-dir>
+git checkout v0.3.1
+pip3 install --user .
+``` 
 
 ### Uninstall
 To uninstall `MoPyRegtest`, run
