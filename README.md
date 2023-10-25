@@ -22,7 +22,8 @@ The scope of `MoPyRegtest` is to have a lightweight and simple way to perform re
 this with automated testing and continuous integration (CI) toolchains, like e.g. GitHub Actions. 
 Without immediately requiring commercial simulation tools or creating strong dependencies from other Modelica libraries.
 
-All that is needed to use `MoPyRegtest` is a Python 3 installation, an [OpenModelica](https://www.openmodelica.org/) installation and a text editor. 
+All that is needed to use `MoPyRegtest` is a Python 3 installation, an [OpenModelica](https://www.openmodelica.org/) installation, 
+and a text editor. 
 
 ## Current realization
 The current realization uses the [Python `unittest` module](https://docs.python.org/3/library/unittest.html) and calls the [OpenModelica compiler `omc`](https://openmodelica.org/) as an 
@@ -30,13 +31,14 @@ external executable for translation and simulation of Modelica models. Note that
 specific to OpenModelica but can be replaced by any other Modelica simulation tool that comes with a suitable scripting API. 
 
 The test execution and orchestration is done by the Python `unittest` module. In particular, Python `unittest` supports 
-[test discovery](https://docs.python.org/3/library/unittest.html#test-discovery). Also, `unittest` is a standard module that comes with virtually all Python distributions. 
+[test discovery](https://docs.python.org/3/library/unittest.html#test-discovery). 
+Also, `unittest` is a standard module that comes with virtually all Python distributions. 
 
 **MoPyRegtest is work in progress!**
 
 
 ## Usage and example
-With `MoPyRegtest` users can define regression tests manually in Python for one Modelica model at a time, 
+With `MoPyRegtest`, users can define regression tests manually in Python for one Modelica model at a time, 
 or automatically for many Modelica models simultaneously.  
 
 ### Manual test case definition
@@ -77,9 +79,10 @@ pip3 uninstall mopyregtest
 ```
 
 ## Future Work
-* Support other simulators like e.g. Dymola, MapleSim, SystemModeler or others
-* Make definition of the tests even simpler, e.g. using a more human-readable BDD approach
 * Allow for parallel execution of regression tests
+* Improve readability of in particular failed test results 
+* Provide logs that help users in the analysis of failed tests
+* Make definition of the tests even simpler, e.g. using a more human-readable BDD approach 
 
 ## Open source software used
 MoPyRegtest is implemented in Python3 and uses the Python core modules (including `pathlib` and `unittest`) along with 
