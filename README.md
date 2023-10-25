@@ -36,7 +36,6 @@ Also, `unittest` is a standard module that comes with virtually all Python distr
 
 **MoPyRegtest is work in progress!**
 
-
 ## Usage and example
 With `MoPyRegtest`, users can define regression tests manually in Python for one Modelica model at a time, 
 or automatically for many Modelica models simultaneously.  
@@ -65,15 +64,31 @@ To use `MoPyRegtest` you need to have
 * the OpenModelica compiler executable `omc` must be accessible via the `PATH` variable.
 
 ## Installation using pip3
-If you want to install `MoPyRegtest` using [Python's package manager `pip`](https://packaging.python.org/tutorials/installing-packages/), 
-just clone this repo to your local `<your-mopyregtest-dir>` (adapt to your needs) and then run
+It is most convenient to install `MoPyRegtest` using [Python's package manager `pip`](https://packaging.python.org/tutorials/installing-packages/).
+`MoPyRegtest` does not need any special privileges to run. 
+
+### Install from PyPI
+You can install `MoPyRegtest` from the [Python Package Index](https://pypi.org/project/MoPyRegtest/) by running
+
+```bash
+pip3 install --user mopyregtest
+```
+
+To install a specific version, e.g. `v0.3.1`, run `pip3 install --user mopyregtest==0.3.1`. 
+
+### Install from source
+Just clone this repository to your local `<your-mopyregtest-dir>` (adapt to your needs). Then run
 
 ```bash
 cd <your-mopyregtest-dir>
 pip3 install --user .
 ```
 
-To uninstall, run
+to get the latest development head. To install a specific version, e.g. `v0.3.1`, first run `git checkout v0.3.1`
+in the `<your-mopyregtest-dir>` where you cloned the repository into, and then `pip3 install --user .`. 
+
+### Uninstall
+To uninstall `MoPyRegtest`, run
 ```bash
 pip3 uninstall mopyregtest
 ```
