@@ -65,7 +65,7 @@ To use `MoPyRegtest` you need to have
 
 ## Installation using pip3
 It is most convenient to install `MoPyRegtest` using [Python's package manager `pip`](https://packaging.python.org/tutorials/installing-packages/).
-`MoPyRegtest` does not need any special privileges to run. 
+`MoPyRegtest` *does not need any special privileges* to run.  
 
 ### Install from PyPI
 You can install `MoPyRegtest` from the [Python Package Index](https://pypi.org/project/MoPyRegtest/) by running
@@ -74,7 +74,7 @@ You can install `MoPyRegtest` from the [Python Package Index](https://pypi.org/p
 pip3 install --user mopyregtest
 ```
 
-To install a specific version, e.g. `v0.3.1`, run `pip3 install --user mopyregtest==0.3.1`. 
+To install a specific version, e.g. `v0.3.1`, run `pip3 install --user mopyregtest==0.3.1` 
 
 ### Install from source
 To install from source, first clone this repository to your local `<your-mopyregtest-dir>` (adapt to your needs) with
