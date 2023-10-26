@@ -17,13 +17,13 @@ jobs:
       - name: Install MoPyRegtest with current code
         run: |
           pip3 install --user .
-          export PATH=$PATH:$HOME/.local/bin
       - name: Run regression test examples
         run: |
           cd examples
           python3 -m unittest
       - name: Run test generation examples with command line tool
         run: |
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
           cd examples/generate_tests
           mopyregtest ./gen_tests BlocksLpDist \
             ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" \
