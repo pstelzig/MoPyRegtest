@@ -8,9 +8,11 @@ MIT License. See the project's LICENSE file.
 
 import argparse
 import pathlib
-import mopyregtest
+from mopyregtest import metrics
+from mopyregtest import Generator
 
-if __name__ == "__main__":
+
+def main():
     parser = argparse.ArgumentParser(
         epilog="Command line interface for the experimental MoPyRegtest test case generator. "
               "This interface is a simplified version. If you want to use all options, please consider "
@@ -33,7 +35,6 @@ if __name__ == "__main__":
 
     test_name = args.test_name
     test_folder = pathlib.Path(args.test_folder)
-    reference_folder = "references"
     result_folder = "results"
     package_folder = args.package_folder
     models_in_package = args.models_in_package.split(",")
@@ -43,18 +44,18 @@ if __name__ == "__main__":
     else:
         references = None
 
-    metric = mopyregtest.metrics.norm_infty_dist
+    metric = metrics.norm_infty_dist
     if args.metric is not None:
         if args.metric == "norm_p_dist":
-            metric = mopyregtest.metrics.norm_p_dist
+            metric = metrics.norm_p_dist
         elif args.metric == "norm_infty_dist":
-            metric = mopyregtest.metrics.norm_infty_dist
+            metric = metrics.norm_infty_dist
         elif args.metric == "Lp_dist":
-            metric = mopyregtest.metrics.Lp_dist
+            metric = metrics.Lp_dist
         elif args.metric == "Linfty_dist":
-            metric = mopyregtest.metrics.Linfty_dist
+            metric = metrics.Linfty_dist
         else:
             raise ValueError("Invalid value for metric")
 
-    gen = mopyregtest.Generator(package_folder=package_folder, models_in_package=models_in_package, metric=metric)
+    gen = Generator(package_folder=package_folder, models_in_package=models_in_package, metric=metric)
     gen.generate_tests(test_folder, test_name, result_folder, references)
