@@ -23,9 +23,8 @@ jobs:
           python3 -m unittest
       - name: Run test generation examples with command line tool
         run: |
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
           cd examples/generate_tests
-          mopyregtest ./gen_tests BlocksLpDist \
+          /github/home/.local/bin/mopyregtest ./gen_tests BlocksLpDist \
             ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" \
             Modelica.Blocks.Sources.Sine,Modelica.Blocks.Sources.ExpSine,Modelica.Blocks.Sources.Step \
             --metric=Lp_dist
