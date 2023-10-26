@@ -17,6 +17,7 @@ jobs:
       - name: Install MoPyRegtest with current code
         run: |
           pip3 install --user .
+          export PATH=$PATH:$HOME/.local/bin
       - name: Run regression test examples
         run: |
           cd examples
