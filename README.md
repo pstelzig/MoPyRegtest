@@ -1,6 +1,6 @@
 # MoPyRegtest: A Python enabled simple regression testing framework for Modelica models
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/pstelzig/MoPyRegtest/tree/master/LICENSE)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/pstelzig/MoPyRegtest/issues)
 
 Scope of this project is to 
@@ -47,15 +47,15 @@ The user has to
 * create a Python file and test methods that instantiate a `mopyregtest.RegressionTest` object, 
   which needs to know which Modelica model to test and where to find the reference result. 
 
-Examples can be found in the `examples` folder. Also see the [examples/README.md](/examples/README.md). 
+Examples can be found in the `examples` folder. Also see the [examples/README.md](https://github.com/pstelzig/MoPyRegtest/tree/master/examples/README.md). 
 
 ### Automatic test case generation
 MoPyRegtest can generate regression test definitions for elements of a Modelica library automatically. 
-Either by creating [Generator class objects](/mopyregtest/generator.py). Or from the command line using the 
-[testgen.py script](/tools/testgen.py). 
+Either by creating [Generator class objects](https://github.com/pstelzig/MoPyRegtest/tree/master/mopyregtest/generator.py). Or using the 
+[`mopyregtest` command line tool](https://github.com/pstelzig/MoPyRegtest/blob/master/mopyregtest/cli.py).
 
-The [examples folder generate_tests](/examples/generate_tests) has a detailed example on how to automatically 
-generate tests using a Python script.
+The folder [examples/generate_tests/README.md](https://github.com/pstelzig/MoPyRegtest/tree/master/examples/generate_tests/README.md) 
+has a detailed explanation on how to automatically generate tests.
 
 ## Prerequisites
 To use `MoPyRegtest` you need to have
@@ -74,7 +74,7 @@ You can install `MoPyRegtest` from the [Python Package Index](https://pypi.org/p
 pip3 install --user mopyregtest
 ```
 
-To install a specific version, e.g. `v0.3.1`, run `pip3 install --user mopyregtest==0.3.1` 
+To install a specific version, e.g. `v0.3.2`, run `pip3 install --user mopyregtest==0.3.2` 
 
 ### Install from source
 To install from source, first clone this repository to your local `<your-mopyregtest-dir>` (adapt to your needs) with
@@ -87,11 +87,11 @@ cd <your-mopyregtest-dir>
 pip3 install --user .
 ```
 
-to get the latest development head. To install a specific version from source, e.g. `v0.3.1`, run 
+to get the latest development head. To install a specific version from source, e.g. `v0.3.2`, run 
 
 ```bash
 cd <your-mopyregtest-dir>
-git checkout v0.3.1
+git checkout v0.3.2
 pip3 install --user .
 ``` 
 
