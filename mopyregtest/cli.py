@@ -12,27 +12,7 @@ from mopyregtest import metrics
 from mopyregtest import Generator
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        epilog="Command line interface for the experimental MoPyRegtest test case generator. "
-              "This interface is a simplified version. If you want to use all options, please consider "
-              "creating a dedicated Python script.")
-    parser.add_argument("test_folder", type=str, help="Path where test shall be generated. Advice: Should not exist yet")
-    parser.add_argument("test_name", type=str, help="Name of the test. Do not use special characters")
-    parser.add_argument("package_folder", type=str,
-                        help="Path to Modelica package from which models shall be tested. Relative paths are possible")
-    parser.add_argument("models_in_package", type=str,
-                        help="Comma separated list of model names like <model name1>,<model name2> "
-                             "to be turned into regression tests")
-    parser.add_argument("--metric", type=str, help="Metric to be used. Choose here from predefined values. "
-                        "For user-defined metrics please consider creating the tests with a dedicated script.",
-                        choices=["norm_p_dist", "norm_infty_dist", "Lp_dist", "Linfty_dist"], default="norm_infty_dist")
-    parser.add_argument("--references", type=str,
-                        help="Comma separated list like <model name1>:</path/to/ref1.csv>,<model name2>:</path/to/ref2.csv>. "
-                        "Missing references for models here will be generated.")
-
-    args = parser.parse_args()
-
+def generate(args):
     test_name = args.test_name
     test_folder = pathlib.Path(args.test_folder)
     result_folder = "results"
@@ -59,3 +39,37 @@ def main():
 
     gen = Generator(package_folder=package_folder, models_in_package=models_in_package, metric=metric)
     gen.generate_tests(test_folder, test_name, result_folder, references)
+
+    return
+
+
+def main():
+    # Main parser
+    main_parser = argparse.ArgumentParser(
+        prog="mopyregtest",
+        epilog="Command line interface for MoPyRegtest, the CI friendly regression testing tool for Modelica models. "
+               "This command line interface is a simplified version to interact with MoPyRegtest. "
+               "If you want to use all options, please consider creating a dedicated Python script.")
+    subparsers = main_parser.add_subparsers(title="subcommands", help="mopyregtest CLI command overview")
+
+    # mopyregtest generate
+    generate_parser = subparsers.add_parser("generate", help="Generate test case definitions")
+
+    # mopyregtest generate [--metric {norm_p_dist,norm_infty_dist,Lp_dist,Linfty_dist}] [--references REFERENCES]  test_folder test_name package_folder models_in_package
+    generate_parser.add_argument("test_folder", type=str, help="Path where test shall be generated. Advice: Should not exist yet")
+    generate_parser.add_argument("test_name", type=str, help="Name of the test. Do not use special characters")
+    generate_parser.add_argument("package_folder", type=str,
+                                 help="Path to Modelica package from which models shall be tested. Relative paths are possible")
+    generate_parser.add_argument("models_in_package", type=str,
+                                 help="Comma separated list of model names like <model name1>,<model name2> "
+                                      "to be turned into regression tests")
+    generate_parser.add_argument("--metric", type=str, help="Metric to be used. Choose here from predefined values. "
+                                                            "For user-defined metrics please consider creating the tests with a dedicated script.",
+                                 choices=["norm_p_dist", "norm_infty_dist", "Lp_dist", "Linfty_dist"], default="norm_infty_dist")
+    generate_parser.add_argument("--references", type=str,
+                                 help="Comma separated list like <model name1>:</path/to/ref1.csv>,<model name2>:</path/to/ref2.csv>. "
+                                      "Missing references for models here will be generated.")
+    generate_parser.set_defaults(func=generate)
+
+    args = main_parser.parse_args()
+    args.func(args)
