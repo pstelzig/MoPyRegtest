@@ -21,10 +21,19 @@ jobs:
         run: |
           cd examples
           python3 -m unittest
-      - name: Run test generation examples
+      - name: Run test generation examples with command line tool
+        run: |
+          cd examples/generate_tests
+          /github/home/.local/bin/mopyregtest ./gen_tests BlocksLpDist_from_cli \
+            ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" \
+            Modelica.Blocks.Sources.Sine,Modelica.Blocks.Sources.ExpSine,Modelica.Blocks.Sources.Step \
+            --metric=Lp_dist
+          cd gen_tests
+          python3 test_blockslpdist_from_cli.py
+      - name: Run test generation examples with script
         run: |
           cd examples/generate_tests
           python3 gentests_modelica_blocks_sources.py
           cd gen_tests
-          python3 test_blockslpdist.py
-          python3 test_blocksuserdef.py
+          python3 test_blockslpdist_from_script.py
+          python3 test_blocksuserdef_from_script.py

@@ -27,5 +27,10 @@ setuptools.setup(
     install_requires=[
         "numpy",
         "pandas"
-    ]
+    ],
+    entry_points={
+        'console_scripts': [
+            'mopyregtest = mopyregtest.cli:main',
+        ]
+    }
 )
