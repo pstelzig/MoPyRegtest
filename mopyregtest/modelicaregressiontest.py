@@ -182,11 +182,11 @@ class RegressionTest:
 
             # Fill in values at missing timestamps
             if fill_in_method == "ffill":
-                results_ext[i] = results_ext[i].fillna(method="ffill", axis=0)
+                results_ext[i] = results_ext[i].ffill(axis=0)
             elif fill_in_method == "bfill":
-                results_ext[i] = results_ext[i].fillna(method="bfill", axis=0)
+                results_ext[i] = results_ext[i].bfill(axis=0)
             elif fill_in_method == "interpolate":
-                results_ext[i] = results_ext[i].interpolate()
+                results_ext[i] = results_ext[i].interpolate(axis=0)
             else:
                 raise ValueError("Unknown filling method for NaN values")
 
