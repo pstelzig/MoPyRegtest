@@ -74,7 +74,7 @@ You can install `MoPyRegtest` from the [Python Package Index](https://pypi.org/p
 pip3 install --user mopyregtest
 ```
 
-To install a specific version, e.g. `v0.3.2`, run `pip3 install --user mopyregtest==0.3.2` 
+To install a specific version, e.g. `v0.3.1`, run `pip3 install --user mopyregtest==0.3.1` 
 
 ### Install from source
 To install from source, first clone this repository to your local `<your-mopyregtest-dir>` (adapt to your needs) with
@@ -87,11 +87,11 @@ cd <your-mopyregtest-dir>
 pip3 install --user .
 ```
 
-to get the latest development head. To install a specific version from source, e.g. `v0.3.2`, run 
+to get the latest development head. To install a specific version from source, e.g. `v0.3.1`, run 
 
 ```bash
 cd <your-mopyregtest-dir>
-git checkout v0.3.2
+git checkout v0.3.1
 pip3 install --user .
 ``` 
 
