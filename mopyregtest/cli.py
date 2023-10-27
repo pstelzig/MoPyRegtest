@@ -8,6 +8,7 @@ MIT License. See the project's LICENSE file.
 
 import argparse
 import pathlib
+import sys
 from mopyregtest import metrics
 from mopyregtest import Generator, RegressionTest
 
@@ -66,7 +67,7 @@ def compare(args):
     return
 
 
-def main():
+def parse_args(cmd_args):
     # Main parser
     main_parser = argparse.ArgumentParser(
         prog="mopyregtest",
@@ -118,5 +119,9 @@ def main():
                                 choices=["ffill", "bfill", "interpolate"], default="ffill")
     compare_parser.set_defaults(func=compare)
 
-    args = main_parser.parse_args()
+    args = main_parser.parse_args(cmd_args)
     args.func(args)
+
+
+def main():
+    parse_args(sys.argv[1:])
