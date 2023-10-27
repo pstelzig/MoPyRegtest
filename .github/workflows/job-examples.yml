@@ -24,10 +24,10 @@ jobs:
       - name: Run test generation examples with command line tool
         run: |
           cd examples/generate_tests
-          /github/home/.local/bin/mopyregtest ./gen_tests BlocksLpDist_from_cli \
+          /github/home/.local/bin/mopyregtest generate --metric=Lp_dist \
+            ./gen_tests BlocksLpDist_from_cli \
             ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" \
-            Modelica.Blocks.Sources.Sine,Modelica.Blocks.Sources.ExpSine,Modelica.Blocks.Sources.Step \
-            --metric=Lp_dist
+            Modelica.Blocks.Sources.Sine,Modelica.Blocks.Sources.ExpSine,Modelica.Blocks.Sources.Step
           cd gen_tests
           python3 test_blockslpdist_from_cli.py
       - name: Run test generation examples with script
