@@ -216,6 +216,36 @@ class RegressionTest:
 
         return
 
+    @staticmethod
+    def compare_csv_files(reference_result, simulation_result,
+                          tol=1e-7, validated_cols=[],
+                          metric=metrics.norm_infty_dist,
+                          unify_timestamps=True, fill_in_method="ffill"):
+
+        ref_data = pd.read_csv(filepath_or_buffer=reference_result, delimiter=',')
+        result_data = pd.read_csv(filepath_or_buffer=simulation_result, delimiter=',')
+
+        if unify_timestamps:
+            data_ext = RegressionTest._unify_timestamps([ref_data, result_data], fill_in_method)
+            ref_data = data_ext[0]
+            result_data = data_ext[1]
+
+        # Determine common columns by comparing column headers
+        common_cols = set(ref_data.columns).intersection(set(result_data.columns))
+
+        if not validated_cols:
+            validated_cols = common_cols
+
+        for c in validated_cols:
+            print("Comparing column \"{}\"".format(c))
+            delta = metric(ref_data[["time", c]].values, result_data[["time", c]].values)
+            if np.abs(delta) >= tol:
+                raise AssertionError(
+                    f"Values in Colum {c} of results {simulation_result} and {reference_result} differ by " \
+                    f"{np.abs(delta)} which is larger than {tol}.")
+
+        return
+
     def compare_result(self, reference_result, tol=1e-7, validated_cols=[],
                        metric=metrics.norm_infty_dist,
                        unify_timestamps=True, fill_in_method="ffill"):
@@ -228,7 +258,7 @@ class RegressionTest:
         reference_result : str
             Path to a reference .csv file containing the expected results of the model
         tol : float
-            Absolute tolerance up to which equality is tested
+            Absolute tolerance up to which deviation in the comparison metric is accepted
         validated_cols : list
             List of variable names (from the file header) in the reference .csv file that are used in the regression test
         metric : Callable
@@ -277,26 +307,8 @@ class RegressionTest:
 
         print("Comparing simulation result {} and reference {}".format(simulation_result, reference_result))
 
-        ref_data = pd.read_csv(filepath_or_buffer=reference_result, delimiter=',')
-        result_data = pd.read_csv(filepath_or_buffer=simulation_result, delimiter=',')
-
-        if unify_timestamps:
-            data_ext = self._unify_timestamps([ref_data, result_data], fill_in_method)
-            ref_data = data_ext[0]
-            result_data = data_ext[1]
-
-        # Determine common columns by comparing column headers
-        common_cols = set(ref_data.columns).intersection(set(result_data.columns))
-
-        if not validated_cols:
-            validated_cols = common_cols
-
-        for c in validated_cols:
-            print("Comparing column \"{}\"".format(c))
-            delta = metric(ref_data[["time", c]].values, result_data[["time", c]].values)
-            if np.abs(delta) >= tol:
-                raise AssertionError(f"Values in Colum {c} of results {simulation_result} and {reference_result} differ by " \
-                                     f"{np.abs(delta)} which is larger than {tol}.")
+        RegressionTest.compare_csv_files(reference_result, simulation_result,
+                                         tol=1e-7, validated_cols=[])
 
         return
 
