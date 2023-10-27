@@ -56,7 +56,7 @@ change to the folder [examples/generate_tests](/examples/generate_tests), and si
 
 ```bash
 cd examples/generate_tests
-mopyregtest ./gen_tests BlocksLpDist ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" Modelica.Blocks.Sources.Sine,Modelica.Blocks.Sources.ExpSine,Modelica.Blocks.Sources.Step --metric=Lp_dist
+mopyregtest ./gen_tests BlocksLpDist_from_cli ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" Modelica.Blocks.Sources.Sine,Modelica.Blocks.Sources.ExpSine,Modelica.Blocks.Sources.Step --metric=Lp_dist
 ```
 
 and for Windows just adapt the path to the Modelica Standard library, e.g. to 
