@@ -217,11 +217,36 @@ class RegressionTest:
         return
 
     @staticmethod
-    def compare_csv_files(reference_result, simulation_result,
-                          tol=1e-7, validated_cols=[],
+    def compare_csv_files(reference_result, simulation_result, tol=1e-7, validated_cols=[],
                           metric=metrics.norm_infty_dist,
                           unify_timestamps=True, fill_in_method="ffill"):
+        """
+        Compares two CSV files from Modelica simulation runs, one as a reference result, the other one as the actual
+        simulation result.
 
+        The default values of this function are identical to the ones in RegressionTest.compare_result
+
+        Parameters
+        ----------
+        reference_result : str
+            Path to a reference .csv file
+        simulation_result  : str
+            Path to a simulation result .csv file
+        tol : float
+            See doc string of RegressionTest.compare_result
+        validated_cols : list
+            See doc string of RegressionTest.compare_result
+        metric : Callable
+            See doc string of RegressionTest.compare_result
+        unify_timestamps : bool
+            See doc string of RegressionTest.compare_result
+        fill_in_method : str
+            See doc string of RegressionTest.compare_result
+
+        Returns
+        -------
+        out : None
+        """
         ref_data = pd.read_csv(filepath_or_buffer=reference_result, delimiter=',')
         result_data = pd.read_csv(filepath_or_buffer=simulation_result, delimiter=',')
 
@@ -307,8 +332,9 @@ class RegressionTest:
 
         print("Comparing simulation result {} and reference {}".format(simulation_result, reference_result))
 
-        RegressionTest.compare_csv_files(reference_result, simulation_result,
-                                         tol=1e-7, validated_cols=[])
+        RegressionTest.compare_csv_files(reference_result, simulation_result, tol, validated_cols,
+                                         metric,
+                                         unify_timestamps, fill_in_method)
 
         return
 
