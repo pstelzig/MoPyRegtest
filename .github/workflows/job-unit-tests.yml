@@ -3,6 +3,7 @@ on: [workflow_dispatch]
 jobs:
   unit-test:
     runs-on: ubuntu-latest
+    container: openmodelica/openmodelica:v1.21.0-minimal
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
