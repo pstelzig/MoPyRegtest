@@ -10,13 +10,13 @@ class TestMetrics(unittest.TestCase):
                       [10, -5]])
 
         p = 2
-        self.assertAlmostEquals(mopyregtest.metrics.Lp_norm(f), ((1-0) * 1**p + (3-1) * 2**p + (10-3) * 3**p)**(1/p))
+        self.assertAlmostEqual(mopyregtest.metrics.Lp_norm(f), ((1-0) * 1**p + (3-1) * 2**p + (10-3) * 3**p)**(1/p))
 
         p = 3
-        self.assertAlmostEquals(mopyregtest.metrics.Lp_norm(f, p), ((1-0) * 1**p + (3-1) * 2**p + (10-3) * 3**p)**(1/p))
+        self.assertAlmostEqual(mopyregtest.metrics.Lp_norm(f, p), ((1-0) * 1**p + (3-1) * 2**p + (10-3) * 3**p)**(1/p))
 
         p = 1
-        self.assertAlmostEquals(mopyregtest.metrics.Lp_norm(f, p), ((1-0) * 1**p + (3-1) * 2**p + (10-3) * 3**p)**(1/p))
+        self.assertAlmostEqual(mopyregtest.metrics.Lp_norm(f, p), ((1-0) * 1**p + (3-1) * 2**p + (10-3) * 3**p)**(1/p))
 
     def test_Lp_dist(self):
         f1 = np.array([[0, 1],
@@ -41,10 +41,10 @@ class TestMetrics(unittest.TestCase):
                        [10, -5]])
 
         p = 2
-        self.assertAlmostEquals(mopyregtest.metrics.Lp_dist(f1, f2), ((1-0) * 6**p + (3-1) * 4**p + (10-3) * 8**p)**(1/p))
+        self.assertAlmostEqual(mopyregtest.metrics.Lp_dist(f1, f2), ((1-0) * 6**p + (3-1) * 4**p + (10-3) * 8**p)**(1/p))
 
         p = 3
-        self.assertAlmostEquals(mopyregtest.metrics.Lp_dist(f1, f2, p), ((1-0) * 6**p + (3-1) * 4**p + (10-3) * 8**p)**(1/p))
+        self.assertAlmostEqual(mopyregtest.metrics.Lp_dist(f1, f2, p), ((1-0) * 6**p + (3-1) * 4**p + (10-3) * 8**p)**(1/p))
 
         p = 2
         self.assertRaises(ValueError, mopyregtest.metrics.Lp_dist, f1=f1, f2=f3, p=p)
@@ -58,7 +58,7 @@ class TestMetrics(unittest.TestCase):
                       [3, -3],
                       [10, -5]])
 
-        self.assertAlmostEquals(mopyregtest.metrics.Linfty_norm(f), 5)
+        self.assertAlmostEqual(mopyregtest.metrics.Linfty_norm(f), 5)
 
     def test_Linfty_dist(self):
         f1 = np.array([[0, 1],
@@ -82,7 +82,7 @@ class TestMetrics(unittest.TestCase):
                        [3, -3],
                        [10, -5]])
 
-        self.assertAlmostEquals(mopyregtest.metrics.Linfty_dist(f1, f2), 8)
+        self.assertAlmostEqual(mopyregtest.metrics.Linfty_dist(f1, f2), 8)
 
         self.assertRaises(ValueError, mopyregtest.metrics.Linfty_dist, f1=f1, f2=f3)
 
@@ -111,12 +111,12 @@ class TestMetrics(unittest.TestCase):
                        [10, -5]])
 
         p = 2
-        self.assertAlmostEquals(mopyregtest.metrics.norm_p_dist(f1, f2),
-                                (6 ** p + 4 ** p + 8 ** p + 7 ** p)**(1/p))
+        self.assertAlmostEqual(mopyregtest.metrics.norm_p_dist(f1, f2),
+                               (6 ** p + 4 ** p + 8 ** p + 7 ** p)**(1/p))
 
         p = 3
-        self.assertAlmostEquals(mopyregtest.metrics.norm_p_dist(f1, f2, p),
-                                (6 ** p + 4 ** p + 8 ** p + 7 ** p)**(1/p))
+        self.assertAlmostEqual(mopyregtest.metrics.norm_p_dist(f1, f2, p),
+                               (6 ** p + 4 ** p + 8 ** p + 7 ** p)**(1/p))
 
         p = 2
         self.assertRaises(ValueError, mopyregtest.metrics.norm_p_dist, f1=f1, f2=f3, p=p)
@@ -146,7 +146,7 @@ class TestMetrics(unittest.TestCase):
                        [3, -3],
                        [10, -5]])
 
-        self.assertAlmostEquals(mopyregtest.metrics.norm_infty_dist(f1, f2), 8)
+        self.assertAlmostEqual(mopyregtest.metrics.norm_infty_dist(f1, f2), 8)
 
         self.assertRaises(ValueError, mopyregtest.metrics.norm_infty_dist, f1=f1, f2=f3)
 

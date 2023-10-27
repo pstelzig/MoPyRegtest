@@ -21,13 +21,13 @@ jobs:
         run: |
           cd examples
           python3 -m unittest
-      - name: Run test generation examples with command line tool
+      - name: Run test generation examples with mopyregtest command line tool
         run: |
           cd examples/generate_tests
-          /github/home/.local/bin/mopyregtest ./gen_tests BlocksLpDist_from_cli \
+          /github/home/.local/bin/mopyregtest generate --metric=Lp_dist \
+            ./gen_tests BlocksLpDist_from_cli \
             ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" \
-            Modelica.Blocks.Sources.Sine,Modelica.Blocks.Sources.ExpSine,Modelica.Blocks.Sources.Step \
-            --metric=Lp_dist
+            Modelica.Blocks.Sources.Sine,Modelica.Blocks.Sources.ExpSine,Modelica.Blocks.Sources.Step
           cd gen_tests
           python3 test_blockslpdist_from_cli.py
       - name: Run test generation examples with script
@@ -37,3 +37,12 @@ jobs:
           cd gen_tests
           python3 test_blockslpdist_from_script.py
           python3 test_blocksuserdef_from_script.py
+      - name: Run CSV file comparison with mopyregtest command line tool
+        run: |
+          /github/home/.local/bin/mopyregtest compare \
+          --metric=Lp_dist \
+          --tol=0.015 \
+          --vars=y \
+          --fill-in-method=interpolate \
+          ./examples/test_user_defined_metrics/references/SineNoisy_res.csv \
+          ./examples/test_user_defined_metrics/references/Sine_res.csv

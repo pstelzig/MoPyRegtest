@@ -25,8 +25,30 @@ mopyregtest --help
 which will print
 
 ```bash
-usage: mopyregtest [-h] [--metric {norm_p_dist,norm_infty_dist,Lp_dist,Linfty_dist}] [--references REFERENCES]
-                   test_folder test_name package_folder models_in_package
+usage: mopyregtest [-h] {generate} ...
+
+options:
+  -h, --help  show this help message and exit
+
+subcommands:
+  {generate}  mopyregtest CLI command overview
+    generate  Generate test case definitions
+
+Command line interface for MoPyRegtest, the CI friendly regression testing tool for Modelica models. This command line interface is a simplified version to
+interact with MoPyRegtest. If you want to use all options, please consider creating a dedicated Python script.
+```
+
+and furthermore
+
+```bash
+mopyregtest generate --help
+```
+
+tells you
+
+```bash
+usage: mopyregtest generate [-h] [--metric {norm_p_dist,norm_infty_dist,Lp_dist,Linfty_dist}] [--references REFERENCES]
+                            test_folder test_name package_folder models_in_package
 
 positional arguments:
   test_folder           Path where test shall be generated. Advice: Should not exist yet
@@ -37,14 +59,11 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   --metric {norm_p_dist,norm_infty_dist,Lp_dist,Linfty_dist}
-                        Metric to be used. Choose here from predefined values. For user-defined metrics please consider creating the tests with a
-                        dedicated script.
+                        Metric to be used. Choose here from predefined values. For user-defined metrics please consider creating the tests with a dedicated
+                        script.
   --references REFERENCES
-                        Comma separated list like <model name1>:</path/to/ref1.csv>,<model name2>:</path/to/ref2.csv>. Missing references for models
-                        here will be generated.
-
-Command line interface for the experimental MoPyRegtest test case generator. This interface is a simplified version. If you want to use all options,
-please consider creating a dedicated Python script.
+                        Comma separated list like <model name1>:</path/to/ref1.csv>,<model name2>:</path/to/ref2.csv>. Missing references for models here will
+                        be generated.
 ```
 
 Just like in the
@@ -56,7 +75,7 @@ change to the folder [examples/generate_tests](/examples/generate_tests), and si
 
 ```bash
 cd examples/generate_tests
-mopyregtest ./gen_tests BlocksLpDist_from_cli ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" Modelica.Blocks.Sources.Sine,Modelica.Blocks.Sources.ExpSine,Modelica.Blocks.Sources.Step --metric=Lp_dist
+mopyregtest generate --metric=Lp_dist ./gen_tests BlocksLpDist_from_cli ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" Modelica.Blocks.Sources.Sine,Modelica.Blocks.Sources.ExpSine,Modelica.Blocks.Sources.Step
 ```
 
 and for Windows just adapt the path to the Modelica Standard library, e.g. to 

@@ -182,11 +182,11 @@ class RegressionTest:
 
             # Fill in values at missing timestamps
             if fill_in_method == "ffill":
-                results_ext[i] = results_ext[i].fillna(method="ffill", axis=0)
+                results_ext[i] = results_ext[i].ffill(axis=0)
             elif fill_in_method == "bfill":
-                results_ext[i] = results_ext[i].fillna(method="bfill", axis=0)
+                results_ext[i] = results_ext[i].bfill(axis=0)
             elif fill_in_method == "interpolate":
-                results_ext[i] = results_ext[i].interpolate()
+                results_ext[i] = results_ext[i].interpolate(axis=0)
             else:
                 raise ValueError("Unknown filling method for NaN values")
 
@@ -216,6 +216,61 @@ class RegressionTest:
 
         return
 
+    @staticmethod
+    def compare_csv_files(reference_result, simulation_result, tol=1e-7, validated_cols=[],
+                          metric=metrics.norm_infty_dist,
+                          unify_timestamps=True, fill_in_method="ffill"):
+        """
+        Compares two CSV files from Modelica simulation runs, one as a reference result, the other one as the actual
+        simulation result.
+
+        The default values of this function are identical to the ones in RegressionTest.compare_result
+
+        Parameters
+        ----------
+        reference_result : str
+            Path to a reference .csv file
+        simulation_result  : str
+            Path to a simulation result .csv file
+        tol : float
+            See doc string of RegressionTest.compare_result
+        validated_cols : list
+            See doc string of RegressionTest.compare_result
+        metric : Callable
+            See doc string of RegressionTest.compare_result
+        unify_timestamps : bool
+            See doc string of RegressionTest.compare_result
+        fill_in_method : str
+            See doc string of RegressionTest.compare_result
+
+        Returns
+        -------
+        out : None
+        """
+        ref_data = pd.read_csv(filepath_or_buffer=reference_result, delimiter=',')
+        result_data = pd.read_csv(filepath_or_buffer=simulation_result, delimiter=',')
+
+        if unify_timestamps:
+            data_ext = RegressionTest._unify_timestamps([ref_data, result_data], fill_in_method)
+            ref_data = data_ext[0]
+            result_data = data_ext[1]
+
+        # Determine common columns by comparing column headers
+        common_cols = set(ref_data.columns).intersection(set(result_data.columns))
+
+        if not validated_cols:
+            validated_cols = common_cols
+
+        for c in validated_cols:
+            print("Comparing column \"{}\"".format(c))
+            delta = metric(ref_data[["time", c]].values, result_data[["time", c]].values)
+            if np.abs(delta) >= tol:
+                raise AssertionError(
+                    f"Values in Colum {c} of results {simulation_result} and {reference_result} differ by " \
+                    f"{np.abs(delta)} which is larger than {tol}.")
+
+        return
+
     def compare_result(self, reference_result, tol=1e-7, validated_cols=[],
                        metric=metrics.norm_infty_dist,
                        unify_timestamps=True, fill_in_method="ffill"):
@@ -228,7 +283,7 @@ class RegressionTest:
         reference_result : str
             Path to a reference .csv file containing the expected results of the model
         tol : float
-            Absolute tolerance up to which equality is tested
+            Absolute tolerance up to which deviation in the comparison metric is accepted
         validated_cols : list
             List of variable names (from the file header) in the reference .csv file that are used in the regression test
         metric : Callable
@@ -277,26 +332,9 @@ class RegressionTest:
 
         print("Comparing simulation result {} and reference {}".format(simulation_result, reference_result))
 
-        ref_data = pd.read_csv(filepath_or_buffer=reference_result, delimiter=',')
-        result_data = pd.read_csv(filepath_or_buffer=simulation_result, delimiter=',')
-
-        if unify_timestamps:
-            data_ext = self._unify_timestamps([ref_data, result_data], fill_in_method)
-            ref_data = data_ext[0]
-            result_data = data_ext[1]
-
-        # Determine common columns by comparing column headers
-        common_cols = set(ref_data.columns).intersection(set(result_data.columns))
-
-        if not validated_cols:
-            validated_cols = common_cols
-
-        for c in validated_cols:
-            print("Comparing column \"{}\"".format(c))
-            delta = metric(ref_data[["time", c]].values, result_data[["time", c]].values)
-            if np.abs(delta) >= tol:
-                raise AssertionError(f"Values in Colum {c} of results {simulation_result} and {reference_result} differ by " \
-                                     f"{np.abs(delta)} which is larger than {tol}.")
+        RegressionTest.compare_csv_files(reference_result, simulation_result, tol, validated_cols,
+                                         metric,
+                                         unify_timestamps, fill_in_method)
 
         return
 
