@@ -21,7 +21,7 @@ jobs:
         run: |
           cd examples
           python3 -m unittest
-      - name: Run test generation examples with command line tool
+      - name: Run test generation examples with mopyregtest command line tool
         run: |
           cd examples/generate_tests
           /github/home/.local/bin/mopyregtest generate --metric=Lp_dist \
@@ -37,3 +37,12 @@ jobs:
           cd gen_tests
           python3 test_blockslpdist_from_script.py
           python3 test_blocksuserdef_from_script.py
+      - name: Run CSV file comparison with mopyregtest command line tool
+        run: |
+          /github/home/.local/bin/mopyregtest compare \
+          --metric=Lp_dist \
+          --tol=0.015 \
+          --vars=sine.y,y \
+          --fill-in-method=interpolate \
+          ./examples/test_user_defined_metrics/references/SineNoisy_res.csv \
+          ./examples/test_user_defined_metrics/references/Sine_res.csv
