@@ -6,7 +6,7 @@ testing on Modelica models.
 
 ### Manual test case definition
 Really quick introduction (read the in-depth explanation below to know what you are doing!): 
-* Install MoPyRegtest locally (!) from the same folder where its [setup.py](/setup.py) is found with pip, e.g. like `pip3 install --user .`
+* Install MoPyRegtest with pip like described in the [main README.md](/README.md), e.g. with `pip3 install --user .`
 * Go to [test_Modelica_Electrical_Analog_Examples](/examples/test_Modelica_Electrical_Analog_Examples)
 * Copy and modify the file [test_modelica_electrical_analog_examples.py](/examples/test_Modelica_Electrical_Analog_Examples/test_modelica_electrical_analog_examples.py) according to your needs
 * Execute the modified file like `python3 test_modelica_electrical_analog_examples.py`
@@ -21,9 +21,9 @@ can be found in
 * Copy and modify the file [gentests_modelica_blocks_sources.py](/examples/generate_tests/gentests_modelica_blocks_sources.py) according to your needs
 * Execute the modified file like `python3 gentests_modelica_blocks_sources.py` (or whatever you named the file now) 
   to create the regression tests defined in that file
-* This will produce MoPyRegtest test case definitions in test_blocksuserdef.py (or how you adapted it) and copy all
-  the reference files into a subfolder `references`. The test cases can then be executed 
-  like `python3 test_blocksuserdef.py`
+* This will produce MoPyRegtest test case definitions in test_blocksuserdef_from_script.py (or how you adapted it) and copy all
+  the reference files into a subfolder called references. The test cases can then be executed 
+  like `python3 test_blocksuserdef_from_script.py`
 
 For a more in-depth explanation turn to
 [generate_tests/README.md](/examples/generate_tests/README.md).

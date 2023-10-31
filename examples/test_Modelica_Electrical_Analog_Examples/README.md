@@ -1,5 +1,5 @@
 # Manual test definition example
-In the example (see the folder [test_Modelica_Electrical_Analog_Examples](/examples/test_Modelica_Electrical_Analog_Examples)) `MoPyRegtest` is used to perform 
+In the example (see the folder [test_Modelica_Electrical_Analog_Examples](/examples/test_Modelica_Electrical_Analog_Examples)) MoPyRegtest is used to perform 
 regression testing on three examples from the Modelica standard library, namely
 * `Modelica.Electrical.Analog.Examples.HeatingRectifier`
 * `Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes` (twice, using different comparison metrics)
@@ -31,8 +31,8 @@ Look at the file `examples/test_Modelica_Electrical_Analog_Examples/test_modelic
 The file name is not important, other than having it start with `test_` and end with `.py`. 
 This file contains the entire test definition. 
 
-Make sure to have the `mopyregtest` module installed by running `pip3 install --user .` from the 
-[`mopyregtest` root directory](/). Now `mopyregtest` can be imported as a module into the test case definition file. 
+Make sure to have the `mopyregtest` module installed, see the [main README.md](/README.md). 
+Now `mopyregtest` can be imported as a module into the test case definition file. 
 
 The following section in the file defines variables that hold the location of the Modelica package containing the models
 we want to test. For other test scenarios this would be the path to a user developed Modelica package.
@@ -72,8 +72,7 @@ Inside each `test_` method, the `mopyregtest.RegressionTest` object `tester` tes
 actual regression. The constructor of `mopyregtest.RegressionTest` gets the 
 * package folder of the Modelica model to be tested in `package_folder=`
 * the actual Modelica model name in this package in `model_in_package=`
-* the result folder where the simulation output goes in `result_folder=`. 
-
+* the result folder where the simulation output goes in `result_folder=`.
 * The execution and comparison with the reference result is done in `tester.compare_result`, which gets the path to
 the reference result as an argument in `reference_result=`. 
 
