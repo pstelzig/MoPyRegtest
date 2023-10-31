@@ -22,7 +22,7 @@ class TestCli(unittest.TestCase):
         cmd_args = ["compare",
                      "--metric=Lp_dist",
                      "--tol=2.5e-4",
-                     "--vars=sine.y,y",
+                     "--validated-cols=sine.y,y",
                      "--fill-in-method=interpolate",
                      str(this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv"),
                      str(this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv")]
@@ -33,7 +33,7 @@ class TestCli(unittest.TestCase):
 
     def test_compare2(self):
         cmd_args = ["compare",
-                     "--vars=y",
+                     "--validated-cols=y",
                      "--fill-in-method=interpolate",
                      str(this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv"),
                      str(this_folder / "../examples/test_user_defined_metrics/references/Sine_res.csv")]

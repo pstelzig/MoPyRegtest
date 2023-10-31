@@ -52,8 +52,8 @@ def compare(args):
     ref_result = pathlib.Path(args.ref_csv_file).absolute()
     act_result = pathlib.Path(args.act_csv_file).absolute()
 
-    if args.vars is not None:
-        validated_cols = args.vars.split(",")
+    if args.validated_cols is not None:
+        validated_cols = args.validated_cols.split(",")
     else:
         validated_cols = []
 
@@ -103,7 +103,7 @@ def parse_args(cmd_args):
     # mopyregtest compare
     compare_parser = subparsers.add_parser("compare", help="Compare CSV result files")
 
-    # mopyregtest compare [--metric {norm_p_dist,norm_infty_dist,Lp_dist,Linfty_dist}] [--vars VARS] ref_csv_file act_csv_file
+    # mopyregtest compare [--metric {norm_p_dist,norm_infty_dist,Lp_dist,Linfty_dist}] [--validated-cols VALIDATED_COLS] ref_csv_file act_csv_file
     compare_parser.add_argument("ref_csv_file", type=str, help="Path of the reference CSV result file to compare")
     compare_parser.add_argument("act_csv_file", type=str, help="Path of the actual CSV result file to compare")
     compare_parser.add_argument("--metric", type=str,
@@ -111,7 +111,7 @@ def parse_args(cmd_args):
                                      "For user-defined metrics please consider creating the tests with a dedicated script.",
                                 choices=["norm_p_dist", "norm_infty_dist", "Lp_dist", "Linfty_dist"],
                                 default="norm_infty_dist")
-    compare_parser.add_argument("--vars", type=str,
+    compare_parser.add_argument("--validated-cols", type=str,
                                 help="Comma separated list like <var name 1>,<var name 2>. "
                                      "If omitted, then all common column names from both CSV files will be used.")
     compare_parser.add_argument("--tol", type=float,
