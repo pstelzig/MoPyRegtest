@@ -101,6 +101,29 @@ To uninstall MoPyRegtest, run
 pip3 uninstall mopyregtest
 ```
 
+### Troubleshooting
+
+#### Problem: CLI `mopyregtest` cannot be found
+To check if MoPyRegtest's command line tool is working, run `mopyregtest --help` from a terminal. 
+
+If an error message shows that the program `mopyregtest` cannot be found, then you have to check if your PATH variable 
+knows where to find `mopyregtest` as installed by pip. To find out the location, run `pip uninstall mopyregtest` but do 
+not confirm to proceed. The uninstallation will tell you which files pip would remove upon uninstalling MoPyRegtest, 
+including the `mopyregtest` executable (or `mopyregtest.exe` under Windows) and its location.
+
+```bash
+Found existing installation: MoPyRegtest 0.4.0rc1
+Uninstalling MoPyRegtest-0.4.0rc1:
+  Would remove:
+    /home/<your user name>/.local/bin/mopyregtest
+    /home/<your user name>/.local/lib/python3.10/site-packages/MoPyRegtest-0.4.0rc1.dist-info/*
+    /home/<your user name>/.local/lib/python3.10/site-packages/mopyregtest/*
+Proceed (Y/n)?
+```
+
+Then, one could either call `mopyregtest` with its full path, or one could add its parent folder to the PATH 
+variable (Be careful! First make sure that this does not cause any harm to your system). 
+
 ## Future Work
 * Allow for parallel execution of regression tests
 * Improve readability of in particular failed test results 
