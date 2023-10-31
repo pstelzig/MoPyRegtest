@@ -42,7 +42,7 @@ def generate(args):
     if args.metric is not None:
         metric = metric_str_to_func(args.metric)
 
-    gen = Generator(package_folder=package_folder, models_in_package=models_in_package, metric=metric)
+    gen = Generator(package_folder=package_folder, models_in_package=models_in_package, metric=metric, tol=args.tol)
     gen.generate_tests(test_folder, test_name, result_folder, references)
 
     return
@@ -92,6 +92,9 @@ def parse_args(cmd_args):
                                       "For user-defined metrics please consider creating the tests with a dedicated script. "
                                       "If omitted, the default is norm_infty_dist",
                                  choices=["norm_p_dist", "norm_infty_dist", "Lp_dist", "Linfty_dist"], default="norm_infty_dist")
+    generate_parser.add_argument("--tol", type=float,
+                                 help="Absolute tolerance up to which deviation in the comparison metric is accepted",
+                                 default=1e-7)
     generate_parser.add_argument("--references", type=str,
                                  help="Comma separated list like <model name1>:</path/to/ref1.csv>,<model name2>:</path/to/ref2.csv>. "
                                       "Missing references for models here will be generated.")

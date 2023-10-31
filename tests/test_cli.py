@@ -8,6 +8,7 @@ class TestCli(unittest.TestCase):
     def test_generate(self):
         cmd_args = ["generate",
                     "--metric=Lp_dist",
+                    "--tol=1.2e-5",
                     str(this_folder / "../examples/generate_tests/gen_tests"),
                     "BlocksLpDist_from_cli",
                     "~/.openmodelica/libraries/Modelica 4.0.0+maint.om/",
