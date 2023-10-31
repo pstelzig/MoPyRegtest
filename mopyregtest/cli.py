@@ -49,8 +49,8 @@ def generate(args):
 
 
 def compare(args):
-    reference_result = pathlib.Path(args.ref_csv_file).absolute()
-    simulation_result = pathlib.Path(args.act_csv_file).absolute()
+    ref_result = pathlib.Path(args.ref_csv_file).absolute()
+    act_result = pathlib.Path(args.act_csv_file).absolute()
 
     if args.vars is not None:
         validated_cols = args.vars.split(",")
@@ -61,7 +61,7 @@ def compare(args):
     if args.metric is not None:
         metric = metric_str_to_func(args.metric)
 
-    RegressionTest.compare_csv_files(reference_result, simulation_result,
+    RegressionTest.compare_csv_files(ref_result, act_result,
                                      args.tol, validated_cols, metric, True, args.fill_in_method)
 
     return
