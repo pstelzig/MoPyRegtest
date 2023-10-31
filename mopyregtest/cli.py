@@ -50,7 +50,7 @@ def generate(args):
 
 def compare(args):
     reference_result = pathlib.Path(args.ref_csv_file).absolute()
-    simulation_result = pathlib.Path(args.sim_csv_file).absolute()
+    simulation_result = pathlib.Path(args.act_csv_file).absolute()
 
     if args.vars is not None:
         validated_cols = args.vars.split(",")
