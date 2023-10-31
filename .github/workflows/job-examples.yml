@@ -42,7 +42,7 @@ jobs:
           /github/home/.local/bin/mopyregtest compare \
           --metric=Lp_dist \
           --tol=0.015 \
-          --vars=y \
+          --validated-cols=y \
           --fill-in-method=interpolate \
           ./examples/test_user_defined_metrics/references/SineNoisy_res.csv \
           ./examples/test_user_defined_metrics/references/Sine_res.csv
