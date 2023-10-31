@@ -25,14 +25,15 @@ mopyregtest --help
 which will print
 
 ```bash
-usage: mopyregtest [-h] {generate} ...
+usage: mopyregtest [-h] {generate,compare} ...
 
 options:
-  -h, --help  show this help message and exit
+  -h, --help          show this help message and exit
 
 subcommands:
-  {generate}  mopyregtest CLI command overview
-    generate  Generate test case definitions
+  {generate,compare}  mopyregtest CLI command overview
+    generate          Generate test case definitions
+    compare           Compare CSV result files
 
 Command line interface for MoPyRegtest, the CI friendly regression testing tool for Modelica models. This command line interface is a simplified version to
 interact with MoPyRegtest. If you want to use all options, please consider creating a dedicated Python script.
@@ -47,7 +48,7 @@ mopyregtest generate --help
 tells you
 
 ```bash
-usage: mopyregtest generate [-h] [--metric {norm_p_dist,norm_infty_dist,Lp_dist,Linfty_dist}] [--references REFERENCES]
+usage: mopyregtest generate [-h] [--metric {norm_p_dist,norm_infty_dist,Lp_dist,Linfty_dist}] [--tol TOL] [--references REFERENCES]
                             test_folder test_name package_folder models_in_package
 
 positional arguments:
@@ -60,7 +61,8 @@ options:
   -h, --help            show this help message and exit
   --metric {norm_p_dist,norm_infty_dist,Lp_dist,Linfty_dist}
                         Metric to be used. Choose here from predefined values. For user-defined metrics please consider creating the tests with a dedicated
-                        script.
+                        script. If omitted, the default is norm_infty_dist
+  --tol TOL             Absolute tolerance up to which deviation in the comparison metric is accepted
   --references REFERENCES
                         Comma separated list like <model name1>:</path/to/ref1.csv>,<model name2>:</path/to/ref2.csv>. Missing references for models here will
                         be generated.
