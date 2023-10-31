@@ -2,6 +2,6 @@ __pycache__
 *.pyd
 .idea/
 /examples/test_Modelica_Electrical_Analog_Examples/Modelica.Electrical.Analog.Examples*
-/examples/generate_tests/gen_tests
+/examples/generate_tests/gen_tests*
 build/
 MoPyRegtest.egg-info/
