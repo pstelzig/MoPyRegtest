@@ -5,9 +5,10 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/pstelzig/MoPyRegtest/issues)  
 
 **Project status**  
-![Unit tests](https://github.com/pstelzig/mopyregtest/actions/workflows/job-unit-tests.yml/badge.svg?branch=master)
-![Examples](https://github.com/pstelzig/mopyregtest/actions/workflows/job-examples.yml/badge.svg?branch=master)
-![Example usage in other repo](https://github.com/pstelzig/mopyregtest/actions/workflows/job-example-for-other-repo.yml/badge.svg?branch=master)  
+[![Unit tests](https://github.com/pstelzig/mopyregtest/actions/workflows/job-unit-tests.yml/badge.svg?branch=master)](https://github.com/pstelzig/MoPyRegtest/actions/workflows/job-unit-tests.yml)
+[![Examples](https://github.com/pstelzig/mopyregtest/actions/workflows/job-examples.yml/badge.svg?branch=master)](https://github.com/pstelzig/MoPyRegtest/actions/workflows/job-examples.yml)
+[![Example usage in other repo](https://github.com/pstelzig/mopyregtest/actions/workflows/job-example-for-other-repo.yml/badge.svg?branch=master)](https://github.com/pstelzig/MoPyRegtest/actions/workflows/job-example-for-other-repo.yml)
+[![Publish to PyPI](https://github.com/pstelzig/mopyregtest/actions/workflows/pythonpublish.yml/badge.svg)](https://pypi.org/project/MoPyRegtest/)
 
 Scope of this project is to 
 * provide a simple regression testing framework for Modelica models
