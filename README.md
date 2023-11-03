@@ -1,13 +1,13 @@
 # MoPyRegtest: A Python enabled simple regression testing framework for Modelica models
 
-**General**
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/pstelzig/MoPyRegtest/tree/master/LICENSE)
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/pstelzig/MoPyRegtest/issues)
+**General**  
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/pstelzig/MoPyRegtest/tree/master/LICENSE)  
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/pstelzig/MoPyRegtest/issues)  
 
-**Project status**
-![Unit tests](https://github.com/pstelzig/mopyregtest/actions/workflows/job-unit-tests.yml/badge.svg?branch=master)
-![Examples](https://github.com/pstelzig/mopyregtest/actions/workflows/job-examples.yml/badge.svg?branch=master)
-![Example usage in other repo](https://github.com/pstelzig/mopyregtest/actions/workflows/job-example-for-other-repo.yml/badge.svg?branch=master)
+**Project status**  
+![Unit tests](https://github.com/pstelzig/mopyregtest/actions/workflows/job-unit-tests.yml/badge.svg?branch=master)  
+![Examples](https://github.com/pstelzig/mopyregtest/actions/workflows/job-examples.yml/badge.svg?branch=master)  
+![Example usage in other repo](https://github.com/pstelzig/mopyregtest/actions/workflows/job-example-for-other-repo.yml/badge.svg?branch=master)  
 
 Scope of this project is to 
 * provide a simple regression testing framework for Modelica models
