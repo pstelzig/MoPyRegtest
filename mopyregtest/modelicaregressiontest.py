@@ -248,15 +248,15 @@ class RegressionTest:
         out : None
         """
         ref_data = pd.read_csv(filepath_or_buffer=reference_result, delimiter=',')
-        result_data = pd.read_csv(filepath_or_buffer=simulation_result, delimiter=',')
+        sim_data = pd.read_csv(filepath_or_buffer=simulation_result, delimiter=',')
 
         if unify_timestamps:
-            data_ext = RegressionTest._unify_timestamps([ref_data, result_data], fill_in_method)
+            data_ext = RegressionTest._unify_timestamps([ref_data, sim_data], fill_in_method)
             ref_data = data_ext[0]
-            result_data = data_ext[1]
+            sim_data = data_ext[1]
 
         # Determine common columns by comparing column headers
-        common_cols = set(ref_data.columns).intersection(set(result_data.columns))
+        common_cols = set(ref_data.columns).intersection(set(sim_data.columns))
 
         if not validated_cols:
             validated_cols = common_cols
@@ -268,22 +268,29 @@ class RegressionTest:
 
         if not validated_cols.issubset(set(ref_data.columns)):
             missing_cols = validated_cols.difference(set(ref_data.columns))
-            raise ValueError(f"The reference data does not contain all entries of validated_cols. Missing: {missing_cols}")
+            raise ValueError(f"The reference data {reference_result} does not contain all entries of validated_cols. "
+                             f"Missing: {missing_cols}")
 
-        if not validated_cols.issubset(set(result_data.columns)):
-            missing_cols = validated_cols.difference(set(result_data.columns))
-            raise ValueError(f"The reference data does not contain all entries of validated_cols. Missing: {missing_cols}")
+        if not validated_cols.issubset(set(sim_data.columns)):
+            missing_cols = validated_cols.difference(set(sim_data.columns))
+            raise ValueError(f"The simulation data {simulation_result} does not contain all entries of validated_cols." 
+                             f"Missing: {missing_cols}")
 
         if len(validated_cols) == 0:
-            raise ValueError("validated_cols must contain at least one common variable in reference and actual result")
+            raise ValueError(f"validated_cols must contain at least one common variable in "
+                             f"reference {reference_result} and simulation result {simulation_result}")
 
+        failed_cols = {}
         for c in validated_cols:
             print("Comparing column \"{}\"".format(c))
-            delta = metric(ref_data[["time", c]].values, result_data[["time", c]].values)
+            delta = metric(ref_data[["time", c]].values, sim_data[["time", c]].values)
             if np.abs(delta) >= tol:
-                raise AssertionError(
-                    f"Values in Colum {c} of results {simulation_result} and {reference_result} differ by " \
-                    f"{np.abs(delta)} which is larger than {tol}.")
+                failed_cols[c] = np.abs(delta)
+
+        if failed_cols:
+            raise AssertionError(
+                f"Values of results {simulation_result} and {reference_result} are different in columns "
+                f"{failed_cols.keys()} by more than {tol}. The individual deviations are {failed_cols}")
 
         return
 
