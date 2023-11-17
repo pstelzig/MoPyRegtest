@@ -1,102 +1,58 @@
 import unittest
 import mopyregtest
-import pandas as pd
 
 class TestCompareResults(unittest.TestCase):
-    def test_unify_timestamps_ffill(self):
-        res1 = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.5, 2.0, 4.0], [0.75, 3.0, 6.0], [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
-        res2 = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.25, 1.5, 3.0], [0.5, 2.0, 4.0], [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
+    def test_time_col_ignored(self):
+        """
+        Validates that time as a validated column is ignored in the result comparison
+        """
 
-        res1_ext_expect = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.25, 1.0, 2.0], [0.5, 2.0, 4.0], [0.75, 3.0, 6.0], [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
+        self.assertRaises(ValueError, mopyregtest.RegressionTest.compare_csv_files,
+                          reference_result="../examples/test_user_defined_metrics/references/Sine_res.csv",
+                          simulation_result="../examples/test_user_defined_metrics/references/Sine_res.csv",
+                          validated_cols=["time"])
 
-        res2_ext_expect = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.25, 1.5, 3.0], [0.5, 2.0, 4.0], [0.75, 2.0, 4.0], [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
+    def test_disjoint_cols(self):
+        """
+        Validate that test of two CSV result files that have no common result variable besides time fails
+        """
+        self.assertRaises(ValueError, mopyregtest.RegressionTest.compare_csv_files,
+                          reference_result="../examples/test_Modelica_Electrical_Analog_Examples/references/Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv",
+                          simulation_result="../examples/test_user_defined_metrics/references/Sine_res.csv")
+        return
 
-        results_ext = mopyregtest.RegressionTest._unify_timestamps([res1, res2])
+    def test_validated_cols_not_contained1(self):
+        """
+        Validate that comparison fails if not all elements of validated cols are contained in both reference and actual
+        result.
+        """
 
-        self.assertIsNone(pd.testing.assert_frame_equal(res1_ext_expect, results_ext[0]))
-        self.assertIsNone(pd.testing.assert_frame_equal(res2_ext_expect, results_ext[1]))
+        self.assertRaises(ValueError, mopyregtest.RegressionTest.compare_csv_files,
+                          reference_result="../examples/test_user_defined_metrics/references/Sine_res.csv",
+                          simulation_result="../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
+                          validated_cols=["y", "not_present_var"])
+        return
 
-    def test_unify_timestamps_bfill(self):
-        res1 = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.5, 2.0, 4.0], [0.75, 3.0, 6.0], [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
-        res2 = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.25, 1.5, 3.0], [0.5, 2.0, 4.0], [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
+    def test_validated_cols_not_contained2(self):
+        """
+        Validate that comparison fails if not all elements of validated cols are contained in both reference and actual
+        result. Case: Column not contained in reference_result.
+        """
 
-        res1_ext_expect = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.25, 2.0, 4.0], [0.5, 2.0, 4.0], [0.75, 3.0, 6.0], [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
+        self.assertRaises(ValueError, mopyregtest.RegressionTest.compare_csv_files,
+                          reference_result="../examples/test_user_defined_metrics/references/Sine_res.csv",
+                          simulation_result="../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
+                          validated_cols=["y", "uniformNoise.y"])
+        return
 
-        res2_ext_expect = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.25, 1.5, 3.0], [0.5, 2.0, 4.0], [0.75, 4.0, 8.0], [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
+    def test_validated_cols_not_contained3(self):
+        """
+        Validate that comparison fails if not all elements of validated cols are contained in both reference and actual
+        result. Case: Column not contained in simulation_result.
+        """
 
-        results_ext = mopyregtest.RegressionTest._unify_timestamps([res1, res2], fill_in_method="bfill")
-
-        self.assertIsNone(pd.testing.assert_frame_equal(res1_ext_expect, results_ext[0]))
-        self.assertIsNone(pd.testing.assert_frame_equal(res2_ext_expect, results_ext[1]))
-
-    def test_unify_timestamps_interpolate(self):
-        res1 = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.5, 2.0, 4.0], [0.75, 3.3, 6.6], [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
-        res2 = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.25, 1.5, 3.0], [0.5, 2.0, 4.0], [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
-
-        res1_ext_expect = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.25, 1.5, 3.0], [0.5, 2.0, 4.0], [0.75, 3.3, 6.6], [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
-
-        res2_ext_expect = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.25, 1.5, 3.0], [0.5, 2.0, 4.0], [0.75, 3.0, 6.0], [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
-
-        results_ext = mopyregtest.RegressionTest._unify_timestamps([res1, res2], fill_in_method="interpolate")
-
-        self.assertIsNone(pd.testing.assert_frame_equal(res1_ext_expect, results_ext[0]))
-        self.assertIsNone(pd.testing.assert_frame_equal(res2_ext_expect, results_ext[1]))
-
-    def test_unify_timestamps_start_times(self):
-        res1 = pd.DataFrame(data=[[0.1, 1.0, 2.0], [0.5, 2.0, 4.0], [0.75, 3.0, 6.0], [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
-        res2 = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.25, 1.5, 3.0], [0.5, 2.0, 4.0], [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
-
-        self.assertRaises(ValueError, mopyregtest.RegressionTest._unify_timestamps, [res1, res2])
-
-    def test_unify_timestamps_end_times(self):
-        res1 = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.5, 2.0, 4.0], [0.75, 3.0, 6.0], [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
-        res2 = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.25, 1.5, 3.0], [0.5, 2.0, 4.0], [0.9, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
-
-        self.assertRaises(ValueError, mopyregtest.RegressionTest._unify_timestamps, [res1, res2])
-
-    def test_unify_timestamps_multiplicity(self):
-        res1 = pd.DataFrame(data=[[0.0, 1.0, 2.0],
-                                  [0.5, 2.0, 4.0], [0.5, 2.2, 4.4], [0.5, 2.4, 4.8],
-                                  [0.75, 3.0, 6.0],
-                                  [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
-        res2 = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.0, 1.1, 2.1],
-                                  [0.25, 1.5, 3.0], [0.25, 1.6, 3.3],
-                                  [0.5, 2.0, 4.0], [0.5, 2.7, 4.7],
-                                  [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
-
-        res1_ext_expect = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.0, 1.0, 2.0],
-                                             [0.25, 1.0, 2.0], [0.25, 1.0, 2.0],
-                                             [0.5, 2.0, 4.0], [0.5, 2.2, 4.4], [0.5, 2.4, 4.8],
-                                             [0.75, 3.0, 6.0],
-                                             [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
-
-        res2_ext_expect = pd.DataFrame(data=[[0.0, 1.0, 2.0], [0.0, 1.1, 2.1],
-                                             [0.25, 1.5, 3.0], [0.25, 1.6, 3.3],
-                                             [0.5, 2.0, 4.0], [0.5, 2.7, 4.7], [0.5, 2.7, 4.7],
-                                             [0.75, 2.7, 4.7],
-                                             [1.0, 4.0, 8.0]],
-                            columns=["time", "quant1", "quant2"])
-
-        results_ext = mopyregtest.RegressionTest._unify_timestamps([res1, res2])
-
-        self.assertIsNone(pd.testing.assert_frame_equal(res1_ext_expect, results_ext[0]))
-        self.assertIsNone(pd.testing.assert_frame_equal(res2_ext_expect, results_ext[1]))
+        self.assertRaises(ValueError, mopyregtest.RegressionTest.compare_csv_files,
+                          reference_result="../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
+                          simulation_result="../examples/test_user_defined_metrics/references/Sine_res.csv",
+                          validated_cols=["y", "uniformNoise.y"])
+        return
