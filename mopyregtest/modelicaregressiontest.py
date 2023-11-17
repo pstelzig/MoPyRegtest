@@ -261,6 +261,22 @@ class RegressionTest:
         if not validated_cols:
             validated_cols = common_cols
 
+        # Check if validated_cols is meaningful
+        validated_cols = set(validated_cols)
+        if "time" in validated_cols:
+            validated_cols.remove("time")  # Ignore time column
+
+        if not validated_cols.issubset(set(ref_data.columns)):
+            missing_cols = validated_cols.difference(set(ref_data.columns))
+            raise ValueError(f"The reference data does not contain all entries of validated_cols. Missing: {missing_cols}")
+
+        if not validated_cols.issubset(set(result_data.columns)):
+            missing_cols = validated_cols.difference(set(result_data.columns))
+            raise ValueError(f"The reference data does not contain all entries of validated_cols. Missing: {missing_cols}")
+
+        if len(validated_cols) == 0:
+            raise ValueError("validated_cols must contain at least one common variable in reference and actual result")
+
         for c in validated_cols:
             print("Comparing column \"{}\"".format(c))
             delta = metric(ref_data[["time", c]].values, result_data[["time", c]].values)
@@ -286,6 +302,7 @@ class RegressionTest:
             Absolute tolerance up to which deviation in the comparison metric is accepted
         validated_cols : list
             List of variable names (from the file header) in the reference .csv file that are used in the regression test
+            Important: All entries of validated_cols must be present in both the reference result and the actual result.
         metric : Callable
             Metric-like function that is used to compute the distance between the reference result and the actual result
             produced by the simulation. Default is the infinity-norm on the difference between reference result and
