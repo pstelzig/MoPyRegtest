@@ -296,7 +296,7 @@ class RegressionTest:
 
             raise AssertionError(
                 f"Values of results {simulation_result} and {reference_result} are different in columns "
-                f"{failed_cols.keys()} by more than {tol}. The individual deviations are {failed_cols}")
+                f"{list(failed_cols.keys())} by more than {tol}. The individual deviations are {failed_cols}")
 
         return
 
