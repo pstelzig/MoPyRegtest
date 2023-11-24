@@ -219,7 +219,7 @@ class RegressionTest:
     @staticmethod
     def compare_csv_files(reference_result, simulation_result, tol=1e-7, validated_cols=[],
                           metric=metrics.norm_infty_dist,
-                          unify_timestamps=True, fill_in_method="ffill"):
+                          unify_timestamps=True, fill_in_method="ffill", write_comparison=True):
         """
         Compares two CSV files from Modelica simulation runs, one as a reference result, the other one as the actual
         simulation result.
@@ -241,6 +241,8 @@ class RegressionTest:
         unify_timestamps : bool
             See doc string of RegressionTest.compare_result
         fill_in_method : str
+            See doc string of RegressionTest.compare_result
+        write_comparison : bool
             See doc string of RegressionTest.compare_result
 
         Returns
@@ -288,6 +290,10 @@ class RegressionTest:
                 failed_cols[c] = np.abs(delta)
 
         if failed_cols:
+            if write_comparison:
+                RegressionTest._write_csv_comparison(reference_result, simulation_result,
+                                                     list(failed_cols.keys()), fill_in_method)
+
             raise AssertionError(
                 f"Values of results {simulation_result} and {reference_result} are different in columns "
                 f"{failed_cols.keys()} by more than {tol}. The individual deviations are {failed_cols}")
@@ -296,7 +302,7 @@ class RegressionTest:
 
     def compare_result(self, reference_result, tol=1e-7, validated_cols=[],
                        metric=metrics.norm_infty_dist,
-                       unify_timestamps=True, fill_in_method="ffill"):
+                       unify_timestamps=True, fill_in_method="ffill", write_comparison=True):
         """
         Executes simulation and then compares the obtained result and the reference result along the
         validated columns. Throws an exception (AssertionError) if the deviation is larger or equal to tol.
@@ -344,6 +350,11 @@ class RegressionTest:
             ffill and bfill are the forward fill and backward fill methods from
             pandas.DataFrame.fillna and "interpol" uses linear interpolation
             as in pandas.DataFrame.interpol
+
+        write_comparison : bool
+            If there are result comparisons that have failed, this will trigger writing a comparison csv file to the
+            folder where the actual simulation result is found and be called <simulation_result_name_root>_compare.csv.
+            Default=True.
 
         Returns
         -------
@@ -464,5 +475,88 @@ class RegressionTest:
 
                 # Run the simulation script and append the output of the OpenModelica Compiler (omc) to omc_output
                 os.system(tool_executable + " {} >> {}".format(model_simulate_mos, tool_output))
+
+        return
+
+    @staticmethod
+    def _write_csv_comparison(reference_result, simulation_result, failed_cols, fill_in_method="ffill",
+                              comparison_fname=""):
+        """
+        Writes a comparison CSV file from the result comparison of reference_result and actual simulation result,
+        which includes also the results for the failed variable columns in the output. Note that to have results in
+        one common CSV files, the timestamps must be identical. The output CSV file has a
+        format like:
+
+        root
+            |
+            + -- reference
+                |
+                +...
+            + -- actual
+                    |
+                    +...
+            + -- failed
+                    |
+                    + var_failed_0
+                        |
+                        + reference
+                        |
+                        + actual
+                    |
+                    + var_failed_1
+                        |
+                        + reference
+                        |
+                        + actual
+
+        Parameters
+        ----------
+        reference_result : str
+            Path to a reference .csv file
+        simulation_result  : str
+            Path to a simulation result .csv file
+        failed_cols : list
+            See doc string of RegressionTest.compare_result
+        fill_in_method : str
+            See doc string of RegressionTest.compare_result
+        comparison_fname : str
+            Path to where the output shall be written. If not specified, the output filename
+            is <path/to/simulation_result/simulation_result_name_root>_compare.csv
+
+        Returns
+        -------
+        out : None
+        """
+
+        if not comparison_fname:
+            comparison_fname = (pathlib.Path(simulation_result).absolute().parent /
+                                f"{pathlib.Path(simulation_result).stem}_comparison.csv")
+
+        ref_data = pd.read_csv(filepath_or_buffer=reference_result, delimiter=',')
+        sim_data = pd.read_csv(filepath_or_buffer=simulation_result, delimiter=',')
+
+        # Timestamps must be unified to have both results side by side
+        data_ext = RegressionTest._unify_timestamps([ref_data, sim_data], fill_in_method)
+        ref_data = data_ext[0]
+        sim_data = data_ext[1]
+
+        # Extract the columns for time and the failed comparisons
+        time_data = sim_data["time"]
+        ref_data.drop(columns=["time"], inplace=True)
+        sim_data.drop(columns=["time"], inplace=True)
+
+        failed_tseries = pd.DataFrame()
+        for c in failed_cols:
+            c_ref = ref_data[c]
+            c_ref.name = f"failed.{c}.reference"
+            c_act = sim_data[c]
+            c_act.name = f"failed.{c}.actual"
+            failed_tseries = pd.concat([failed_tseries, c_ref, c_act], axis=1)
+
+        # Concatenate results and prepend result headers
+        ref_data.columns = [f"reference.{c}" for c in ref_data.columns]
+        sim_data.columns = [f"actual.{c}" for c in sim_data.columns]
+        comparison_csv = pd.concat([time_data, ref_data, sim_data, failed_tseries], axis=1)
+        comparison_csv.to_csv(comparison_fname, sep=",")
 
         return
