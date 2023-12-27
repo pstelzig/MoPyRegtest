@@ -71,6 +71,24 @@ class TestUserDefinedMetrics(unittest.TestCase):
 
         return
 
+    # Example for a metric that returns a deviation timeseries
+    def test_Sine_ptwise_metric(self):
+        tester = mopyregtest.RegressionTest(package_folder=package_folder,
+                                            model_in_package="Modelica.Blocks.Sources.Sine",
+                                            result_folder=result_folder / "Modelica.Blocks.Sources.Sine",
+                                            modelica_version="4.0.0",
+                                            dependencies=None)
+
+        # Comparing results using a pointwise defined metric
+        tester.compare_result(reference_result=str(reference_folder / "SineNoisy_res.csv"),
+                              metric=functools.partial(mopyregtest.metrics.func_ptwise, dist=lambda x: 0.1*np.sqrt(x)),
+                              validated_cols=["y"], tol=2e-2, fill_in_method="interpolate")
+
+        # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
+        #tester.cleanup()
+
+        return
+
     @staticmethod
     def metric_different_timestamps(r_ref, r_act):
         """
@@ -108,6 +126,7 @@ class TestUserDefinedMetrics(unittest.TestCase):
         #tester.cleanup()
 
         return
+
 
 if __name__ == '__main__':
     unittest.main()
