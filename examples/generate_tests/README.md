@@ -24,7 +24,7 @@ mopyregtest --help
 
 which will print
 
-```bash
+```
 usage: mopyregtest [-h] {generate,compare} ...
 
 options:
@@ -47,8 +47,8 @@ mopyregtest generate --help
 
 tells you
 
-```bash
-usage: mopyregtest generate [-h] [--metric {norm_p_dist,norm_infty_dist,Lp_dist,Linfty_dist}] [--tol TOL] [--references REFERENCES]
+```
+usage: mopyregtest generate [-h] [--metric {norm_p_dist,norm_infty_dist,Lp_dist,Linfty_dist,abs_dist_ptwise}] [--tol TOL] [--references REFERENCES]
                             test_folder test_name package_folder models_in_package
 
 positional arguments:
@@ -59,7 +59,7 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  --metric {norm_p_dist,norm_infty_dist,Lp_dist,Linfty_dist}
+  --metric {norm_p_dist,norm_infty_dist,Lp_dist,Linfty_dist,abs_dist_ptwise}
                         Metric to be used. Choose here from predefined values. For user-defined metrics please consider creating the tests with a dedicated
                         script. If omitted, the default is norm_infty_dist
   --tol TOL             Absolute tolerance up to which deviation in the comparison metric is accepted
@@ -72,12 +72,12 @@ Just like in the
 [gentests_modelica_blocks_sources.py](/examples/generate_tests/gentests_modelica_blocks_sources.py)
 we generate regression tests for the models `Modelica.Blocks.Sources.Sine`, `Modelica.Blocks.Sources.ExpSine`, and
 `Modelica.Blocks.Sources.Step` from the Modelica standard library. The test definition shall go in 
-examples/generate_tests/gen_tests. The test shall be named `BlocksLpDist_from_cli`. To achieve this, under Ubuntu Linux
+examples/generate_tests/gen_tests. The test shall be named `BlocksAbsDistPtwise_from_cli`. To achieve this, under Ubuntu Linux
 change to the folder [examples/generate_tests](/examples/generate_tests), and simply run
 
 ```bash
 cd examples/generate_tests
-mopyregtest generate --metric=Lp_dist ./gen_tests BlocksLpDist_from_cli ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" Modelica.Blocks.Sources.Sine,Modelica.Blocks.Sources.ExpSine,Modelica.Blocks.Sources.Step
+mopyregtest generate --metric=abs_dist_ptwise ./gen_tests BlocksAbsDistPtwise_from_cli ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" Modelica.Blocks.Sources.Sine,Modelica.Blocks.Sources.ExpSine,Modelica.Blocks.Sources.Step
 ```
 
 and for Windows just adapt the path to the Modelica Standard library, e.g. to 
@@ -85,16 +85,16 @@ and for Windows just adapt the path to the Modelica Standard library, e.g. to
 
 You will find the resulting test definition in gen_tests/test_blockslpdist_from_cli.py and the generated reference results in 
 gen_tests/references. Note that you can also pass existing reference results to the `mopyregtest` command line tool 
-through the `--references` option. E.g., if `Modelica.Blocks.Sources.ExpSine` had an existing reference result in 
-`/home/<your user name>/Modelica.Blocks.Sources.ExpSine_res.csv`, then you would have to add the option
+through the `--references` option. E.g., if `Modelica.Blocks.Sources.Sine` had an existing reference result in 
+`/home/<your user name>/Modelica.Blocks.Sources.Sine_res.csv`, then you would have to add the option
 
 ```bash
---references Modelica.Blocks.Sources.ExpSine:/home/<your user name>/Modelica.Blocks.Sources.ExpSine_res.csv
+--references Modelica.Blocks.Sources.Sine:/home/<your user name>/Modelica.Blocks.Sources.Sine_res.csv
 ```
 
 or as a comma separated list, if more models had pre-existing references. 
 
-You can run the generated test just like the example explained above with `python3 test_blockslpdist_from_cli.py`. 
+You can run the generated test just like the example explained above with `python3 test_blocksabsdistptwise_from_cli.py`. 
 
 ## Using a generator script
 Just like with the example 
@@ -135,10 +135,10 @@ gen.generate_tests(test_folder=this_folder / "gen_tests", test_name="BlocksLpDis
 Note that in the current implementation, all tests generated from a `mopyregtest.Generator` object use the same 
 comparison metric.
 
-If you wanted to use pre-existing reference results, e.g. if `Modelica.Blocks.Sources.ExpSine` had an existing reference 
-result in `/home/<your user name>/Modelica.Blocks.Sources.ExpSine_res.csv`, you would have to create a dictionary like
+If you wanted to use pre-existing reference results, e.g. if `Modelica.Blocks.Sources.Sine` had an existing reference 
+result in `/home/<your user name>/Modelica.Blocks.Sources.Sine_res.csv`, you would have to create a dictionary like
 ```python
-preexist_references = {"Modelica.Blocks.Sources.ExpSine": "/home/<your user name>/Modelica.Blocks.Sources.ExpSine_res.csv"}
+preexist_references = {"Modelica.Blocks.Sources.Sine": "/home/<your user name>/Modelica.Blocks.Sources.Sine_res.csv"}
 ```
 and call
 ```python
