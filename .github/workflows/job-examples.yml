@@ -36,7 +36,7 @@ jobs:
           cd examples/generate_tests
           python3 gentests_modelica_blocks_sources.py
           cd gen_tests
-          python3 test_blockslpdist_from_script.py
+          python3 test_blocksabsdistptwise_from_script.py
           python3 test_blocksuserdef_from_script.py
       - name: Run CSV file comparison with mopyregtest command line tool
         run: |

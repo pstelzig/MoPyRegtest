@@ -40,7 +40,7 @@ reference_folder = this_folder / "references"
 models_in_package = ["Modelica.Blocks.Sources.Sine", "Modelica.Blocks.Sources.ExpSine", "Modelica.Blocks.Sources.Step"]
 
 gen = mopyregtest.Generator(package_folder=package_folder, models_in_package=models_in_package,
-                            metric=mopyregtest.metrics.abs_dist_ptwise)
+                            metric=mopyregtest.metrics.abs_dist_ptwise, tol=0.12)
 gen.generate_tests(test_folder=this_folder / "gen_tests", test_name="BlocksAbsDistPtwise_from_script",
                    test_results_folder=this_folder / "results",
                    references={"Modelica.Blocks.Sources.Sine": str(this_folder / "../test_user_defined_metrics/references/SineNoisy_res.csv")})
