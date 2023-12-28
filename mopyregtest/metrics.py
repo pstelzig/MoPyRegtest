@@ -109,3 +109,15 @@ def Linfty_dist(f1, f2):
     _check_comparability(f1, f2)
 
     return Linfty_norm(np.vstack((f1[:, 0], f2[:, 1] - f1[:, 1])).transpose())
+
+
+def func_ptwise(f1, f2, dist: callable):
+    _check_comparability(f1, f2)
+
+    delta = np.vstack((f1[:, 0], np.vectorize(dist)(f2[:, 1] - f1[:, 1]))).transpose()
+
+    return delta
+
+
+def abs_dist_ptwise(f1, f2):
+    return func_ptwise(f1, f2, np.abs)

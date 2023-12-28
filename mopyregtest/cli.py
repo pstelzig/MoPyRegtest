@@ -22,6 +22,8 @@ def metric_str_to_func(m: str):
         return metrics.Lp_dist
     elif m == "Linfty_dist":
         return metrics.Linfty_dist
+    elif m == "abs_dist_ptwise":
+        return metrics.abs_dist_ptwise
     else:
         raise ValueError("Invalid value for metric")
 
@@ -91,7 +93,8 @@ def parse_args(cmd_args):
                                  help="Metric to be used. Choose here from predefined values. "
                                       "For user-defined metrics please consider creating the tests with a dedicated script. "
                                       "If omitted, the default is norm_infty_dist",
-                                 choices=["norm_p_dist", "norm_infty_dist", "Lp_dist", "Linfty_dist"], default="norm_infty_dist")
+                                 choices=["norm_p_dist", "norm_infty_dist", "Lp_dist", "Linfty_dist", "abs_dist_ptwise"],
+                                 default="norm_infty_dist")
     generate_parser.add_argument("--tol", type=float,
                                  help="Absolute tolerance up to which deviation in the comparison metric is accepted",
                                  default=1e-7)
@@ -109,7 +112,7 @@ def parse_args(cmd_args):
     compare_parser.add_argument("--metric", type=str,
                                 help="Metric to be used. Choose here from predefined values. "
                                      "For user-defined metrics please consider creating the tests with a dedicated script.",
-                                choices=["norm_p_dist", "norm_infty_dist", "Lp_dist", "Linfty_dist"],
+                                choices=["norm_p_dist", "norm_infty_dist", "Lp_dist", "Linfty_dist", "abs_dist_ptwise"],
                                 default="norm_infty_dist")
     compare_parser.add_argument("--validated-cols", type=str,
                                 help="Comma separated list like <var name 1>,<var name 2>. "

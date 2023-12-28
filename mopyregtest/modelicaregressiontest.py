@@ -219,7 +219,7 @@ class RegressionTest:
     @staticmethod
     def compare_csv_files(reference_result, simulation_result, tol=1e-7, validated_cols=[],
                           metric=metrics.norm_infty_dist,
-                          unify_timestamps=True, fill_in_method="ffill"):
+                          unify_timestamps=True, fill_in_method="ffill", write_comparison=True):
         """
         Compares two CSV files from Modelica simulation runs, one as a reference result, the other one as the actual
         simulation result.
@@ -241,6 +241,8 @@ class RegressionTest:
         unify_timestamps : bool
             See doc string of RegressionTest.compare_result
         fill_in_method : str
+            See doc string of RegressionTest.compare_result
+        write_comparison : bool
             See doc string of RegressionTest.compare_result
 
         Returns
@@ -284,19 +286,29 @@ class RegressionTest:
         for c in validated_cols:
             print("Comparing column \"{}\"".format(c))
             delta = metric(ref_data[["time", c]].values, sim_data[["time", c]].values)
-            if np.abs(delta) >= tol:
-                failed_cols[c] = np.abs(delta)
+
+            if type(delta) is np.ndarray:
+                if np.any(delta[:, 1] >= tol):
+                    delta_gt_tol = np.where(delta >= tol, delta, 0.0)
+                    failed_cols[c] = pd.DataFrame(data=delta_gt_tol, columns=["time", "delta"])
+            else:
+                if np.abs(delta) >= tol:
+                    failed_cols[c] = delta
 
         if failed_cols:
+            if write_comparison:
+                RegressionTest._write_csv_comparison(reference_result, simulation_result,
+                                                     failed_cols, fill_in_method)
+
             raise AssertionError(
                 f"Values of results {simulation_result} and {reference_result} are different in columns "
-                f"{failed_cols.keys()} by more than {tol}. The individual deviations are {failed_cols}")
+                f"{list(failed_cols.keys())} by more than {tol}. ")
 
         return
 
     def compare_result(self, reference_result, tol=1e-7, validated_cols=[],
                        metric=metrics.norm_infty_dist,
-                       unify_timestamps=True, fill_in_method="ffill"):
+                       unify_timestamps=True, fill_in_method="ffill", write_comparison=True):
         """
         Executes simulation and then compares the obtained result and the reference result along the
         validated columns. Throws an exception (AssertionError) if the deviation is larger or equal to tol.
@@ -312,13 +324,26 @@ class RegressionTest:
             Important: All entries of validated_cols must be present in both the reference result and the actual result.
         metric : Callable
             Metric-like function that is used to compute the distance between the reference result and the actual result
-            produced by the simulation. Default is the infinity-norm on the difference between reference result and
-            actual result
+            produced by the simulation.
 
-            :math:`\| r_\text{ref} - r_\{act} \|_{\infty} = \max_{t \in 1,\ldots,N} |r_\text{ref}[t] - r_\{act}[t]|`
+            The return value of the metric function MUST either be
+
+            a nonnegative scalar value (i.e. a time-wise nonlocalized deviation)
+
+            or
+
+            an np.ndarray of shape (N,2) containing a timeseries of localized deviations between r_ref and r_act
+            (i.e. a time-wise localized metric evaluation).
+
+            The timestamps in a returned timeseries do not need to match those of r_ref or of r_act. Timestamp
+            unification will be used when plotting localized deviations.
+
+            Default is the infinity-norm on the difference between reference result and actual result.
+
+            :math:`\| r_\text{ref} - r_\text{act} \|_{\infty} = \max_{i \in 1,\ldots,N} |r_\text{ref}[t_i] - r_\text{act}[t_i]|`
 
             where :math:`r_\text{ref}, r_\text{act} \in \mathbb{R}^N` denote the reference and the actual result
-            with timestamps :math:`t \in 1,\ldots,N`. Note that the timestamps of both results are unified using
+            with timestamps :math:`t_i, i \in 1,\ldots,N`. Note that the timestamps of both results are unified using
             the method _unify_timestamps.
 
             This default function is implemented in 
@@ -328,6 +353,12 @@ class RegressionTest:
             but we could also have put an in-place definition using lambda functions like
 
                 metric=lambda r_ref, r_act: np.linalg.norm(r_ref[:, 1] - r_act[:, 1], ord=np.inf)
+
+            A default implementation of a metric returning a timeseries of deviations would be
+
+                metric=mopyregtest.metrics.abs_dist_ptwise
+
+            which is simply :math:`\Big\{ (t_i, |r_\text{ref}[t_i] - r_\text{act}[t_i]| : i \in 1,\ldots,N \Big\}`
 
         unify_timestamps : bool
             Boolean controlling whether the timestamp unification shall be called in compare_result before evaluating
@@ -344,6 +375,11 @@ class RegressionTest:
             ffill and bfill are the forward fill and backward fill methods from
             pandas.DataFrame.fillna and "interpol" uses linear interpolation
             as in pandas.DataFrame.interpol
+
+        write_comparison : bool
+            If there are result comparisons that have failed, this will trigger writing a comparison csv file to the
+            folder where the actual simulation result is found and be called <simulation_result_name_root>_compare.csv.
+            Default=True.
 
         Returns
         -------
@@ -464,5 +500,136 @@ class RegressionTest:
 
                 # Run the simulation script and append the output of the OpenModelica Compiler (omc) to omc_output
                 os.system(tool_executable + " {} >> {}".format(model_simulate_mos, tool_output))
+
+        return
+
+    @staticmethod
+    def _write_csv_comparison(reference_result, simulation_result, failed_cols, fill_in_method="ffill",
+                              comparison_fname=""):
+        """
+        Writes a comparison CSV file from the result comparison of reference_result and actual simulation result,
+        which includes also the results for the failed variable columns in the output. Note that to have results in
+        one common CSV files, the timestamps must be identical. The output CSV file has a
+        format like:
+
+        root
+            |
+            + -- reference
+                |
+                +...
+            + -- actual
+                    |
+                    +...
+            + -- failed
+                    |
+                    + var_failed_0
+                        |
+                        + reference
+                        |
+                        + actual
+                        |
+                        + [delta_nonloc|delta_greater_tol]
+                    |
+                    + var_failed_1
+                        |
+                        + reference
+                        |
+                        + actual
+                        |
+                        + [delta_nonloc|delta_greater_tol]
+
+        In case of the metric used in the comparison returning a scalar value, the deviation is a constant
+        (because it cannot be localized), and is called delta_nonloc.
+
+        In case of metric returning a timeseries, it contains the part of the timeseries where the error exceeds the
+        tolerance, and is called delta_greater_tol.
+
+        Parameters
+        ----------
+        reference_result : str
+            Path to a reference .csv file
+        simulation_result  : str
+            Path to a simulation result .csv file
+        failed_cols : dict
+            A dictionary mapping the name of the column for which comparison between r_ref and r_act failed to the
+            deviation delta. This delta MUST FOR ALL COLUMNS have the same type, which can either be
+
+            a nonnegative real value
+
+            or
+
+            a pandas DataFrame with columns ["time", "delta"].
+        fill_in_method : str
+            See doc string of RegressionTest.compare_result
+        comparison_fname : str
+            Path to where the output shall be written. If not specified, the output filename
+            is <path/to/simulation_result/simulation_result_name_root>_compare.csv
+
+        Returns
+        -------
+        out : None
+        """
+
+        if not comparison_fname:
+            comparison_fname = (pathlib.Path(simulation_result).absolute().parent /
+                                f"{pathlib.Path(simulation_result).stem}_comparison.csv")
+
+        ref_data = pd.read_csv(filepath_or_buffer=reference_result, delimiter=',')
+        sim_data = pd.read_csv(filepath_or_buffer=simulation_result, delimiter=',')
+
+        # Determine if the delta in failed_cols between actual and reference is a (nonlocal) scalar or a timeseries
+        is_scalar = True
+        for v in failed_cols.values():
+            if type(v) is pd.DataFrame:
+                is_scalar = False
+                break
+
+        # Timestamps must be unified to have both results side by side
+        if is_scalar:  # Only unify ref_data and sim_data, make delta a constant timeseries
+            data_ext = RegressionTest._unify_timestamps([ref_data, sim_data], fill_in_method)
+            ref_data_ext = data_ext[0]
+            sim_data_ext = data_ext[1]
+
+            timestamps_ext = sim_data_ext["time"].values
+            failed_cols_ext = {}
+            for c in failed_cols.keys():
+                delta_ext = failed_cols[c]*np.ones(shape=timestamps_ext.shape)
+                failed_cols_ext[c] = pd.DataFrame(data=np.vstack((timestamps_ext, delta_ext)).transpose(),
+                                                  columns=["time", "delta"])
+        else:  # Unify ref_data, sim_data and all delta timeseries
+            failed_keys = list(failed_cols.keys())
+            data_ext = RegressionTest._unify_timestamps([ref_data, sim_data] + list(failed_cols.values()))
+            ref_data_ext = data_ext[0]
+            sim_data_ext = data_ext[1]
+
+            failed_cols_ext = {}
+            for i in range(0, len(failed_keys)):
+                failed_cols_ext[failed_keys[i]] = data_ext[2+i]
+
+        # Extract the columns for time and the failed comparisons
+        time_data = sim_data_ext["time"]
+        ref_data_ext.drop(columns=["time"], inplace=True)
+        sim_data_ext.drop(columns=["time"], inplace=True)
+        for c in failed_cols_ext.keys():
+            failed_cols_ext[c].drop(columns=["time"], inplace=True)
+
+        failed_tseries = pd.DataFrame()
+        for c in failed_cols_ext.keys():
+            c_ref = ref_data_ext[c]
+            c_ref.name = f"failed.{c}.reference"
+            c_act = sim_data_ext[c]
+            c_act.name = f"failed.{c}.actual"
+            c_delta = failed_cols_ext[c]["delta"]
+            if is_scalar:
+                c_delta.name = f"failed.{c}.delta_nonloc"
+            else:
+                c_delta.name = f"failed.{c}.delta_greater_tol"
+            failed_tseries = pd.concat([failed_tseries, c_ref, c_act, c_delta], axis=1)
+
+        # Concatenate results and prepend result headers
+        ref_data_ext.columns = [f"reference.{c}" for c in ref_data_ext.columns]
+        sim_data_ext.columns = [f"actual.{c}" for c in sim_data_ext.columns]
+        comparison_csv = pd.concat([time_data, ref_data_ext, sim_data_ext, failed_tseries], axis=1)
+        comparison_csv.to_csv(comparison_fname, sep=",")
 
         return

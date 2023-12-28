@@ -35,6 +35,24 @@ class TestCli(unittest.TestCase):
 
         return
 
+    def test_generate3(self):
+        """
+        Testing for optional arguments in CLI: mopyregtest generate
+        """
+        cmd_args = ["generate",
+                    "--metric=abs_dist_ptwise",
+                    "--tol=1.2e-5",
+                    "--references=Modelica.Blocks.Sources.Sine:{}".format(
+                        this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv"),
+                    str(this_folder / "../examples/generate_tests/gen_tests3"),
+                    "BlocksAbsDistPtwise_from_cli",
+                    "~/.openmodelica/libraries/Modelica 4.0.0+maint.om/",
+                    "Modelica.Blocks.Sources.Sine"]
+
+        cli.parse_args(cmd_args)
+
+        return
+
     def test_compare1(self):
         """
         Testing for default arguments in CLI: mopyregtest compare
@@ -74,6 +92,8 @@ class TestCli(unittest.TestCase):
                     str(this_folder / "../examples/test_user_defined_metrics/references/Sine_res.csv")]
 
         self.assertRaises(AssertionError, cli.parse_args, cmd_args=cmd_args)
+        self.assertTrue(
+            (this_folder / "../examples/test_user_defined_metrics/references/Sine_res_comparison.csv").exists())
 
         return
 
@@ -89,5 +109,23 @@ class TestCli(unittest.TestCase):
                     str(this_folder / "../examples/test_user_defined_metrics/references/Sine_res.csv")]
 
         cli.parse_args(cmd_args)
+
+        return
+
+    def test_compare5(self):
+        """
+        Testing for new metric argument abs_dist_ptwise in CLI: mopyregtest compare
+        """
+        cmd_args = ["compare",
+                    "--metric=abs_dist_ptwise",
+                    "--tol=2.5e-4",
+                    "--validated-cols=y",
+                    "--fill-in-method=interpolate",
+                    str(this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv"),
+                    str(this_folder / "../examples/test_user_defined_metrics/references/Sine_res.csv")]
+
+        self.assertRaises(AssertionError, cli.parse_args, cmd_args=cmd_args)
+        self.assertTrue(
+            (this_folder / "../examples/test_user_defined_metrics/references/Sine_res_comparison.csv").exists())
 
         return

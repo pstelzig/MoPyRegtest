@@ -118,7 +118,7 @@ knows where to find `mopyregtest` as installed by pip. To find out the location,
 not confirm to proceed. The uninstallation will tell you which files pip would remove upon uninstalling MoPyRegtest, 
 including the `mopyregtest` executable (or `mopyregtest.exe` under Windows) and its location.
 
-```bash
+```
 Found existing installation: MoPyRegtest 0.4.0rc1
 Uninstalling MoPyRegtest-0.4.0rc1:
   Would remove:
