@@ -97,7 +97,7 @@ if __name__ == '__main__':
         metric : function or str
             Metric to be used in result comparison. Important: If the metric is given as a funtion, one must use one
             of the predefined metrics, i.e. mopyregtest.metrics.norm_p_dist, mopyregtest.metrics.norm_infty_dist,
-            mopyregtest.metrics.Lp_dist or mopyregtest.metrics.Linfty_dist.
+            mopyregtest.metrics.Lp_dist, mopyregtest.metrics.Linfty_dist, or mopyregtest.metrics.abs_dist_ptwise.
 
             If a user-defined metric shall be used, the code must be passed as a string!
         tol : float
@@ -123,7 +123,9 @@ if __name__ == '__main__':
         self.modelica_version = modelica_version
         self.dependencies = dependencies
         if (callable(metric) and
-                metric in [metrics.norm_p_dist, metrics.norm_infty_dist, metrics.Lp_dist, metrics.Linfty_dist]):
+                metric in [metrics.norm_p_dist, metrics.norm_infty_dist,
+                           metrics.Lp_dist, metrics.Linfty_dist,
+                           metrics.abs_dist_ptwise]):
             self.metric = f"mopyregtest.metrics.{metric.__name__}"
         elif type(metric) == str:
             self.metric = metric
