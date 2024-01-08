@@ -394,7 +394,7 @@ class RegressionTest:
 
         RegressionTest.compare_csv_files(reference_result, simulation_result, tol, validated_cols,
                                          metric,
-                                         unify_timestamps, fill_in_method)
+                                         unify_timestamps, fill_in_method, write_comparison)
 
         return
 
