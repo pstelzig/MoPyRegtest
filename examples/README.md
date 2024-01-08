@@ -17,7 +17,7 @@ can be found in
 [test_Modelica_Electrical_Analog_Examples/README.md](/examples/test_Modelica_Electrical_Analog_Examples/README.md).
 
 For an example of how to create regression tests with user-defined metrics, see the 
-[example in the folder test_user_defined_metrics](/examples/test_user_defined_metrics/test_user_defined_metrics.py) 
+[example in the folder test_user_defined_metrics](/examples/test_user_defined_metrics/test_user_defined_metrics.py). 
 
 ### Automatic test case generation
 There are two different ways to auto-generate test case definitions. 
@@ -32,9 +32,9 @@ Examples can be found in the [folder generate_tests](/examples/generate_tests)
     the reference files into a subfolder called references. The test cases can then be executed
     like `python3 test_blocksuserdef_from_script.py`
 
+For a more in-depth explanation of automatic test case generation turn to
+[generate_tests/README.md](/examples/generate_tests/README.md).
+
 ### Test for intentional failure
 MoPyRegtest can also be used to check for intentional failure of regression tests. See 
 [test_for_intentional_failure/README.md](/examples/test_for_intentional_failure/README.md).
-
-For a more in-depth explanation turn to
-[generate_tests/README.md](/examples/generate_tests/README.md).
