@@ -17,14 +17,13 @@ jobs:
         run: python -c "import sys; print(sys.version)"
       - name: Install dependencies
         run: |
-          python -m ensurepip --default-pip
           python -m pip install --upgrade pip
-          pip install numpy pandas
+          python -m pip install numpy pandas
       - name: Install Modelica STL 4.0.0
         run: |
           echo "installPackage(Modelica, \"4.0.0+maint.om\", exactMatch=true);" > installModelicaStl.mos && omc installModelicaStl.mos
       - name: Run unit tests
         run: |
-          pip3 install --user .
+          python -m pip install --user .
           cd tests
           python3 -m unittest
