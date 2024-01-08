@@ -62,21 +62,6 @@ class TestCompareResults(unittest.TestCase):
 
     def test_write_comparison_timeseries1(self):
         """
-        Validate that a comparison timeseries is written on a failed test by default.
-        """
-
-        self.assertRaises(AssertionError, mopyregtest.RegressionTest.compare_csv_files,
-                          reference_result="../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
-                          simulation_result="../examples/test_user_defined_metrics/references/Sine_res.csv",
-                          tol=1e-5,
-                          validated_cols=["y"])
-        self.assertTrue(
-            (this_folder / "../examples/test_user_defined_metrics/references/Sine_res_comparison.csv").exists())
-
-        return
-
-    def test_write_comparison_timeseries2(self):
-        """
         Validate that writing a comparison timeseries on failed tests can be switched off using the write_comparison
         argument.
         """
@@ -88,6 +73,21 @@ class TestCompareResults(unittest.TestCase):
                           validated_cols=["y"],
                           write_comparison=False)
         self.assertFalse(
+            (this_folder / "../examples/test_user_defined_metrics/references/Sine_res_comparison.csv").exists())
+
+        return
+
+    def test_write_comparison_timeseries2(self):
+        """
+        Validate that a comparison timeseries is written on a failed test by default.
+        """
+
+        self.assertRaises(AssertionError, mopyregtest.RegressionTest.compare_csv_files,
+                          reference_result="../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
+                          simulation_result="../examples/test_user_defined_metrics/references/Sine_res.csv",
+                          tol=1e-5,
+                          validated_cols=["y"])
+        self.assertTrue(
             (this_folder / "../examples/test_user_defined_metrics/references/Sine_res_comparison.csv").exists())
 
         return
