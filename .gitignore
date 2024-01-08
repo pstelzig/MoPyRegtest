@@ -5,3 +5,4 @@ __pycache__
 /examples/generate_tests/gen_tests*
 build/
 MoPyRegtest.egg-info/
+/examples/test_user_defined_metrics/references/Sine_res_comparison.csv
