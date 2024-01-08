@@ -67,7 +67,7 @@ has a detailed explanation on how to automatically generate tests.
 ## Prerequisites
 To use MoPyRegtest you need to have
 * a [Python 3](https://www.python.org/) distribution including the modules [`unittest`](https://docs.python.org/3/library/unittest.html), [`numpy`](https://numpy.org/) and [`pandas`](https://pandas.pydata.org/),
-* a working [OpenModelica](https://www.openmodelica.org/) installation (version 1.13.0 or later, works also for latest 1.21), and 
+* a working [OpenModelica](https://www.openmodelica.org/) installation (version 1.13.0 or later, works also for latest 1.22), and 
 * the OpenModelica compiler executable `omc` must be accessible via the `PATH` variable.
 
 ## Installation using pip3
