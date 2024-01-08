@@ -130,4 +130,7 @@ def parse_args(cmd_args):
 
 
 def main():
-    parse_args(sys.argv[1:])
+    if len(sys.argv) <= 1:
+        parse_args(["--help"])
+    else:
+        parse_args(sys.argv[1:])
