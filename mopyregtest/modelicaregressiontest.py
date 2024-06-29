@@ -506,6 +506,11 @@ class RegressionTest:
 
                 (start_time, stop_time, tolerance, num_intervals, interval) = omc_messages.split("\n")[-1].lstrip('(').rstrip(')').split(',')
 
+                # Delete old simulation results
+                sim_result_path = self.result_folder_path / (self.model_in_package + "_res.csv")
+                if pathlib.Path(sim_result_path).exists():
+                    os.remove(sim_result_path)
+
                 # Modify the simulation template
                 if platform.system() == 'Windows':
                     repl_dict["SIMULATION_BINARY"] = "{}.exe".format(self.model_in_package)
@@ -519,7 +524,7 @@ class RegressionTest:
                 utils.replace_in_file(self.result_folder_path / model_simulate_mos, repl_dict)
 
                 # Run the simulation script and append the output of the OpenModelica Compiler (omc) to omc_output
-                proc_return = subprocess.run([tool_executable, model_simulate_mos], capture_output=True)
+                proc_return = subprocess.run([tool_executable, model_simulate_mos], check=True, capture_output=True)
                 omc_messages = proc_return.stdout.decode("utf-8").strip("\'").strip("\n")
                 RegressionTest._check_tool_message(omc_messages)
 
