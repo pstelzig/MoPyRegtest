@@ -7,6 +7,7 @@ MIT License. See the project's LICENSE file.
 """
 
 import os
+import re
 import subprocess
 import platform
 import pathlib
@@ -447,9 +448,10 @@ class RegressionTest:
 
     @staticmethod
     def _check_tool_message(msg: str):
-        if msg.lower().find("error") != -1:
+        if re.search("\\berror\\b", msg.lower()):
             raise AssertionError(f"The simulation tool produced error messages: {msg}")
-        if msg.lower().find("fatal") != -1:
+
+        if re.search("\\bfatal\\b", msg.lower()):
             raise AssertionError(f"The simulation tool produced fatal messages: {msg}")
 
         return
