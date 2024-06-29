@@ -3,7 +3,7 @@ on: [workflow_dispatch]
 jobs:
   examples-test:
     runs-on: ubuntu-latest
-    container: openmodelica/openmodelica:v1.22.1-minimal
+    container: openmodelica/openmodelica:v1.23.0-minimal
     steps:
       - name: Install dependencies
         run: |
