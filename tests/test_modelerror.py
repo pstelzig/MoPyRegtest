@@ -1,14 +1,19 @@
+import os
 import unittest
 import pathlib
 import mopyregtest
 
 this_folder = pathlib.Path(__file__).absolute().parent
+initial_cwd = os.getcwd()
 
 class TestModelErrors(unittest.TestCase):
     def test_build_errors(self):
+        # Exception in RegressionTest._import_and_simulate raised before RegressionTest switches back to initial_cwd
+        os.chdir(initial_cwd)
+
         tester = mopyregtest.RegressionTest(package_folder=this_folder / "data/FlawedModels",
                                           model_in_package="FlawedModels.DoesNotBuild",
-                                          result_folder=this_folder / "data/FlawedModels")
+                                          result_folder=this_folder / "data/FlawedModels/results")
 
         self.assertRaises(AssertionError, tester._import_and_simulate)
 
@@ -17,9 +22,12 @@ class TestModelErrors(unittest.TestCase):
         return
 
     def test_simulate_errors(self):
+        # Exception in RegressionTest._import_and_simulate raised before RegressionTest switches back to initial_cwd
+        os.chdir(initial_cwd)
+
         tester = mopyregtest.RegressionTest(package_folder=this_folder / "data/FlawedModels",
                                           model_in_package="FlawedModels.DoesNotFinish",
-                                          result_folder=this_folder / "data/FlawedModels")
+                                          result_folder=this_folder / "data/FlawedModels/results")
 
         self.assertRaises(AssertionError, tester._import_and_simulate)
 

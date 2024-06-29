@@ -50,11 +50,12 @@ class RegressionTest:
             dependency is an entire package, it must be the path to the respective package's package.mo.
         """
 
-        self.template_folder_path = pathlib.Path(__file__).parent.absolute() / "templates"
-        self.package_folder_path = pathlib.Path(package_folder).absolute()
-        self.model_in_package = model_in_package
-        self.result_folder_path = pathlib.Path(result_folder).absolute()
         self.initial_cwd = os.getcwd()
+
+        self.template_folder_path = pathlib.Path(__file__).parent.absolute() / "templates"
+        self.package_folder_path = self._make_path_absolut(package_folder)
+        self.model_in_package = model_in_package
+        self.result_folder_path = self._make_path_absolut(result_folder)
         self.modelica_version = modelica_version
         self.dependencies = dependencies
 
@@ -64,6 +65,18 @@ class RegressionTest:
             self.tools = [tl for tl in ["omc"] if shutil.which(tl) != None]
 
         self.result_folder_created = False
+
+    def _make_path_absolut(self, path):
+        path = os.path.expanduser(path)
+
+        if not pathlib.PurePath(path).is_absolute():
+            path_abs = pathlib.Path(self.initial_cwd) / path
+        else:
+            path_abs = pathlib.Path(path)
+
+        path_abs = path_abs.absolute()
+
+        return path_abs
 
     @staticmethod
     def _unify_timestamps(results: List[pd.DataFrame], fill_in_method="ffill"):
