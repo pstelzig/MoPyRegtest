@@ -7,6 +7,7 @@ MIT License. See the project's LICENSE file.
 """
 
 import os
+import subprocess
 import platform
 import pathlib
 import shutil
@@ -431,6 +432,15 @@ class RegressionTest:
 
         return
 
+    @staticmethod
+    def _check_tool_message(msg: str):
+        if msg.lower().find("error") != -1:
+            raise AssertionError(f"The simulation tool produced error messages: {msg}")
+        if msg.lower().find("fatal") != -1:
+            raise AssertionError(f"The simulation tool produced fatal messages: {msg}")
+
+        return
+
     def _run_model(self):
         """
         Executes the Modelica simulation tool as an external process called on the
@@ -477,14 +487,11 @@ class RegressionTest:
                 utils.replace_in_file(self.result_folder_path / model_import_mos, repl_dict)
 
                 # Run the import script and write the output of the OpenModelica Compiler (omc) to omc_output
-                os.system(tool_executable + " {} > {}".format(model_import_mos, tool_output))
+                proc_return = subprocess.run([tool_executable, model_import_mos], check=True, capture_output=True)
+                omc_messages = proc_return.stdout.decode("utf-8").strip("\'").strip("\n")
+                RegressionTest._check_tool_message(omc_messages)
 
-                # Read simulation options from the simulation_options_file
-                model_import_output_file = open(tool_output, 'r')
-                omc_messages = model_import_output_file.readlines()
-                model_import_output_file.close()
-
-                (start_time, stop_time, tolerance, num_intervals, interval) = omc_messages[-1].lstrip('(').rstrip(')').split(',')
+                (start_time, stop_time, tolerance, num_intervals, interval) = omc_messages.split("\n")[-1].lstrip('(').rstrip(')').split(',')
 
                 # Modify the simulation template
                 if platform.system() == 'Windows':
@@ -499,7 +506,9 @@ class RegressionTest:
                 utils.replace_in_file(self.result_folder_path / model_simulate_mos, repl_dict)
 
                 # Run the simulation script and append the output of the OpenModelica Compiler (omc) to omc_output
-                os.system(tool_executable + " {} >> {}".format(model_simulate_mos, tool_output))
+                proc_return = subprocess.run([tool_executable, model_simulate_mos], capture_output=True)
+                omc_messages = proc_return.stdout.decode("utf-8").strip("\'").strip("\n")
+                RegressionTest._check_tool_message(omc_messages)
 
         return
 
