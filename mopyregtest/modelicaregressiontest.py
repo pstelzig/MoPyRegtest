@@ -530,12 +530,12 @@ class RegressionTest:
                 if not sim_binary_path.exists():
                     raise AssertionError(
                         f"The expected simulation binary at {sim_result_path} does not exist. "
-                        + f"Please check the output from the simulation tool: {omc_messages}")
+                        + f"Please check the output from the simulation tool:\n\n{omc_messages}")
 
                 if not sim_result_path.exists():
                     raise AssertionError(
                         f"The expected simulation result at {sim_result_path} does not exist. "
-                        + f"Please check the output from the simulation tool: {omc_messages}")
+                        + f"Please check the output from the simulation tool:\n\n{omc_messages}")
         return
 
     @staticmethod

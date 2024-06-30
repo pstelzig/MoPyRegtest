@@ -10,6 +10,7 @@ import shutil
 import os
 import pathlib
 import tempfile
+import sys
 
 from . import metrics
 from . import utils
@@ -168,7 +169,13 @@ if __name__ == '__main__':
                                  result_folder=tmp_res_folder, tool=tool,
                                  modelica_version=self.modelica_version,
                                  dependencies=self.dependencies)
-        regtest._import_and_simulate()
+
+        try:
+            regtest._import_and_simulate()
+        except Exception as e:
+            print(f"Failed to generate the test:\n\n{e}\n\n")
+            print("Aborting test generation.")
+            sys.exit(1)
 
         # Copy reference result file from temporary folder into reference target folder
         res_file = f"{model_in_package}_res.csv"
