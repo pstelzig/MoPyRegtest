@@ -17,7 +17,7 @@ jobs:
         run: |
           git clone https://github.com/pstelzig/MoPyRegtest.git mopyregtest
           cd mopyregtest
-          git checkout v0.5.0
+          git checkout v0.5.1-rc.1
           pip3 install --user .
       - name: Run regression test examples
         run: |
