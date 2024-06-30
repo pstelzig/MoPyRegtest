@@ -172,7 +172,13 @@ if __name__ == '__main__':
 
         # Copy reference result file from temporary folder into reference target folder
         res_file = f"{model_in_package}_res.csv"
-        shutil.copyfile(pathlib.Path(tmp_res_folder) / res_file, str(pathlib.Path(reference_folder) / res_file))
+        ref_src = pathlib.Path(tmp_res_folder) / res_file
+        ref_dst = pathlib.Path(reference_folder) / res_file
+
+        if ref_dst.exists():
+            os.remove(ref_dst)
+
+        shutil.copyfile(ref_src, ref_dst)
 
         # Cleanup temporary directory with simulation data
         if do_cleanup:

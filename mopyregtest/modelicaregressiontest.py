@@ -446,16 +446,6 @@ class RegressionTest:
 
         return
 
-    @staticmethod
-    def _check_tool_message(msg: str):
-        if re.search("\\berror\\b", msg.lower()):
-            raise AssertionError(f"The simulation tool produced error messages: {msg}")
-
-        if re.search("\\bfatal\\b", msg.lower()):
-            raise AssertionError(f"The simulation tool produced fatal messages: {msg}")
-
-        return
-
     def _run_model(self):
         """
         Executes the Modelica simulation tool as an external process called on the
@@ -504,20 +494,18 @@ class RegressionTest:
                 # Run the import script and write the output of the OpenModelica Compiler (omc) to omc_output
                 proc_return = subprocess.run([tool_executable, model_import_mos], check=True, capture_output=True)
                 omc_messages = proc_return.stdout.decode("utf-8").strip("\'").strip("\n")
-                RegressionTest._check_tool_message(omc_messages)
 
                 (start_time, stop_time, tolerance, num_intervals, interval) = omc_messages.split("\n")[-1].lstrip('(').rstrip(')').split(',')
 
-                # Delete old simulation results
-                sim_result_path = self.result_folder_path / (self.model_in_package + "_res.csv")
-                if pathlib.Path(sim_result_path).exists():
-                    os.remove(sim_result_path)
-
                 # Modify the simulation template
                 if platform.system() == 'Windows':
-                    repl_dict["SIMULATION_BINARY"] = "{}.exe".format(self.model_in_package)
+                    sim_binary = self.model_in_package + ".exe"
+                    repl_dict["SIMULATION_BINARY"] = sim_binary
                 elif platform.system() == 'Linux':
-                    repl_dict["SIMULATION_BINARY"] = "./{}".format(self.model_in_package)
+                    sim_binary = self.model_in_package
+                    repl_dict["SIMULATION_BINARY"] = "./" + sim_binary
+                else:
+                    raise ValueError(f"Platform {platform.system()} not supported")
                 repl_dict["START_TIME"] = start_time
                 repl_dict["STOP_TIME"] = stop_time
                 repl_dict["TOLERANCE"] = tolerance
@@ -525,11 +513,29 @@ class RegressionTest:
 
                 utils.replace_in_file(self.result_folder_path / model_simulate_mos, repl_dict)
 
+                # Delete old simulation binary and old simulation result
+                sim_result_path = self.result_folder_path / (self.model_in_package + "_res.csv")
+                if sim_result_path.exists():
+                    os.remove(sim_result_path)
+
+                sim_binary_path = self.result_folder_path / sim_binary
+                if sim_binary_path.exists():
+                    os.remove(sim_binary_path)
+
                 # Run the simulation script and append the output of the OpenModelica Compiler (omc) to omc_output
                 proc_return = subprocess.run([tool_executable, model_simulate_mos], check=True, capture_output=True)
                 omc_messages = proc_return.stdout.decode("utf-8").strip("\'").strip("\n")
-                RegressionTest._check_tool_message(omc_messages)
 
+                # Check output: Both simulation binary and simulation result must exist now
+                if not sim_binary_path.exists():
+                    raise AssertionError(
+                        f"The expected simulation binary at {sim_result_path} does not exist. "
+                        + f"Please check the output from the simulation tool: {omc_messages}")
+
+                if not sim_result_path.exists():
+                    raise AssertionError(
+                        f"The expected simulation result at {sim_result_path} does not exist. "
+                        + f"Please check the output from the simulation tool: {omc_messages}")
         return
 
     @staticmethod
