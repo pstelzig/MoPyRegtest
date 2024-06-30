@@ -13,7 +13,7 @@ jobs:
       - name: Install Modelica STL 4.0.0
         run: |
           echo "installPackage(Modelica, \"4.0.0+maint.om\", exactMatch=true);" > installModelicaStl.mos && omc installModelicaStl.mos
-      - name: Install MoPyRegtest with tag v0.5.0
+      - name: Install MoPyRegtest with tag v0.5.1-rc.1
         run: |
           git clone https://github.com/pstelzig/MoPyRegtest.git mopyregtest
           cd mopyregtest
