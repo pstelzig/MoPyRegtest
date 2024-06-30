@@ -100,3 +100,7 @@ class TestCompareResults(unittest.TestCase):
         self.assertTrue(compar_file_path.exists())
 
         return
+
+
+if __name__ == '__main__':
+    unittest.main()

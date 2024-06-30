@@ -8,7 +8,7 @@ with open("README.md") as fh:
 
 setuptools.setup(
     name="MoPyRegtest",
-    version="0.5.0",
+    version="0.5.1-rc.1",
     author="Philipp Emanuel Stelzig",
     description="A Python enabled simple regression testing framework for Modelica models",
     long_description=long_description,

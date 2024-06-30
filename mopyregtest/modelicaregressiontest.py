@@ -7,6 +7,8 @@ MIT License. See the project's LICENSE file.
 """
 
 import os
+import re
+import subprocess
 import platform
 import pathlib
 import shutil
@@ -49,11 +51,12 @@ class RegressionTest:
             dependency is an entire package, it must be the path to the respective package's package.mo.
         """
 
-        self.template_folder_path = pathlib.Path(__file__).parent.absolute() / "templates"
-        self.package_folder_path = pathlib.Path(package_folder).absolute()
-        self.model_in_package = model_in_package
-        self.result_folder_path = pathlib.Path(result_folder).absolute()
         self.initial_cwd = os.getcwd()
+
+        self.template_folder_path = pathlib.Path(__file__).parent.absolute() / "templates"
+        self.package_folder_path = self._make_path_absolut(package_folder)
+        self.model_in_package = model_in_package
+        self.result_folder_path = self._make_path_absolut(result_folder)
         self.modelica_version = modelica_version
         self.dependencies = dependencies
 
@@ -63,6 +66,18 @@ class RegressionTest:
             self.tools = [tl for tl in ["omc"] if shutil.which(tl) != None]
 
         self.result_folder_created = False
+
+    def _make_path_absolut(self, path):
+        path = os.path.expanduser(path)
+
+        if not pathlib.PurePath(path).is_absolute():
+            path_abs = pathlib.Path(self.initial_cwd) / path
+        else:
+            path_abs = pathlib.Path(path)
+
+        path_abs = path_abs.absolute()
+
+        return path_abs
 
     @staticmethod
     def _unify_timestamps(results: List[pd.DataFrame], fill_in_method="ffill"):
@@ -477,20 +492,20 @@ class RegressionTest:
                 utils.replace_in_file(self.result_folder_path / model_import_mos, repl_dict)
 
                 # Run the import script and write the output of the OpenModelica Compiler (omc) to omc_output
-                os.system(tool_executable + " {} > {}".format(model_import_mos, tool_output))
+                proc_return = subprocess.run([tool_executable, model_import_mos], check=True, capture_output=True)
+                omc_messages = proc_return.stdout.decode("utf-8").strip("\'").strip("\n")
 
-                # Read simulation options from the simulation_options_file
-                model_import_output_file = open(tool_output, 'r')
-                omc_messages = model_import_output_file.readlines()
-                model_import_output_file.close()
-
-                (start_time, stop_time, tolerance, num_intervals, interval) = omc_messages[-1].lstrip('(').rstrip(')').split(',')
+                (start_time, stop_time, tolerance, num_intervals, interval) = omc_messages.split("\n")[-1].lstrip('(').rstrip(')').split(',')
 
                 # Modify the simulation template
                 if platform.system() == 'Windows':
-                    repl_dict["SIMULATION_BINARY"] = "{}.exe".format(self.model_in_package)
+                    sim_binary = self.model_in_package + ".exe"
+                    repl_dict["SIMULATION_BINARY"] = sim_binary
                 elif platform.system() == 'Linux':
-                    repl_dict["SIMULATION_BINARY"] = "./{}".format(self.model_in_package)
+                    sim_binary = self.model_in_package
+                    repl_dict["SIMULATION_BINARY"] = "./" + sim_binary
+                else:
+                    raise ValueError(f"Platform {platform.system()} not supported")
                 repl_dict["START_TIME"] = start_time
                 repl_dict["STOP_TIME"] = stop_time
                 repl_dict["TOLERANCE"] = tolerance
@@ -498,9 +513,29 @@ class RegressionTest:
 
                 utils.replace_in_file(self.result_folder_path / model_simulate_mos, repl_dict)
 
-                # Run the simulation script and append the output of the OpenModelica Compiler (omc) to omc_output
-                os.system(tool_executable + " {} >> {}".format(model_simulate_mos, tool_output))
+                # Delete old simulation binary and old simulation result
+                sim_result_path = self.result_folder_path / (self.model_in_package + "_res.csv")
+                if sim_result_path.exists():
+                    os.remove(sim_result_path)
 
+                sim_binary_path = self.result_folder_path / sim_binary
+                if sim_binary_path.exists():
+                    os.remove(sim_binary_path)
+
+                # Run the simulation script and append the output of the OpenModelica Compiler (omc) to omc_output
+                proc_return = subprocess.run([tool_executable, model_simulate_mos], check=True, capture_output=True)
+                omc_messages = proc_return.stdout.decode("utf-8").strip("\'").strip("\n")
+
+                # Check output: Both simulation binary and simulation result must exist now
+                if not sim_binary_path.exists():
+                    raise AssertionError(
+                        f"The expected simulation binary at {sim_result_path} does not exist. "
+                        + f"Please check the output from the simulation tool:\n\n{omc_messages}")
+
+                if not sim_result_path.exists():
+                    raise AssertionError(
+                        f"The expected simulation result at {sim_result_path} does not exist. "
+                        + f"Please check the output from the simulation tool:\n\n{omc_messages}")
         return
 
     @staticmethod
