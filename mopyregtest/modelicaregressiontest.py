@@ -222,12 +222,8 @@ class RegressionTest:
             pathlib.Path.mkdir(self.result_folder_path)
             self.result_folder_created = True
 
-        os.chdir(self.result_folder_path)
-
         # Run the scripts for import and simulation
         self._run_model()
-
-        os.chdir(self.initial_cwd)
 
         return
 
@@ -457,6 +453,8 @@ class RegressionTest:
         out : None
 
         """
+        os.chdir(self.result_folder_path)
+
         for tool in self.tools:
             tool_executable = tool
 
@@ -528,14 +526,21 @@ class RegressionTest:
 
                 # Check output: Both simulation binary and simulation result must exist now
                 if not sim_binary_path.exists():
+                    os.chdir(self.initial_cwd)
+
                     raise AssertionError(
                         f"The expected simulation binary at {sim_result_path} does not exist. "
                         + f"Please check the output from the simulation tool:\n\n{omc_messages}")
 
                 if not sim_result_path.exists():
+                    os.chdir(self.initial_cwd)
+
                     raise AssertionError(
                         f"The expected simulation result at {sim_result_path} does not exist. "
                         + f"Please check the output from the simulation tool:\n\n{omc_messages}")
+
+        os.chdir(self.initial_cwd)
+
         return
 
     @staticmethod
