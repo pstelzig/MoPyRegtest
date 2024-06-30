@@ -67,10 +67,10 @@ class TestCompareResults(unittest.TestCase):
         argument.
         """
 
-        compar_file_path = (this_folder / "../examples/test_user_defined_metrics/references/Sine_res_comparison.csv")
+        compare_file_path = (this_folder / "../examples/test_user_defined_metrics/references/Sine_res_comparison.csv")
 
-        if compar_file_path.exists():
-            os.remove(compar_file_path)
+        if compare_file_path.exists():
+            os.remove(compare_file_path)
 
         self.assertRaises(AssertionError, mopyregtest.RegressionTest.compare_csv_files,
                           reference_result="../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
@@ -78,7 +78,7 @@ class TestCompareResults(unittest.TestCase):
                           tol=1e-5,
                           validated_cols=["y"],
                           write_comparison=False)
-        self.assertFalse(compar_file_path.exists())
+        self.assertFalse(compare_file_path.exists())
 
         return
 
@@ -87,17 +87,17 @@ class TestCompareResults(unittest.TestCase):
         Validate that a comparison timeseries is written on a failed test by default.
         """
 
-        compar_file_path = (this_folder / "../examples/test_user_defined_metrics/references/Sine_res_comparison.csv")
+        compare_file_path = (this_folder / "../examples/test_user_defined_metrics/references/Sine_res_comparison.csv")
 
-        if compar_file_path.exists():
-            os.remove(compar_file_path)
+        if compare_file_path.exists():
+            os.remove(compare_file_path)
 
         self.assertRaises(AssertionError, mopyregtest.RegressionTest.compare_csv_files,
                           reference_result="../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
                           simulation_result="../examples/test_user_defined_metrics/references/Sine_res.csv",
                           tol=1e-5,
                           validated_cols=["y"])
-        self.assertTrue(compar_file_path.exists())
+        self.assertTrue(compare_file_path.exists())
 
         return
 

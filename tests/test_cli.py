@@ -1,3 +1,4 @@
+import shutil
 import unittest
 import pathlib
 from mopyregtest import cli
@@ -64,7 +65,13 @@ class TestCli(unittest.TestCase):
                     str(this_folder / "data/FlawedModels"),
                     "FlawedModels.DoesNotBuild"]
 
-        self.assertRaises(AssertionError, cli.parse_args, cmd_args)
+        with self.assertRaises(SystemExit) as e:
+            cli.parse_args(cmd_args)
+
+        self.assertEqual(e.exception.code, 1)
+
+        # Clean up the generated regression tests as otherwise they will confuse unittest discovery
+        shutil.rmtree(this_folder / "data/gentests")
 
         return
 
@@ -79,6 +86,9 @@ class TestCli(unittest.TestCase):
                     "FlawedModels.DoesNotFinish"]
 
         cli.parse_args(cmd_args)
+
+        # Clean up the generated regression tests as otherwise they will confuse unittest discovery
+        shutil.rmtree(this_folder / "data/gentests")
 
         return
 
