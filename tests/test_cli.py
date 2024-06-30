@@ -53,6 +53,35 @@ class TestCli(unittest.TestCase):
 
         return
 
+    def test_generate4(self):
+        """
+        Testing for generation to fail if the simulation model for which a test is
+        being generated fails to build.
+        """
+        cmd_args = ["generate",
+                    str(this_folder / "data/gentests"),
+                    "FlawedModels_DoesNotBuild",
+                    str(this_folder / "data/FlawedModels"),
+                    "FlawedModels.DoesNotBuild"]
+
+        self.assertRaises(AssertionError, cli.parse_args, cmd_args)
+
+        return
+
+    def test_generate5(self):
+        """
+
+        """
+        cmd_args = ["generate",
+                    str(this_folder / "data/gentests"),
+                    "FlawedModels_DoesNotFinish",
+                    str(this_folder / "data/FlawedModels"),
+                    "FlawedModels.DoesNotFinish"]
+
+        cli.parse_args(cmd_args)
+
+        return
+
     def test_compare1(self):
         """
         Testing for default arguments in CLI: mopyregtest compare

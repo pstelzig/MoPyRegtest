@@ -21,7 +21,13 @@ class TestModelErrors(unittest.TestCase):
 
         return
 
-    def test_simulate_errors(self):
+    def test_simulate_errors1(self):
+        """
+        This test runs a simulation model that will build and run, but the simulation will not reach the
+        targeted simulation end time. An error will _not_ be thrown by _import_and_simulate. This is because
+        for regression we do not care about simulation end times, but about reproducibility.
+        """
+
         # Exception in RegressionTest._import_and_simulate raised before RegressionTest switches back to initial_cwd
         os.chdir(initial_cwd)
 
@@ -29,7 +35,7 @@ class TestModelErrors(unittest.TestCase):
                                           model_in_package="FlawedModels.DoesNotFinish",
                                           result_folder=this_folder / "data/FlawedModels/results")
 
-        self.assertRaises(AssertionError, tester._import_and_simulate)
+        tester._import_and_simulate()
 
         tester.cleanup(ask_confirmation=False)
 
