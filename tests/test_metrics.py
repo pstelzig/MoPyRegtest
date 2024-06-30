@@ -151,3 +151,7 @@ class TestMetrics(unittest.TestCase):
         self.assertRaises(ValueError, mopyregtest.metrics.norm_infty_dist, f1=f1, f2=f3)
 
         self.assertRaises(ValueError, mopyregtest.metrics.norm_infty_dist, f1=f1, f2=f4)
+
+
+if __name__ == '__main__':
+    unittest.main()

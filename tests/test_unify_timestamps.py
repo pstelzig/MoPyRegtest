@@ -100,3 +100,7 @@ class TestUnifyTimestamps(unittest.TestCase):
 
         self.assertIsNone(pd.testing.assert_frame_equal(res1_ext_expect, results_ext[0]))
         self.assertIsNone(pd.testing.assert_frame_equal(res2_ext_expect, results_ext[1]))
+
+
+if __name__ == '__main__':
+    unittest.main()

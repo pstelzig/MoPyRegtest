@@ -40,3 +40,7 @@ class TestModelErrors(unittest.TestCase):
         tester.cleanup(ask_confirmation=False)
 
         return
+
+
+if __name__ == '__main__':
+    unittest.main()

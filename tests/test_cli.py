@@ -158,3 +158,7 @@ class TestCli(unittest.TestCase):
             (this_folder / "../examples/test_user_defined_metrics/references/Sine_res_comparison.csv").exists())
 
         return
+
+
+if __name__ == '__main__':
+    unittest.main()
