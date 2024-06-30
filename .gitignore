@@ -7,3 +7,4 @@ build/
 MoPyRegtest.egg-info/
 /examples/test_user_defined_metrics/references/Sine_res_comparison.csv
 /tests/data/FlawedModels/results
+/tests/data/gentests
