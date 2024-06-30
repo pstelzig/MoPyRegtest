@@ -175,7 +175,7 @@ if __name__ == '__main__':
         except Exception as e:
             print(f"Failed to generate the test:\n\n{e}\n\n")
             print("Aborting test generation.")
-            sys.exit(-1)
+            sys.exit(1)
 
         # Copy reference result file from temporary folder into reference target folder
         res_file = f"{model_in_package}_res.csv"
