@@ -12,8 +12,8 @@ class TestCompareResults(unittest.TestCase):
         """
 
         self.assertRaises(ValueError, mopyregtest.RegressionTest.compare_csv_files,
-                          reference_result="../examples/test_user_defined_metrics/references/Sine_res.csv",
-                          simulation_result="../examples/test_user_defined_metrics/references/Sine_res.csv",
+                          reference_result=this_folder / "../examples/test_user_defined_metrics/references/Sine_res.csv",
+                          simulation_result=this_folder / "../examples/test_user_defined_metrics/references/Sine_res.csv",
                           validated_cols=["time"])
 
     def test_disjoint_cols(self):
@@ -21,8 +21,8 @@ class TestCompareResults(unittest.TestCase):
         Validate that test of two CSV result files that have no common result variable besides time fails
         """
         self.assertRaises(ValueError, mopyregtest.RegressionTest.compare_csv_files,
-                          reference_result="../examples/test_Modelica_Electrical_Analog_Examples/references/Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv",
-                          simulation_result="../examples/test_user_defined_metrics/references/Sine_res.csv")
+                          reference_result=this_folder / "../examples/test_Modelica_Electrical_Analog_Examples/references/Modelica.Electrical.Analog.Examples.CharacteristicIdealDiodes_res.csv",
+                          simulation_result=this_folder / "../examples/test_user_defined_metrics/references/Sine_res.csv")
         return
 
     def test_validated_cols_not_contained1(self):
@@ -32,8 +32,8 @@ class TestCompareResults(unittest.TestCase):
         """
 
         self.assertRaises(ValueError, mopyregtest.RegressionTest.compare_csv_files,
-                          reference_result="../examples/test_user_defined_metrics/references/Sine_res.csv",
-                          simulation_result="../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
+                          reference_result=this_folder / "../examples/test_user_defined_metrics/references/Sine_res.csv",
+                          simulation_result=this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
                           validated_cols=["y", "not_present_var"])
         return
 
@@ -44,8 +44,8 @@ class TestCompareResults(unittest.TestCase):
         """
 
         self.assertRaises(ValueError, mopyregtest.RegressionTest.compare_csv_files,
-                          reference_result="../examples/test_user_defined_metrics/references/Sine_res.csv",
-                          simulation_result="../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
+                          reference_result=this_folder / "../examples/test_user_defined_metrics/references/Sine_res.csv",
+                          simulation_result=this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
                           validated_cols=["y", "uniformNoise.y"])
         return
 
@@ -56,8 +56,8 @@ class TestCompareResults(unittest.TestCase):
         """
 
         self.assertRaises(ValueError, mopyregtest.RegressionTest.compare_csv_files,
-                          reference_result="../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
-                          simulation_result="../examples/test_user_defined_metrics/references/Sine_res.csv",
+                          reference_result=this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
+                          simulation_result=this_folder / "../examples/test_user_defined_metrics/references/Sine_res.csv",
                           validated_cols=["y", "uniformNoise.y"])
         return
 
@@ -73,8 +73,8 @@ class TestCompareResults(unittest.TestCase):
             os.remove(compare_file_path)
 
         self.assertRaises(AssertionError, mopyregtest.RegressionTest.compare_csv_files,
-                          reference_result="../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
-                          simulation_result="../examples/test_user_defined_metrics/references/Sine_res.csv",
+                          reference_result=this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
+                          simulation_result=this_folder / "../examples/test_user_defined_metrics/references/Sine_res.csv",
                           tol=1e-5,
                           validated_cols=["y"],
                           write_comparison=False)
@@ -93,8 +93,8 @@ class TestCompareResults(unittest.TestCase):
             os.remove(compare_file_path)
 
         self.assertRaises(AssertionError, mopyregtest.RegressionTest.compare_csv_files,
-                          reference_result="../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
-                          simulation_result="../examples/test_user_defined_metrics/references/Sine_res.csv",
+                          reference_result=this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
+                          simulation_result=this_folder / "../examples/test_user_defined_metrics/references/Sine_res.csv",
                           tol=1e-5,
                           validated_cols=["y"])
         self.assertTrue(compare_file_path.exists())
