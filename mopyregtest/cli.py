@@ -36,7 +36,17 @@ def generate(args):
     models_in_package = args.models_in_package.split(",")
 
     if args.references is not None:
-        references = {r.split(":")[0] : r.split(":")[1] for r in args.references.split(",")}
+        ref_pairs = args.references.split(",")
+        references = {}
+        for i in range(0, len(ref_pairs)):
+            sep_idx = ref_pairs[i].find(":")
+            if sep_idx == -1 or sep_idx == len(ref_pairs[i])-1:
+                raise ValueError(f"The argument {args.references} has no valid reference string format. " 
+                                 "Must be like <model name1>:</path/to/ref1.csv>,<model name2>:</path/to/ref2.csv>")
+
+            k = ref_pairs[i][0:sep_idx]
+            v = ref_pairs[i][sep_idx+1:]
+            references[k] = v
     else:
         references = None
 
