@@ -497,7 +497,7 @@ class RegressionTest:
 
                 # Modify the simulation template
                 if platform.system() == 'Windows':
-                    sim_binary = self.model_in_package + ".exe"
+                    sim_binary = self.model_in_package + ".bat"
                     repl_dict["SIMULATION_BINARY"] = sim_binary
                 elif platform.system() == 'Linux':
                     sim_binary = self.model_in_package
