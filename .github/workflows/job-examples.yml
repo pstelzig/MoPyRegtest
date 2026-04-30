@@ -47,3 +47,19 @@ jobs:
           --fill-in-method=interpolate \
           ./examples/test_user_defined_metrics/references/SineNoisy_res.csv \
           ./examples/test_user_defined_metrics/references/Sine_res.csv
+      - name: Run simulation-only test generation with mopyregtest command line tool
+        run: |
+          cd examples/generate_tests
+          /github/home/.local/bin/mopyregtest generate \
+            --mode=simulation \
+            ./gen_tests BlocksSimCheck_from_cli \
+            ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" \
+            Modelica.Blocks.Examples.Filter
+          cd gen_tests
+          python3 test_blockssimcheck_from_cli.py
+      - name: Run simulation-only test generation with script
+        run: |
+          cd examples/generate_tests
+          python3 gentests_simulation_check.py
+          cd gen_tests
+          python3 test_blockssimcheck_from_script.py
