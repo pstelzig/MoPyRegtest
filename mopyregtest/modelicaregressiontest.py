@@ -317,6 +317,31 @@ class RegressionTest:
 
         return
 
+    def check_simulation(self):
+        """
+        Executes the simulation of the Modelica model specified in the constructor and checks that it
+        completes successfully. No comparison against a reference result is performed.
+
+        This is useful for Modelica libraries that have a battery of unit tests where the models contain
+        built-in assertions, and the user only needs to verify that the model compiles, builds, and
+        simulates without error.
+
+        Raises AssertionError if the simulation binary or result CSV file is not produced.
+
+        Returns
+        -------
+        out : None
+        """
+        print("\nChecking simulation of model {}".format(self.model_in_package))
+
+        self._import_and_simulate()
+
+        simulation_result = str(self.result_folder_path / self.model_in_package) + "_res.csv"
+        print("Simulation of model {} completed successfully. Result at {}".format(
+            self.model_in_package, simulation_result))
+
+        return
+
     def compare_result(self, reference_result, tol=1e-7, validated_cols=[],
                        metric=metrics.norm_infty_dist,
                        unify_timestamps=True, fill_in_method="ffill", write_comparison=True):

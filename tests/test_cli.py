@@ -92,6 +92,36 @@ class TestCli(unittest.TestCase):
 
         return
 
+    def test_generate_simulation_mode(self):
+        """
+        Testing --mode=simulation in CLI: mopyregtest generate
+        Verifies that generated test file uses check_simulation() and no references folder is created.
+        """
+        gentests_folder = this_folder / "data/gentests_simmode"
+        cmd_args = ["generate",
+                    "--mode=simulation",
+                    str(gentests_folder),
+                    "FlawedModels_SimCheck",
+                    str(this_folder / "data/FlawedModels"),
+                    "FlawedModels.DoesNotFinish"]
+
+        cli.parse_args(cmd_args)
+
+        # Verify the generated test file contains check_simulation and not compare_result
+        generated_file = gentests_folder / "test_flawedmodels_simcheck.py"
+        self.assertTrue(generated_file.exists())
+        content = generated_file.read_text()
+        self.assertIn("check_simulation()", content)
+        self.assertNotIn("compare_result(", content)
+
+        # Verify no references folder was created
+        self.assertFalse((gentests_folder / "references").exists())
+
+        # Clean up
+        shutil.rmtree(gentests_folder)
+
+        return
+
     def test_compare1(self):
         """
         Testing for default arguments in CLI: mopyregtest compare

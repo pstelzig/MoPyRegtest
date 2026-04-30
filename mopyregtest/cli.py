@@ -34,6 +34,7 @@ def generate(args):
     result_folder = "results"
     package_folder = args.package_folder
     models_in_package = args.models_in_package.split(",")
+    mode = args.mode
 
     if args.references is not None:
         ref_pairs = args.references.split(",")
@@ -54,7 +55,8 @@ def generate(args):
     if args.metric is not None:
         metric = metric_str_to_func(args.metric)
 
-    gen = Generator(package_folder=package_folder, models_in_package=models_in_package, metric=metric, tol=args.tol)
+    gen = Generator(package_folder=package_folder, models_in_package=models_in_package,
+                    mode=mode, metric=metric, tol=args.tol)
     gen.generate_tests(test_folder, test_name, result_folder, references)
 
     return
@@ -99,6 +101,12 @@ def parse_args(cmd_args):
     generate_parser.add_argument("models_in_package", type=str,
                                  help="Comma separated list of model names like <model name1>,<model name2> "
                                       "to be turned into regression tests")
+    generate_parser.add_argument("--mode", type=str,
+                                 help="Testing mode. 'regression' (default) generates tests that compare simulation "
+                                      "results against reference CSV files. 'simulation' generates tests that only "
+                                      "check whether the model simulates successfully, without reference comparison.",
+                                 choices=["regression", "simulation"],
+                                 default="regression")
     generate_parser.add_argument("--metric", type=str,
                                  help="Metric to be used. Choose here from predefined values. "
                                       "For user-defined metrics please consider creating the tests with a dedicated script. "
