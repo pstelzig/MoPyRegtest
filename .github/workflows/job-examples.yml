@@ -3,7 +3,7 @@ on: [workflow_dispatch]
 jobs:
   examples-test:
     runs-on: ubuntu-latest
-    container: openmodelica/openmodelica:v1.23.0-minimal
+    container: openmodelica/openmodelica:v1.26.5-minimal
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
