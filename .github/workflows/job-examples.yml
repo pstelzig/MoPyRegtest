@@ -10,13 +10,13 @@ jobs:
         run: |
           apt-get -qq update
           apt-get -qq --no-install-recommends install python3 python3-pip
-          pip install --break-system-packages numpy pandas
+          pip install numpy pandas
       - name: Install Modelica STL 4.0.0
         run: |
           echo "installPackage(Modelica, \"4.0.0+maint.om\", exactMatch=true);" > installModelicaStl.mos && omc installModelicaStl.mos
       - name: Install MoPyRegtest with current code
         run: |
-          pip3 install --break-system-packages --user .
+          pip3 install --user .
       - name: Run regression test examples
         run: |
           cd examples
