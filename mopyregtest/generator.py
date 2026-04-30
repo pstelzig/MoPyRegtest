@@ -71,6 +71,24 @@ class Test$$CLASS_NAME$$(unittest.TestCase):
         return
         """
 
+    METHOD_CHECK_SIM = \
+        """
+    def test_$$METHOD_NAME$$(self):
+        tester = mopyregtest.RegressionTest(package_folder="$$PACKAGE_FOLDER$$",
+                                            model_in_package="$$MODEL_IN_PACKAGE$$",
+                                            result_folder="$$RESULT_FOLDER$$",
+                                            modelica_version="$$MODELICA_VERSION$$",
+                                            dependencies=$$DEPENDENCIES$$)
+    
+        # Check that simulation completes successfully
+        tester.check_simulation()
+    
+        # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
+        $$DO_CLEANUP$$tester.cleanup()
+    
+        return
+        """
+
     MAIN_STATEMENT = \
         """
 if __name__ == '__main__':
@@ -78,6 +96,7 @@ if __name__ == '__main__':
         """
 
     def __init__(self, package_folder, models_in_package, modelica_version="default", dependencies=None,
+                 mode="regression",
                  metric=metrics.norm_infty_dist,
                  tol=1e-7, unify_timestamps=True, fill_in_method="ffill"):
         """
@@ -95,6 +114,10 @@ if __name__ == '__main__':
             Optional list of strings with names of packages that the package to be tested depends on.
             Each dependency must point to the .mo file that defines the dependency. E.g. if the
             dependency is an entire package, it must be the path to the respective package's package.mo.
+        mode : str
+            Testing mode. "regression" (default) generates tests that compare simulation results against
+            reference CSV files. "simulation" generates tests that only check whether the model compiles,
+            builds, and simulates successfully, without any reference comparison.
         metric : function or str
             Metric to be used in result comparison. Important: If the metric is given as a funtion, one must use one
             of the predefined metrics, i.e. mopyregtest.metrics.norm_p_dist, mopyregtest.metrics.norm_infty_dist,
@@ -123,6 +146,11 @@ if __name__ == '__main__':
         self.models_in_package = models_in_package
         self.modelica_version = modelica_version
         self.dependencies = dependencies
+
+        if mode not in ["regression", "simulation"]:
+            raise ValueError(f"Invalid mode '{mode}'. Must be 'regression' or 'simulation'.")
+        self.mode = mode
+
         if (callable(metric) and
                 metric in [metrics.norm_p_dist, metrics.norm_infty_dist,
                            metrics.Lp_dist, metrics.Linfty_dist,
@@ -234,8 +262,10 @@ if __name__ == '__main__':
         test_folder = pathlib.Path(test_folder)
         if not test_folder.exists():
             test_folder.mkdir(parents=True, exist_ok=False)
-        if not (test_folder / "references").exists():
-            (test_folder / "references").mkdir()
+
+        if self.mode == "regression":
+            if not (test_folder / "references").exists():
+                (test_folder / "references").mkdir()
 
         # Creating the MoPyRegtest test definition
         tfile = open(pathlib.Path(test_folder) / f"test_{test_name.lower()}.py", 'w')
@@ -245,12 +275,13 @@ if __name__ == '__main__':
 
         # Creating a test method for every element in self.models_in_package
         for md in self.models_in_package:
-            r_ref_relpath = f"references/{md}_res.csv"
-            if (references is None or md not in references.keys()) and generate_missing_refs:
-                self._generate_reference(reference_folder=test_folder / "references",
-                                         model_in_package=md, do_cleanup=cleanup_ref_gen)
-            else:
-                shutil.copyfile(references[md], str(test_folder / r_ref_relpath))
+            if self.mode == "regression":
+                r_ref_relpath = f"references/{md}_res.csv"
+                if (references is None or md not in references.keys()) and generate_missing_refs:
+                    self._generate_reference(reference_folder=test_folder / "references",
+                                             model_in_package=md, do_cleanup=cleanup_ref_gen)
+                else:
+                    shutil.copyfile(references[md], str(test_folder / r_ref_relpath))
 
             # If the package path is relative, compute its relative path to the target test folder
             if not pathlib.PurePath(test_folder).is_absolute():
@@ -273,15 +304,20 @@ if __name__ == '__main__':
                 "$$RESULT_FOLDER$$": str(pathlib.Path(test_results_folder).as_posix()),
                 "$$MODELICA_VERSION$$": self.modelica_version,
                 "$$DEPENDENCIES$$": dependencies_str,
-                "$$REFERENCE_RESULT$$": str(pathlib.Path(r_ref_relpath).as_posix()),
-                "$$METRIC$$": self.metric,
-                "$$TOLERANCE$$": str(self.tol),
-                "$$UNIFY_TIMESTAMPS$$": str(self.unify_timestamps),
-                "$$FILL_IN_METHOD$$": self.fill_in_method,
                 "$$DO_CLEANUP$$": "" if cleanup_in_tests else "#"
             }
 
-            test_method = utils.replace_in_str(Generator.METHOD, repl_dict)
+            if self.mode == "regression":
+                repl_dict["$$REFERENCE_RESULT$$"] = str(pathlib.Path(r_ref_relpath).as_posix())
+                repl_dict["$$METRIC$$"] = self.metric
+                repl_dict["$$TOLERANCE$$"] = str(self.tol)
+                repl_dict["$$UNIFY_TIMESTAMPS$$"] = str(self.unify_timestamps)
+                repl_dict["$$FILL_IN_METHOD$$"] = self.fill_in_method
+                template = Generator.METHOD
+            else:
+                template = Generator.METHOD_CHECK_SIM
+
+            test_method = utils.replace_in_str(template, repl_dict)
             tfile.write(test_method)
             tfile.flush()
 
