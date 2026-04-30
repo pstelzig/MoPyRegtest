@@ -10,159 +10,93 @@
 [![Example usage in other repo](https://github.com/pstelzig/mopyregtest/actions/workflows/job-example-for-other-repo.yml/badge.svg?branch=master)](https://github.com/pstelzig/MoPyRegtest/actions/workflows/job-example-for-other-repo.yml)
 [![Publish to PyPI](https://github.com/pstelzig/mopyregtest/actions/workflows/pythonpublish.yml/badge.svg)](https://pypi.org/project/MoPyRegtest/)
 
-Scope of this project is to 
-* provide a simple regression testing framework for Modelica models
-* support continuous integration (CI) for Modelica library development, in particular
-* test for reproducibility of results from [Modelica](https://www.modelica.org/) models and to
-* have it wrapped in the well-known [Python `unittest` module](https://docs.python.org/3/library/unittest.html)
+A lightweight, CI-friendly regression testing framework for [Modelica](https://www.modelica.org/) models, 
+wrapped in Python's [`unittest`](https://docs.python.org/3/library/unittest.html) module. 
+Uses [OpenModelica](https://www.openmodelica.org/) for model translation and simulation.
 
-## Background: 
-When developing Modelica models or libraries and releases have been made, there is definitely the need for testing. E.g.
-- validation of successful model translation,
-- reproducibility of simulation results, or
-- making sure refactorings in Modelica libraries do not alter the behavior.
- 
-Other testing criteria could be memory consumption, CPU time and more. 
-
-## Why MoPyRegtest
-The scope of MoPyRegtest is to have a lightweight and simple way to perform regression tests and to be able to integrate 
-this with automated testing and continuous integration (CI) toolchains, like e.g. GitHub Actions. 
-Without immediately requiring commercial simulation tools or creating strong dependencies from other Modelica libraries.
-
-All that is needed to use MoPyRegtest is a Python 3 installation, an [OpenModelica](https://www.openmodelica.org/) installation, 
-and a text editor. 
-
-## Current realization
-The current realization uses the [Python `unittest` module](https://docs.python.org/3/library/unittest.html) and calls the [OpenModelica compiler `omc`](https://openmodelica.org/) as an 
-external executable for translation and simulation of Modelica models. Note that the implementation of MoPyRegtest is not 
-specific to OpenModelica but can be replaced by any other Modelica simulation tool that comes with a suitable scripting API. 
-
-The test execution and orchestration is done by the Python `unittest` module. In particular, Python `unittest` supports 
-[test discovery](https://docs.python.org/3/library/unittest.html#test-discovery). 
-Also, `unittest` is a standard module that comes with virtually all Python distributions. 
-
-**MoPyRegtest is work in progress!**
-
-## Usage and example
-With MoPyRegtest, users can define regression tests manually in Python for one Modelica model at a time, 
-or automatically for many Modelica models simultaneously.  
-
-### Manual test case definition
-The user has to
-* provide Modelica models that can be translated, built and executed and produce a result `.csv` file
-* provide for every Modelica model a `.csv` file with a reference result against which an actual result is compared
-* create a Python file and test methods that instantiate a `mopyregtest.RegressionTest` object, 
-  which needs to know which Modelica model to test and where to find the reference result. 
-
-Examples can be found in the `examples` folder. Also see the [examples/README.md](https://github.com/pstelzig/MoPyRegtest/tree/master/examples/README.md). 
-
-### Automatic test case generation
-MoPyRegtest can generate regression test definitions for elements of a Modelica library automatically. 
-Either by creating [Generator class objects](https://github.com/pstelzig/MoPyRegtest/tree/master/mopyregtest/generator.py). Or using the 
-[`mopyregtest` command line tool](https://github.com/pstelzig/MoPyRegtest/blob/master/mopyregtest/cli.py).
-
-The folder [examples/generate_tests/README.md](https://github.com/pstelzig/MoPyRegtest/tree/master/examples/generate_tests/README.md) 
-has a detailed explanation on how to automatically generate tests.
-
-### Simulation-only testing
-For Modelica libraries with unit test models that contain built-in assertions, MoPyRegtest supports a simulation-only 
-mode where no reference results are needed. Tests simply verify that a model compiles, builds, and simulates 
-successfully.
-
-This can be used via the `--mode=simulation` flag on the CLI:
-```bash
-mopyregtest generate --mode=simulation ./gen_tests MyTest <package_folder> <model_names>
-```
-
-or via `mode="simulation"` in the `Generator` class, or by calling `check_simulation()` directly on a 
-`RegressionTest` instance. See the [examples/generate_tests/README.md](https://github.com/pstelzig/MoPyRegtest/tree/master/examples/generate_tests/README.md#simulation-only-mode) 
-for details.
+**Key features:**
+- **Regression testing** — compare simulation results against reference CSV files using configurable metrics and tolerances
+- **Simulation-only testing** — verify that models compile, build, and simulate successfully (useful for unit test models with built-in assertions)
+- **Automatic test generation** — generate `unittest` test files for entire Modelica libraries via CLI or Python script
+- **CSV comparison** — compare two CSV result files directly from the command line
 
 ## Prerequisites
-To use MoPyRegtest you need to have
-* a [Python 3](https://www.python.org/) distribution including the modules [`unittest`](https://docs.python.org/3/library/unittest.html), [`numpy`](https://numpy.org/) and [`pandas`](https://pandas.pydata.org/),
-* a working [OpenModelica](https://www.openmodelica.org/) installation (version 1.13.0 or later, works also for latest 1.22), and 
-* the OpenModelica compiler executable `omc` must be accessible via the `PATH` variable.
+- [Python 3](https://www.python.org/) with [`numpy`](https://numpy.org/) and [`pandas`](https://pandas.pydata.org/)
+- [OpenModelica](https://www.openmodelica.org/) (>= 1.13.0) with `omc` on `PATH`
 
-## Installation using pip3
-It is most convenient to install MoPyRegtest using [Python's package manager `pip`](https://packaging.python.org/tutorials/installing-packages/).
-MoPyRegtest *does not need any special privileges* to run.  
-
-### Install from PyPI
-You can install MoPyRegtest from the [Python Package Index](https://pypi.org/project/MoPyRegtest/) by running
+## Installation
 
 ```bash
+# From PyPI
 pip3 install --user mopyregtest
-```
 
-To install a specific version, e.g. `v0.3.1`, run `pip3 install --user mopyregtest==0.3.1` 
-
-### Install from source
-To install from source, first clone this repository to your local `<your-mopyregtest-dir>` (adapt to your needs) with
-the command `git clone https://github.com/pstelzig/MoPyRegtest.git <your-mopyregtest-dir>`
-
-Then run
-
-```bash
-cd <your-mopyregtest-dir>
+# From source
+git clone https://github.com/pstelzig/MoPyRegtest.git
+cd MoPyRegtest
 pip3 install --user .
 ```
 
-to get the latest development head. To install a specific version from source, e.g. `v0.3.1`, run 
+Verify the CLI: `mopyregtest --help`
+
+> **Tip:** If `mopyregtest` is not found, check that pip's script directory is on your `PATH`.  
+> Run `pip3 uninstall mopyregtest` (without confirming) to see where pip installed the executable.
+
+## Quick start
+
+### Regression test (manual)
+
+```python
+import mopyregtest
+
+tester = mopyregtest.RegressionTest(
+    package_folder="~/.openmodelica/libraries/Modelica 4.0.0+maint.om",
+    model_in_package="Modelica.Electrical.Analog.Examples.HeatingRectifier",
+    result_folder="./results",
+    modelica_version="4.0.0")
+
+tester.compare_result(reference_result="references/HeatingRectifier_res.csv", tol=1e-3)
+tester.cleanup(ask_confirmation=False)
+```
+
+### Simulation-only test (manual)
+
+```python
+tester = mopyregtest.RegressionTest(
+    package_folder="~/.openmodelica/libraries/Modelica 4.0.0+maint.om",
+    model_in_package="Modelica.Blocks.Examples.Filter",
+    result_folder="./results")
+
+tester.check_simulation()
+tester.cleanup(ask_confirmation=False)
+```
+
+### Auto-generate tests (CLI)
 
 ```bash
-cd <your-mopyregtest-dir>
-git checkout v0.3.1
-pip3 install --user .
-``` 
+# Regression tests
+mopyregtest generate ./gen_tests MyTest ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" \
+    Modelica.Blocks.Sources.Sine,Modelica.Blocks.Sources.Step
 
-### Uninstall
-To uninstall MoPyRegtest, run
+# Simulation-only tests
+mopyregtest generate --mode=simulation ./gen_tests MySimTest ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" \
+    Modelica.Blocks.Examples.Filter
+```
+
+### Compare CSV files (CLI)
+
 ```bash
-pip3 uninstall mopyregtest
+mopyregtest compare --metric=Lp_dist --tol=0.015 --validated-cols=y reference.csv actual.csv
 ```
 
-### Troubleshooting
+## Documentation
+For detailed usage, metrics reference, and worked examples see the [documentation](doc/usage.md).  
+Runnable examples are in the [examples/](examples/) folder.
 
-#### Problem: CLI `mopyregtest` cannot be found
-To check if MoPyRegtest's command line tool is working, run `mopyregtest --help` from a terminal. 
+## License
+MIT — see [LICENSE](LICENSE).
 
-If an error message shows that the program `mopyregtest` cannot be found, then you have to check if your PATH variable 
-knows where to find `mopyregtest` as installed by pip. To find out the location, run `pip uninstall mopyregtest` but do 
-not confirm to proceed. The uninstallation will tell you which files pip would remove upon uninstalling MoPyRegtest, 
-including the `mopyregtest` executable (or `mopyregtest.exe` under Windows) and its location.
+## Contributing
+Contributions are welcome! Please open an issue or pull request.
 
-```
-Found existing installation: MoPyRegtest 0.4.0rc1
-Uninstalling MoPyRegtest-0.4.0rc1:
-  Would remove:
-    /home/<your user name>/.local/bin/mopyregtest
-    /home/<your user name>/.local/lib/python3.10/site-packages/MoPyRegtest-0.4.0rc1.dist-info/*
-    /home/<your user name>/.local/lib/python3.10/site-packages/mopyregtest/*
-Proceed (Y/n)?
-```
-
-Then, one could either call `mopyregtest` with its full path, or one could add its parent folder to the PATH 
-variable (Be careful! First make sure that this does not cause any harm to your system). 
-
-## Future Work
-* Allow for parallel execution of regression tests
-* Improve readability of in particular failed test results 
-* Provide logs that help users in the analysis of failed tests
-* Make definition of the tests even simpler, e.g. using a more human-readable BDD approach 
-
-## Open source software used
-MoPyRegtest is implemented in Python3 and uses the Python core modules (including `pathlib` and `unittest`) along with 
-[`numpy`](https://numpy.org/) and [`pandas`](https://pandas.pydata.org/). 
-
-# License
-MoPyRegtest is open source software. MoPyRegtest is provided "as is", without warranty of any kind. 
-Usage is completely at your own risk. See the file `LICENSE`. 
-
-# How to contribute
-If you want to help me extend MoPyRegtest, please drop me a message! Contributions are welcome!
-
-# Authors
-The MoPyRegtest is being developed by the following authors:
-* [Dr. Philipp Emanuel Stelzig](https://github.com/pstelzig)
-
+## Authors
+- [Dr. Philipp Emanuel Stelzig](https://github.com/pstelzig)

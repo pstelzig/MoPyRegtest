@@ -1,52 +1,20 @@
-# Usage
-This file guides you through the examples on how to use the `mopyregtest` module to perform simple and quick regression 
-testing on Modelica models. 
+# Examples
 
-## Quick start
+For detailed documentation on all features, see [doc/usage.md](/doc/usage.md).
 
-### Manual test case definition
-Really quick introduction (read the in-depth explanation below to know what you are doing!): 
-* Install MoPyRegtest with pip like described in the [main README.md](/README.md), e.g. with `pip3 install --user .`
-* Go to [test_Modelica_Electrical_Analog_Examples](/examples/test_Modelica_Electrical_Analog_Examples)
-* Copy and modify the file [test_modelica_electrical_analog_examples.py](/examples/test_Modelica_Electrical_Analog_Examples/test_modelica_electrical_analog_examples.py) according to your needs
-* Execute the modified file like `python3 test_modelica_electrical_analog_examples.py`
-  (or whatever you named the file now) to run regression tests on your own Modelica package and models
+## Manual test definitions
 
-A more in-depth explanation of how the provided example works, what happens and how the example was created 
-can be found in 
-[test_Modelica_Electrical_Analog_Examples/README.md](/examples/test_Modelica_Electrical_Analog_Examples/README.md).
+| Example | Description |
+|---------|-------------|
+| [test_Modelica_Electrical_Analog_Examples](test_Modelica_Electrical_Analog_Examples/) | Regression tests with default and custom metrics |
+| [test_user_defined_metrics](test_user_defined_metrics/) | User-defined comparison metrics |
+| [test_for_intentional_failure](test_for_intentional_failure/) | Testing that a comparison *fails* as expected |
 
-For an example of how to create regression tests with user-defined metrics, see the 
-[example in the folder test_user_defined_metrics](/examples/test_user_defined_metrics/test_user_defined_metrics.py). 
+## Automatic test generation
 
-### Automatic test case generation
-There are two different ways to auto-generate test case definitions. 
-Examples can be found in the [folder generate_tests](/examples/generate_tests)
+| Example | Description |
+|---------|-------------|
+| [generate_tests/gentests_modelica_blocks_sources.py](generate_tests/gentests_modelica_blocks_sources.py) | Generate regression tests from a script |
+| [generate_tests/gentests_simulation_check.py](generate_tests/gentests_simulation_check.py) | Generate simulation-only tests from a script |
 
-* Generate test definitions using the [command line tool `mopyregtest`](/examples/generate_tests/README.md#from-the-command-line), or
-* [Use a generator script](/examples/generate_tests/README.md#using-a-generator-script): 
-  * Copy and modify the file [gentests_modelica_blocks_sources.py](/examples/generate_tests/gentests_modelica_blocks_sources.py) according to your needs
-  * Execute the modified file like `python3 gentests_modelica_blocks_sources.py` (or whatever you named the file now) 
-    to create the regression tests defined in that file
-  * This will produce MoPyRegtest test case definitions in test_blocksuserdef_from_script.py (or how you adapted it) and copy all
-    the reference files into a subfolder called references. The test cases can then be executed
-    like `python3 test_blocksuserdef_from_script.py`
-
-For a more in-depth explanation of automatic test case generation turn to
-[generate_tests/README.md](/examples/generate_tests/README.md).
-
-### Simulation-only testing
-Some Modelica libraries contain unit test models with built-in assertions, where the actual result timeseries 
-is not relevant — you only need to verify that the model compiles, builds, and simulates successfully.
-MoPyRegtest supports this with the `--mode=simulation` option (CLI) or `mode="simulation"` (script).
-
-Examples can be found in the [folder generate_tests](/examples/generate_tests):
-
-* **From the command line**: `mopyregtest generate --mode=simulation ./gen_tests MyTest <package_folder> <model_names>`
-* **From a script**: See [gentests_simulation_check.py](/examples/generate_tests/gentests_simulation_check.py)
-
-For more details, see [generate_tests/README.md](/examples/generate_tests/README.md#simulation-only-mode).
-
-### Test for intentional failure
-MoPyRegtest can also be used to check for intentional failure of regression tests. See 
-[test_for_intentional_failure/README.md](/examples/test_for_intentional_failure/README.md).
+See [generate_tests/README.md](generate_tests/README.md) for CLI and script usage.
