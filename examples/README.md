@@ -35,6 +35,18 @@ Examples can be found in the [folder generate_tests](/examples/generate_tests)
 For a more in-depth explanation of automatic test case generation turn to
 [generate_tests/README.md](/examples/generate_tests/README.md).
 
+### Simulation-only testing
+Some Modelica libraries contain unit test models with built-in assertions, where the actual result timeseries 
+is not relevant — you only need to verify that the model compiles, builds, and simulates successfully.
+MoPyRegtest supports this with the `--mode=simulation` option (CLI) or `mode="simulation"` (script).
+
+Examples can be found in the [folder generate_tests](/examples/generate_tests):
+
+* **From the command line**: `mopyregtest generate --mode=simulation ./gen_tests MyTest <package_folder> <model_names>`
+* **From a script**: See [gentests_simulation_check.py](/examples/generate_tests/gentests_simulation_check.py)
+
+For more details, see [generate_tests/README.md](/examples/generate_tests/README.md#simulation-only-mode).
+
 ### Test for intentional failure
 MoPyRegtest can also be used to check for intentional failure of regression tests. See 
 [test_for_intentional_failure/README.md](/examples/test_for_intentional_failure/README.md).

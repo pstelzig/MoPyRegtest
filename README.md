@@ -64,6 +64,20 @@ Either by creating [Generator class objects](https://github.com/pstelzig/MoPyReg
 The folder [examples/generate_tests/README.md](https://github.com/pstelzig/MoPyRegtest/tree/master/examples/generate_tests/README.md) 
 has a detailed explanation on how to automatically generate tests.
 
+### Simulation-only testing
+For Modelica libraries with unit test models that contain built-in assertions, MoPyRegtest supports a simulation-only 
+mode where no reference results are needed. Tests simply verify that a model compiles, builds, and simulates 
+successfully.
+
+This can be used via the `--mode=simulation` flag on the CLI:
+```bash
+mopyregtest generate --mode=simulation ./gen_tests MyTest <package_folder> <model_names>
+```
+
+or via `mode="simulation"` in the `Generator` class, or by calling `check_simulation()` directly on a 
+`RegressionTest` instance. See the [examples/generate_tests/README.md](https://github.com/pstelzig/MoPyRegtest/tree/master/examples/generate_tests/README.md#simulation-only-mode) 
+for details.
+
 ## Prerequisites
 To use MoPyRegtest you need to have
 * a [Python 3](https://www.python.org/) distribution including the modules [`unittest`](https://docs.python.org/3/library/unittest.html), [`numpy`](https://numpy.org/) and [`pandas`](https://pandas.pydata.org/),

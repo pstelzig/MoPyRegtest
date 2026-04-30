@@ -154,3 +154,44 @@ them into code in the test definition file, you _must turn them into a string_. 
 gen = mopyregtest.Generator(package_folder=package_folder, models_in_package=models_in_package,
                             metric="lambda r_ref, r_act: np.linalg.norm(r_ref[:, 1] - r_act[:, 1], ord=np.inf)")
 ```
+
+## Simulation-only mode
+Some Modelica libraries contain unit test models with built-in assertions. For these, you don't need to compare
+against reference results — you only want to verify that the model compiles, builds, and simulates successfully.
+
+MoPyRegtest supports this with `mode="simulation"`. In this mode, no reference results are generated or needed,
+and the generated tests use `check_simulation()` instead of `compare_result()`.
+
+### From the command line
+To generate a simulation-only test from the command line, use `--mode=simulation`:
+
+```bash
+cd examples/generate_tests
+mopyregtest generate --mode=simulation ./gen_tests BlocksSimCheck_from_cli ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" Modelica.Blocks.Examples.Filter
+```
+
+This will create the test file `gen_tests/test_blockssimcheck_from_cli.py` without any `references/` folder.
+You can run the generated test with `python3 gen_tests/test_blockssimcheck_from_cli.py`.
+
+### Using a generator script
+See [gentests_simulation_check.py](/examples/generate_tests/gentests_simulation_check.py) for a complete example.
+The key difference from a regression test is passing `mode="simulation"` to the `Generator` constructor:
+
+```python
+models_in_package = ["Modelica.Blocks.Examples.Filter"]
+
+gen = mopyregtest.Generator(package_folder=package_folder, models_in_package=models_in_package,
+                            mode="simulation")
+gen.generate_tests(test_folder=this_folder / "gen_tests", test_name="BlocksSimCheck_from_script",
+                   test_results_folder=this_folder / "results")
+```
+
+You can also use `check_simulation()` directly in manually written tests without the generator:
+
+```python
+tester = mopyregtest.RegressionTest(package_folder=package_folder,
+                                    model_in_package="Modelica.Blocks.Examples.Filter",
+                                    result_folder=result_folder)
+tester.check_simulation()
+tester.cleanup()
+```
