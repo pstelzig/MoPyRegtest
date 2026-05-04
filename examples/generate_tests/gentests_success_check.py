@@ -38,5 +38,5 @@ models_in_package = ["Modelica.Blocks.Examples.Filter"]
 
 gen = mopyregtest.Generator(package_folder=package_folder, models_in_package=models_in_package,
                             mode="success")
-gen.generate_tests(test_folder=this_folder / "gen_tests", test_name="BlocksSimCheck_from_script",
+gen.generate_tests(test_folder=this_folder / "gen_tests", test_name="BlocksSuccessCheck_from_script",
                    test_results_folder=this_folder / "results")
