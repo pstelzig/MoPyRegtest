@@ -317,7 +317,7 @@ class RegressionTest:
 
         return
 
-    def check_simulation(self):
+    def check_success(self):
         """
         Executes the simulation of the Modelica model specified in the constructor and checks that it
         completes successfully. No comparison against a reference result is performed.
@@ -332,7 +332,7 @@ class RegressionTest:
         -------
         out : None
         """
-        print("\nChecking simulation of model {}".format(self.model_in_package))
+        print("\nChecking success of model {}".format(self.model_in_package))
 
         self._import_and_simulate()
 

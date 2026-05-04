@@ -71,7 +71,7 @@ class Test$$CLASS_NAME$$(unittest.TestCase):
         return
         """
 
-    METHOD_CHECK_SIM = \
+    METHOD_CHECK_SUCCESS = \
         """
     def test_$$METHOD_NAME$$(self):
         tester = mopyregtest.RegressionTest(package_folder="$$PACKAGE_FOLDER$$",
@@ -81,7 +81,7 @@ class Test$$CLASS_NAME$$(unittest.TestCase):
                                             dependencies=$$DEPENDENCIES$$)
     
         # Check that simulation completes successfully
-        tester.check_simulation()
+        tester.check_success()
     
         # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
         $$DO_CLEANUP$$tester.cleanup()
@@ -116,7 +116,7 @@ if __name__ == '__main__':
             dependency is an entire package, it must be the path to the respective package's package.mo.
         mode : str
             Testing mode. "regression" (default) generates tests that compare simulation results against
-            reference CSV files. "simulation" generates tests that only check whether the model compiles,
+            reference CSV files. "success" generates tests that only check whether the model compiles,
             builds, and simulates successfully, without any reference comparison.
         metric : function or str
             Metric to be used in result comparison. Important: If the metric is given as a funtion, one must use one
@@ -147,8 +147,8 @@ if __name__ == '__main__':
         self.modelica_version = modelica_version
         self.dependencies = dependencies
 
-        if mode not in ["regression", "simulation"]:
-            raise ValueError(f"Invalid mode '{mode}'. Must be 'regression' or 'simulation'.")
+        if mode not in ["regression", "success"]:
+            raise ValueError(f"Invalid mode '{mode}'. Must be 'regression' or 'success'.")
         self.mode = mode
 
         if (callable(metric) and
@@ -315,7 +315,7 @@ if __name__ == '__main__':
                 repl_dict["$$FILL_IN_METHOD$$"] = self.fill_in_method
                 template = Generator.METHOD
             else:
-                template = Generator.METHOD_CHECK_SIM
+                template = Generator.METHOD_CHECK_SUCCESS
 
             test_method = utils.replace_in_str(template, repl_dict)
             tfile.write(test_method)

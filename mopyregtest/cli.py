@@ -103,9 +103,9 @@ def parse_args(cmd_args):
                                       "to be turned into regression tests")
     generate_parser.add_argument("--mode", type=str,
                                  help="Testing mode. 'regression' (default) generates tests that compare simulation "
-                                      "results against reference CSV files. 'simulation' generates tests that only "
+                                      "results against reference CSV files. 'success' generates tests that only "
                                       "check whether the model simulates successfully, without reference comparison.",
-                                 choices=["regression", "simulation"],
+                                 choices=["regression", "success"],
                                  default="regression")
     generate_parser.add_argument("--metric", type=str,
                                  help="Metric to be used. Choose here from predefined values. "

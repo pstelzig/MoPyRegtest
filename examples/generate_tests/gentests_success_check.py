@@ -31,12 +31,12 @@ in this file to your needs."""
 # Where to put results from this test
 this_folder = pathlib.Path(__file__).absolute().parent
 
-# Generating a simulation-only test battery ############################################################################
-# In simulation mode, no reference results are needed. The generated tests only check that the model
+# Generating a success-only test battery ############################################################################
+# In success mode, no reference results are needed. The generated tests only check that the model
 # compiles, builds, and simulates successfully.
 models_in_package = ["Modelica.Blocks.Examples.Filter"]
 
 gen = mopyregtest.Generator(package_folder=package_folder, models_in_package=models_in_package,
-                            mode="simulation")
+                            mode="success")
 gen.generate_tests(test_folder=this_folder / "gen_tests", test_name="BlocksSimCheck_from_script",
                    test_results_folder=this_folder / "results")

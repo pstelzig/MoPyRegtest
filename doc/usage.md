@@ -7,7 +7,7 @@ MoPyRegtest supports two testing modes:
 | Mode | Method | Purpose |
 |------|--------|---------|
 | **Regression** (default) | `compare_result()` | Compare simulation output against a reference CSV |
-| **Simulation-only** | `check_simulation()` | Verify that a model compiles, builds, and simulates without error |
+| **Success-only** | `check_success()` | Verify that a model compiles, builds, and simulates without error |
 
 ## Manual test definition
 
@@ -39,8 +39,8 @@ class TestMyModels(unittest.TestCase):
             model_in_package="Modelica.Blocks.Examples.Filter",
             result_folder="./results")
 
-        # Simulation-only mode: just check it runs
-        tester.check_simulation()
+        # Success-only mode: just check it runs
+        tester.check_success()
 
         tester.cleanup(ask_confirmation=False)
 
@@ -83,8 +83,8 @@ mopyregtest generate ./gen_tests MyTest <package_folder> Model1,Model2,Model3
 # With options
 mopyregtest generate --metric=Lp_dist --tol=1e-5 ./gen_tests MyTest <package_folder> Model1,Model2
 
-# Simulation-only tests
-mopyregtest generate --mode=simulation ./gen_tests MySimTest <package_folder> Model1,Model2
+# Success-only tests
+mopyregtest generate --mode=success ./gen_tests MySuccessTest <package_folder> Model1,Model2
 
 # Supply existing references
 mopyregtest generate --references Model1:/path/to/ref1.csv,Model2:/path/to/ref2.csv \
@@ -106,11 +106,11 @@ gen = mopyregtest.Generator(
     tol=0.12)
 gen.generate_tests(test_folder="./gen_tests", test_name="MyTest", test_results_folder="./results")
 
-# Simulation-only tests
+# Success-only tests
 gen = mopyregtest.Generator(
     package_folder="~/.openmodelica/libraries/Modelica 4.0.0+maint.om",
     models_in_package=["Modelica.Blocks.Examples.Filter"],
-    mode="simulation")
+    mode="success")
 gen.generate_tests(test_folder="./gen_tests", test_name="MySimTest", test_results_folder="./results")
 ```
 
@@ -120,7 +120,7 @@ gen.generate_tests(test_folder="./gen_tests", test_name="MySimTest", test_result
 |-----------|---------|-------------|
 | `package_folder` | — | Path to the Modelica package |
 | `models_in_package` | — | List of fully qualified model names |
-| `mode` | `"regression"` | `"regression"` or `"simulation"` |
+| `mode` | `"regression"` | `"regression"` or `"success"` |
 | `modelica_version` | `"default"` | Modelica STL version |
 | `dependencies` | `None` | List of dependent `.mo` file paths |
 | `metric` | `norm_infty_dist` | Predefined metric function or string for custom metrics |

@@ -14,8 +14,8 @@ mopyregtest generate --metric=Lp_dist --tol=1.25e-5 \
     ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" \
     Modelica.Blocks.Sources.Sine,Modelica.Blocks.Sources.ExpSine,Modelica.Blocks.Sources.Step
 
-# Simulation-only test — just checks that the model simulates successfully
-mopyregtest generate --mode=simulation \
+# Success-only test — just checks that the model simulates successfully
+mopyregtest generate --mode=success \
     ./gen_tests BlocksSimCheck \
     ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" \
     Modelica.Blocks.Examples.Filter
@@ -46,15 +46,15 @@ gen.generate_tests(test_folder="./gen_tests", test_name="MyTest", test_results_f
 You can supply pre-existing references via the `references` parameter and use custom metrics as strings 
 (see [doc/usage.md](/doc/usage.md#custom-metrics)).
 
-### Simulation-only tests
-See [gentests_simulation_check.py](gentests_simulation_check.py):
+### Success-only tests
+See [gentests_success_check.py](gentests_success_check.py):
 
 ```python
 gen = mopyregtest.Generator(
     package_folder=package_folder,
     models_in_package=["Modelica.Blocks.Examples.Filter"],
-    mode="simulation")
-gen.generate_tests(test_folder="./gen_tests", test_name="MySimTest", test_results_folder="./results")
+    mode="success")
+gen.generate_tests(test_folder="./gen_tests", test_name="MySuccessTest", test_results_folder="./results")
 ```
 
-No reference results are generated or needed. The test calls `check_simulation()` instead of `compare_result()`.
+No reference results are generated or needed. The test calls `check_success()` instead of `compare_result()`.

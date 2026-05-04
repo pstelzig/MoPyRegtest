@@ -1,9 +1,5 @@
 # MoPyRegtest: A Python enabled simple regression testing framework for Modelica models
 
-**General**  
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/pstelzig/MoPyRegtest/tree/master/LICENSE) 
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/pstelzig/MoPyRegtest/issues)  
-
 **Project status**  
 [![Unit tests](https://github.com/pstelzig/mopyregtest/actions/workflows/job-unit-tests.yml/badge.svg?branch=master)](https://github.com/pstelzig/MoPyRegtest/actions/workflows/job-unit-tests.yml)
 [![Examples](https://github.com/pstelzig/mopyregtest/actions/workflows/job-examples.yml/badge.svg?branch=master)](https://github.com/pstelzig/MoPyRegtest/actions/workflows/job-examples.yml)
@@ -16,7 +12,7 @@ Uses [OpenModelica](https://www.openmodelica.org/) for model translation and sim
 
 **Key features:**
 - **Regression testing** — compare simulation results against reference CSV files using configurable metrics and tolerances
-- **Simulation-only testing** — verify that models compile, build, and simulate successfully (useful for unit test models with built-in assertions)
+- **Success-only testing** — verify that models compile, build, and simulate successfully (useful for unit test models with built-in assertions)
 - **Automatic test generation** — generate `unittest` test files for entire Modelica libraries via CLI or Python script
 - **CSV comparison** — compare two CSV result files directly from the command line
 
@@ -28,18 +24,18 @@ Uses [OpenModelica](https://www.openmodelica.org/) for model translation and sim
 
 ```bash
 # From PyPI
-pip3 install --user mopyregtest
+python3 -m pip install --user mopyregtest
 
 # From source
 git clone https://github.com/pstelzig/MoPyRegtest.git
 cd MoPyRegtest
-pip3 install --user .
+python3 -m pip install --user .
 ```
 
 Verify the CLI: `mopyregtest --help`
 
 > **Tip:** If `mopyregtest` is not found, check that pip's script directory is on your `PATH`.  
-> Run `pip3 uninstall mopyregtest` (without confirming) to see where pip installed the executable.
+> Run `python3 -m pip uninstall mopyregtest` (without confirming) to see where pip installed the executable.
 
 ## Quick start
 
@@ -58,7 +54,7 @@ tester.compare_result(reference_result="references/HeatingRectifier_res.csv", to
 tester.cleanup(ask_confirmation=False)
 ```
 
-### Simulation-only test (manual)
+### Success-only test (manual)
 
 ```python
 tester = mopyregtest.RegressionTest(
@@ -66,7 +62,7 @@ tester = mopyregtest.RegressionTest(
     model_in_package="Modelica.Blocks.Examples.Filter",
     result_folder="./results")
 
-tester.check_simulation()
+tester.check_success()
 tester.cleanup(ask_confirmation=False)
 ```
 
@@ -77,8 +73,8 @@ tester.cleanup(ask_confirmation=False)
 mopyregtest generate ./gen_tests MyTest ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" \
     Modelica.Blocks.Sources.Sine,Modelica.Blocks.Sources.Step
 
-# Simulation-only tests
-mopyregtest generate --mode=simulation ./gen_tests MySimTest ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" \
+# Success-only tests
+mopyregtest generate --mode=success ./gen_tests MySimTest ~/".openmodelica/libraries/Modelica 4.0.0+maint.om/" \
     Modelica.Blocks.Examples.Filter
 ```
 

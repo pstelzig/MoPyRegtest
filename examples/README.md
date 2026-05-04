@@ -15,6 +15,6 @@ For detailed documentation on all features, see [doc/usage.md](/doc/usage.md).
 | Example | Description |
 |---------|-------------|
 | [generate_tests/gentests_modelica_blocks_sources.py](generate_tests/gentests_modelica_blocks_sources.py) | Generate regression tests from a script |
-| [generate_tests/gentests_simulation_check.py](generate_tests/gentests_simulation_check.py) | Generate simulation-only tests from a script |
+| [generate_tests/gentests_success_check.py](generate_tests/gentests_success_check.py) | Generate success-only tests from a script |
 
 See [generate_tests/README.md](generate_tests/README.md) for CLI and script usage.
