@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     container: openmodelica/openmodelica:v1.26.5-minimal
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install dependencies
         run: |
           apt-get -qq update
