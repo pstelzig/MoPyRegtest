@@ -51,7 +51,6 @@ tester = mopyregtest.RegressionTest(
     modelica_version="4.0.0")
 
 tester.compare_result(reference_result="references/HeatingRectifier_res.csv", tol=1e-3)
-tester.cleanup(ask_confirmation=False)
 ```
 
 ### Success-only test (manual)
@@ -63,7 +62,6 @@ tester = mopyregtest.RegressionTest(
     result_folder="./results")
 
 tester.check_success()
-tester.cleanup(ask_confirmation=False)
 ```
 
 ### Auto-generate tests (CLI)
