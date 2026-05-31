@@ -28,6 +28,9 @@ setuptools.setup(
         "numpy",
         "pandas"
     ],
+    extras_require={
+        "funnel": ["pyfunnel"],
+    },
     entry_points={
         'console_scripts': [
             'mopyregtest = mopyregtest.cli:main',

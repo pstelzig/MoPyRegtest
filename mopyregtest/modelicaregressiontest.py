@@ -293,6 +293,12 @@ class RegressionTest:
             raise ValueError(f"validated_cols must contain at least one common variable in "
                              f"reference {reference_result} and simulation result {simulation_result}")
 
+        # When using FunnelDist, the funnel tolerances alone control pass/fail.
+        if isinstance(metric, metrics.FunnelDist):
+            tol = np.finfo(float).tiny
+            if metric.output_dir is None:
+                metric.output_dir = str(pathlib.Path(simulation_result).absolute().parent / "funnel_output")
+
         failed_cols = {}
         for c in validated_cols:
             print("Comparing column \"{}\"".format(c))
@@ -427,6 +433,11 @@ class RegressionTest:
         simulation_result = str(self.result_folder_path / self.model_in_package) + "_res.csv"
 
         print("Comparing simulation result {} and reference {}".format(simulation_result, reference_result))
+
+        # When using FunnelDist, direct pyfunnel output into the result folder so
+        # that cleanup() handles intermediate files.
+        if isinstance(metric, metrics.FunnelDist):
+            metric.output_dir = str(self.result_folder_path / "funnel_output")
 
         RegressionTest.compare_csv_files(reference_result, simulation_result, tol, validated_cols,
                                          metric,

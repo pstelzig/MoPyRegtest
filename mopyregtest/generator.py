@@ -156,6 +156,15 @@ if __name__ == '__main__':
                            metrics.Lp_dist, metrics.Linfty_dist,
                            metrics.abs_dist_ptwise]):
             self.metric = f"mopyregtest.metrics.{metric.__name__}"
+        elif isinstance(metric, metrics.FunnelDist):
+            tol_parts = []
+            tol_parts.append(f"atolx={metric.atolx}")
+            tol_parts.append(f"atoly={metric.atoly}")
+            tol_parts.append(f"ltolx={metric.ltolx}")
+            tol_parts.append(f"ltoly={metric.ltoly}")
+            tol_parts.append(f"rtolx={metric.rtolx}")
+            tol_parts.append(f"rtoly={metric.rtoly}")
+            self.metric = f"mopyregtest.metrics.FunnelDist({', '.join(tol_parts)})"
         elif type(metric) == str:
             self.metric = metric
         else:

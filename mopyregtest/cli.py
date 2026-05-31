@@ -13,7 +13,7 @@ from mopyregtest import metrics
 from mopyregtest import Generator, RegressionTest
 
 
-def metric_str_to_func(m: str):
+def metric_str_to_func(m: str, **kwargs):
     if m == "norm_p_dist":
         return metrics.norm_p_dist
     elif m == "norm_infty_dist":
@@ -24,8 +24,44 @@ def metric_str_to_func(m: str):
         return metrics.Linfty_dist
     elif m == "abs_dist_ptwise":
         return metrics.abs_dist_ptwise
+    elif m == "funnel_dist":
+        funnel_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+        return metrics.FunnelDist(**funnel_kwargs)
     else:
         raise ValueError("Invalid value for metric")
+
+
+_FUNNEL_TOL_KEYS = ["atolx", "atoly", "ltolx", "ltoly", "rtolx", "rtoly"]
+
+
+def _add_funnel_args(parser):
+    """Add pyfunnel tolerance arguments to a subparser."""
+    parser.add_argument("--atolx", type=float, default=None,
+                        help="pyfunnel: absolute tolerance along x axis (only with --metric funnel_dist)")
+    parser.add_argument("--atoly", type=float, default=None,
+                        help="pyfunnel: absolute tolerance along y axis (only with --metric funnel_dist)")
+    parser.add_argument("--ltolx", type=float, default=None,
+                        help="pyfunnel: relative tolerance along x axis, relative to local value (only with --metric funnel_dist)")
+    parser.add_argument("--ltoly", type=float, default=None,
+                        help="pyfunnel: relative tolerance along y axis, relative to local value (only with --metric funnel_dist)")
+    parser.add_argument("--rtolx", type=float, default=None,
+                        help="pyfunnel: relative tolerance along x axis, relative to range (only with --metric funnel_dist)")
+    parser.add_argument("--rtoly", type=float, default=None,
+                        help="pyfunnel: relative tolerance along y axis, relative to range (only with --metric funnel_dist)")
+
+
+def _validate_funnel_args(args, parser):
+    """Validate mutual exclusivity of --tol and pyfunnel tolerance arguments."""
+    has_funnel_tols = any(getattr(args, k) is not None for k in _FUNNEL_TOL_KEYS)
+
+    if args.metric == "funnel_dist":
+        if hasattr(args, "tol") and args.tol is not None:
+            parser.error("--tol cannot be used with --metric funnel_dist. "
+                         "Use --atoly, --atolx, --ltoly, --ltolx, --rtoly, --rtolx instead.")
+    else:
+        if has_funnel_tols:
+            parser.error("--atolx, --atoly, --ltolx, --ltoly, --rtolx, --rtoly can only be used "
+                         "with --metric funnel_dist.")
 
 
 def generate(args):
@@ -53,10 +89,11 @@ def generate(args):
 
     metric = metrics.norm_infty_dist
     if args.metric is not None:
-        metric = metric_str_to_func(args.metric)
+        funnel_kwargs = {k: getattr(args, k) for k in _FUNNEL_TOL_KEYS if getattr(args, k) is not None}
+        metric = metric_str_to_func(args.metric, **funnel_kwargs)
 
     gen = Generator(package_folder=package_folder, models_in_package=models_in_package,
-                    mode=mode, metric=metric, tol=args.tol)
+                    mode=mode, metric=metric, tol=args.tol if args.tol is not None else 1e-7)
     gen.generate_tests(test_folder, test_name, result_folder, references)
 
     return
@@ -73,10 +110,13 @@ def compare(args):
 
     metric = metrics.norm_infty_dist
     if args.metric is not None:
-        metric = metric_str_to_func(args.metric)
+        funnel_kwargs = {k: getattr(args, k) for k in _FUNNEL_TOL_KEYS if getattr(args, k) is not None}
+        metric = metric_str_to_func(args.metric, **funnel_kwargs)
+
+    tol = 1e-7 if args.tol is None else args.tol
 
     RegressionTest.compare_csv_files(ref_result, act_result,
-                                     args.tol, validated_cols, metric, True, args.fill_in_method)
+                                     tol, validated_cols, metric, True, args.fill_in_method)
 
     return
 
@@ -111,14 +151,16 @@ def parse_args(cmd_args):
                                  help="Metric to be used. Choose here from predefined values. "
                                       "For user-defined metrics please consider creating the tests with a dedicated script. "
                                       "If omitted, the default is norm_infty_dist",
-                                 choices=["norm_p_dist", "norm_infty_dist", "Lp_dist", "Linfty_dist", "abs_dist_ptwise"],
+                                 choices=["norm_p_dist", "norm_infty_dist", "Lp_dist", "Linfty_dist", "abs_dist_ptwise", "funnel_dist"],
                                  default="norm_infty_dist")
     generate_parser.add_argument("--tol", type=float,
-                                 help="Absolute tolerance up to which deviation in the comparison metric is accepted",
-                                 default=1e-7)
+                                 help="Absolute tolerance up to which deviation in the comparison metric is accepted. "
+                                      "Cannot be used with --metric funnel_dist.",
+                                 default=None)
     generate_parser.add_argument("--references", type=str,
                                  help="Comma separated list like <model name1>:</path/to/ref1.csv>,<model name2>:</path/to/ref2.csv>. "
                                       "Missing references for models here will be generated.")
+    _add_funnel_args(generate_parser)
     generate_parser.set_defaults(func=generate)
 
     # mopyregtest compare
@@ -130,20 +172,23 @@ def parse_args(cmd_args):
     compare_parser.add_argument("--metric", type=str,
                                 help="Metric to be used. Choose here from predefined values. "
                                      "For user-defined metrics please consider creating the tests with a dedicated script.",
-                                choices=["norm_p_dist", "norm_infty_dist", "Lp_dist", "Linfty_dist", "abs_dist_ptwise"],
+                                choices=["norm_p_dist", "norm_infty_dist", "Lp_dist", "Linfty_dist", "abs_dist_ptwise", "funnel_dist"],
                                 default="norm_infty_dist")
     compare_parser.add_argument("--validated-cols", type=str,
                                 help="Comma separated list like <var name 1>,<var name 2>. "
                                      "If omitted, then all common column names from both CSV files will be used.")
     compare_parser.add_argument("--tol", type=float,
-                                help="Absolute tolerance up to which deviation in the comparison metric is accepted",
-                                default=1e-7)
+                                help="Absolute tolerance up to which deviation in the comparison metric is accepted. "
+                                     "Cannot be used with --metric funnel_dist.",
+                                default=None)
     compare_parser.add_argument("--fill-in-method", type=str,
                                 help="Defines the method used to fill in data when calling RegressionTest._unify_timestamps",
                                 choices=["ffill", "bfill", "interpolate"], default="ffill")
+    _add_funnel_args(compare_parser)
     compare_parser.set_defaults(func=compare)
 
     args = main_parser.parse_args(cmd_args)
+    _validate_funnel_args(args, main_parser)
     args.func(args)
 
 
