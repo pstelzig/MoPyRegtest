@@ -228,8 +228,7 @@ class RegressionTest:
         return
 
     @staticmethod
-    def compare_csv_files(reference_result, simulation_result, tol=1e-7, validated_cols=[],
-                          metric=metrics.norm_infty_dist,
+    def compare_csv_files(reference_result, simulation_result, metric, tol, validated_cols=[],
                           unify_timestamps=True, fill_in_method="ffill", write_comparison=True):
         """
         Compares two CSV files from Modelica simulation runs, one as a reference result, the other one as the actual
@@ -295,6 +294,8 @@ class RegressionTest:
 
         # When using FunnelDist, the funnel tolerances alone control pass/fail.
         if isinstance(metric, metrics.FunnelDist):
+            if tol is not None:
+                raise ValueError(f"A tol value {tol} cannot be used with metric funnel_dist.")
             tol = np.finfo(float).tiny
             if metric.output_dir is None:
                 metric.output_dir = str(pathlib.Path(simulation_result).absolute().parent / "funnel_output")
@@ -348,8 +349,7 @@ class RegressionTest:
 
         return
 
-    def compare_result(self, reference_result, tol=1e-7, validated_cols=[],
-                       metric=metrics.norm_infty_dist,
+    def compare_result(self, reference_result, metric, tol, validated_cols=[],
                        unify_timestamps=True, fill_in_method="ffill", write_comparison=True):
         """
         Executes simulation and then compares the obtained result and the reference result along the

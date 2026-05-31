@@ -50,10 +50,12 @@ def _add_funnel_args(parser):
                         help="pyfunnel: relative tolerance along y axis, relative to range (only with --metric funnel_dist)")
 
 
-def _validate_funnel_args(args, parser):
-    """Validate mutual exclusivity of --tol and pyfunnel tolerance arguments."""
+def _validate_tolerances(args, parser):
+    """
+    Validate presence of tolerance values. In particular, for pyfunnel as metric ensure
+    mutual exclusivity of --tol and pyfunnel tolerance arguments.
+    """
     has_funnel_tols = any(getattr(args, k) is not None for k in _FUNNEL_TOL_KEYS)
-
     if args.metric == "funnel_dist":
         if hasattr(args, "tol") and args.tol is not None:
             parser.error("--tol cannot be used with --metric funnel_dist. "
@@ -87,13 +89,20 @@ def generate(args):
     else:
         references = None
 
-    metric = metrics.norm_infty_dist
-    if args.metric is not None:
+    if args.metric is not None:        
         funnel_kwargs = {k: getattr(args, k) for k in _FUNNEL_TOL_KEYS if getattr(args, k) is not None}
         metric = metric_str_to_func(args.metric, **funnel_kwargs)
+    else:
+         metric = metrics.norm_infty_dist
+
+    if isinstance(metric, metrics.FunnelDist):
+        tol = None
+    else:                   
+        tol = args.tol if args.tol is not None else 1e-7
+
 
     gen = Generator(package_folder=package_folder, models_in_package=models_in_package,
-                    mode=mode, metric=metric, tol=args.tol if args.tol is not None else 1e-7)
+                    mode=mode, metric=metric, tol=tol)
     gen.generate_tests(test_folder, test_name, result_folder, references)
 
     return
@@ -108,15 +117,19 @@ def compare(args):
     else:
         validated_cols = []
 
-    metric = metrics.norm_infty_dist
-    if args.metric is not None:
+    if args.metric is not None:        
         funnel_kwargs = {k: getattr(args, k) for k in _FUNNEL_TOL_KEYS if getattr(args, k) is not None}
         metric = metric_str_to_func(args.metric, **funnel_kwargs)
+    else:
+         metric = metrics.norm_infty_dist
 
-    tol = 1e-7 if args.tol is None else args.tol
+    if isinstance(metric, metrics.FunnelDist):
+        tol = None
+    else:                   
+        tol = args.tol if args.tol is not None else 1e-7        
 
     RegressionTest.compare_csv_files(ref_result, act_result,
-                                     tol, validated_cols, metric, True, args.fill_in_method)
+                                     metric, tol, validated_cols, True, args.fill_in_method)
 
     return
 
@@ -188,7 +201,8 @@ def parse_args(cmd_args):
     compare_parser.set_defaults(func=compare)
 
     args = main_parser.parse_args(cmd_args)
-    _validate_funnel_args(args, main_parser)
+
+    _validate_tolerances(args, main_parser)
     args.func(args)
 
 
