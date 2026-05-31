@@ -32,6 +32,14 @@ cd MoPyRegtest
 python3 -m pip install --user .
 ```
 
+### Optional: funnel-based comparison
+
+To use the `FunnelDist` metric (tolerance-funnel comparison via [pyfunnel](https://github.com/lbl-srg/funnel)):
+
+```bash
+python3 -m pip install --user mopyregtest[funnel]
+```
+
 Verify the CLI: `mopyregtest --help`
 
 > **Tip:** If `mopyregtest` is not found, check that pip's script directory is on your `PATH`.  

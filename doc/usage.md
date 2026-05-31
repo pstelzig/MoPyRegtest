@@ -157,6 +157,44 @@ All metrics operate on Nx2 arrays of `[time, value]` pairs.
 | `abs_dist_ptwise(f1, f2)` | Pointwise absolute difference |
 | `func_ptwise(f1, f2, dist)` | Apply custom function elementwise |
 
+### Funnel-based comparison (optional, requires `pyfunnel`)
+
+| Metric | Description |
+|--------|-------------|
+| `FunnelDist(atolx, atoly, ltolx, ltoly, rtolx, rtoly)` | Funnel comparison using [pyfunnel](https://github.com/lbl-srg/funnel) |
+
+`FunnelDist` builds a tolerance funnel around the reference data and reports test points outside the funnel as errors. It supports absolute, local-relative, and range-relative tolerances in both x and y directions.
+
+Install with: `python3 -m pip install mopyregtest[funnel]`
+
+**Parameters:**
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `atolx` | `0` | Absolute tolerance along x axis |
+| `atoly` | `1e-7` | Absolute tolerance along y axis |
+| `ltolx` | `0` | Relative tolerance along x (relative to local value) |
+| `ltoly` | `0` | Relative tolerance along y (relative to local value) |
+| `rtolx` | `0` | Relative tolerance along x (relative to range) |
+| `rtoly` | `0` | Relative tolerance along y (relative to range) |
+
+**Important:** The `tol` parameter in `compare_result()` / `compare_csv_files()` cannot be used together with `FunnelDist`. The funnel tolerances alone control pass/fail. Passing a non-default `tol` with `FunnelDist` raises a `ValueError`.
+
+```python
+import mopyregtest
+
+tester = mopyregtest.RegressionTest(...)
+tester.compare_result(
+    reference_result="references/HeatingRectifier_res.csv",
+    metric=mopyregtest.metrics.FunnelDist(atoly=1e-3),
+    validated_cols=["y"])
+```
+
+From the CLI:
+```bash
+mopyregtest compare --metric=funnel_dist --atoly=1e-3 --validated-cols=y reference.csv actual.csv
+```
+
 ### Custom metrics
 
 Pass any callable as `metric` to `compare_result()`:
