@@ -103,5 +103,36 @@ class TestElectricalAnalogExamples(unittest.TestCase):
         return
 
 
+# Testing Modelica.Electrical.Analog.Examples.HeatingRectifier with FunnelDist metric
+# This test is only defined when pyfunnel is installed (optional dependency)
+try:
+    import pyfunnel  # noqa: F401
+    _has_pyfunnel = True
+except ImportError:
+    _has_pyfunnel = False
+
+if _has_pyfunnel:
+    class TestElectricalAnalogExamplesFunnel(unittest.TestCase):
+
+        # Testing HeatingRectifier using pyfunnel's tolerance-funnel comparison
+        def test_HeatingRectifier_funnel(self):
+            tester = mopyregtest.RegressionTest(package_folder=package_folder,
+                                                model_in_package="Modelica.Electrical.Analog.Examples.HeatingRectifier",
+                                                result_folder=result_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier",
+                                                modelica_version="4.0.0",
+                                                dependencies=None)
+
+            # Comparing results using FunnelDist: builds a tolerance funnel around the reference
+            # and checks that test data points lie within the funnel
+            tester.compare_result(
+                reference_result=str(reference_folder / "Modelica.Electrical.Analog.Examples.HeatingRectifier_res.csv"),
+                metric=mopyregtest.metrics.FunnelDist(atoly=1e-3))
+
+            # Deletes result_folder after it has been created. Leave out if you feel uncomfortable with auto-deletion!
+            #tester.cleanup()
+
+            return
+
+
 if __name__ == '__main__':
     unittest.main()
