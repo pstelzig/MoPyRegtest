@@ -152,6 +152,85 @@ class TestMetrics(unittest.TestCase):
 
         self.assertRaises(ValueError, mopyregtest.metrics.norm_infty_dist, f1=f1, f2=f4)
 
+    def test_funnel_dist_matching(self):
+        """Test FunnelDist with identical signals returns all-zero errors."""
+        f1 = np.array([[0.0, 1.0],
+                       [1.0, 2.0],
+                       [2.0, 3.0],
+                       [3.0, 4.0]])
+
+        metric = mopyregtest.metrics.FunnelDist(atoly=0.1)
+        result = metric(f1, f1)
+
+        self.assertIsInstance(result, np.ndarray)
+        self.assertEqual(result.shape[1], 2)
+        self.assertTrue(np.all(result[:, 1] == 0.0))
+
+    def test_funnel_dist_diverging(self):
+        """Test FunnelDist with diverging signals returns non-zero errors."""
+        f1 = np.array([[0.0, 0.0],
+                       [1.0, 1.0],
+                       [2.0, 0.0],
+                       [3.0, 1.0]])
+
+        f2 = np.array([[0.0, 0.0],
+                       [1.0, 2.0],
+                       [2.0, 0.0],
+                       [3.0, 1.0]])
+
+        metric = mopyregtest.metrics.FunnelDist(atoly=0.1)
+        result = metric(f1, f2)
+
+        self.assertIsInstance(result, np.ndarray)
+        self.assertEqual(result.shape[1], 2)
+        # Point at x=1 has y difference of 1.0, funnel tolerance is 0.1 → error > 0
+        self.assertTrue(np.any(result[:, 1] > 0))
+
+    def test_funnel_dist_large_tolerance(self):
+        """Test FunnelDist with large tolerance passes for small deviations."""
+        f1 = np.array([[0.0, 0.0],
+                       [1.0, 1.0],
+                       [2.0, 0.0],
+                       [3.0, 1.0]])
+
+        f2 = np.array([[0.0, 0.0],
+                       [1.0, 1.05],
+                       [2.0, 0.0],
+                       [3.0, 1.0]])
+
+        metric = mopyregtest.metrics.FunnelDist(atoly=0.1)
+        result = metric(f1, f2)
+
+        self.assertIsInstance(result, np.ndarray)
+        # Deviation of 0.05 is within atoly=0.1 → all errors should be 0
+        self.assertTrue(np.all(result[:, 1] == 0.0))
+
+    def test_funnel_dist_output_dir(self):
+        """Test FunnelDist writes output to specified directory."""
+        import tempfile
+        import os
+
+        f1 = np.array([[0.0, 0.0],
+                       [1.0, 1.0],
+                       [2.0, 0.0]])
+        f2 = np.array([[0.0, 0.0],
+                       [1.0, 1.5],
+                       [2.0, 0.0]])
+
+        out_dir = tempfile.mkdtemp(prefix="mopyregtest_test_funnel_")
+        try:
+            metric = mopyregtest.metrics.FunnelDist(atoly=0.1)
+            metric.output_dir = out_dir
+            metric(f1, f2)
+
+            # Output should be in a col_1 subdirectory
+            col_dir = os.path.join(out_dir, "col_1")
+            self.assertTrue(os.path.isdir(col_dir))
+            self.assertTrue(os.path.isfile(os.path.join(col_dir, "errors.csv")))
+        finally:
+            import shutil
+            shutil.rmtree(out_dir)
+
 
 if __name__ == '__main__':
     unittest.main()

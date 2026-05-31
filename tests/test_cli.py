@@ -199,6 +199,52 @@ class TestCli(unittest.TestCase):
 
         return
 
+    def test_compare_funnel_dist(self):
+        """
+        Testing for funnel_dist metric in CLI: mopyregtest compare
+        """
+        cmd_args = ["compare",
+                    "--metric=funnel_dist",
+                    "--atoly=0.1",
+                    "--validated-cols=y",
+                    str(this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv"),
+                    str(this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv")]
+
+        cli.parse_args(cmd_args)
+
+        return
+
+    def test_compare_funnel_dist_tol_rejected(self):
+        """
+        Verify that --tol with --metric funnel_dist causes a SystemExit error.
+        """
+        cmd_args = ["compare",
+                    "--metric=funnel_dist",
+                    "--tol=0.5",
+                    "--atoly=0.1",
+                    str(this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv"),
+                    str(this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv")]
+
+        with self.assertRaises(SystemExit):
+            cli.parse_args(cmd_args)
+
+        return
+
+    def test_compare_funnel_tols_with_wrong_metric(self):
+        """
+        Verify that pyfunnel tolerance args with a non-funnel metric causes a SystemExit error.
+        """
+        cmd_args = ["compare",
+                    "--metric=norm_infty_dist",
+                    "--atoly=0.1",
+                    str(this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv"),
+                    str(this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv")]
+
+        with self.assertRaises(SystemExit):
+            cli.parse_args(cmd_args)
+
+        return
+
 
 if __name__ == '__main__':
     unittest.main()
