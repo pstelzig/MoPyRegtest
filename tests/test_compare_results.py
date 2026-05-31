@@ -113,6 +113,45 @@ class TestCompareResults(unittest.TestCase):
 
         return
 
+    def test_funnel_dist_identical_files(self):
+        """
+        Validate that FunnelDist passes for identical CSV files.
+        """
+        mopyregtest.RegressionTest.compare_csv_files(
+            reference_result=this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
+            simulation_result=this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
+            metric=mopyregtest.metrics.FunnelDist(atoly=0.1),
+            tol=None,
+            validated_cols=["y"])
+
+        return
+
+    def test_funnel_dist_different_files(self):
+        """
+        Validate that FunnelDist fails for different CSV files with tight tolerance.
+        """
+        self.assertRaises(AssertionError, mopyregtest.RegressionTest.compare_csv_files,
+                          reference_result=this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
+                          simulation_result=this_folder / "../examples/test_user_defined_metrics/references/Sine_res.csv",
+                          metric=mopyregtest.metrics.FunnelDist(atoly=1e-5),
+                          tol=None,
+                          validated_cols=["y"])
+
+        return
+
+    def test_funnel_dist_tol_rejected(self):
+        """
+        Validate that passing a non-None tol with FunnelDist raises ValueError.
+        """
+        self.assertRaises(ValueError, mopyregtest.RegressionTest.compare_csv_files,
+                          reference_result=this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
+                          simulation_result=this_folder / "../examples/test_user_defined_metrics/references/SineNoisy_res.csv",
+                          metric=mopyregtest.metrics.FunnelDist(atoly=0.1),
+                          tol=0.5,
+                          validated_cols=["y"])
+
+        return
+
 
 if __name__ == '__main__':
     unittest.main()
